@@ -58,9 +58,9 @@ Every project page should answer, in order:
 ## 3. Visual Design Goals
 
 ### Target aesthetic
-Minimal, elegant, typography-led, high whitespace. The reference north stars are **read.cv, Stripe, Linear, and Vercel** — modern technical portfolios where the content is the design and restraint signals confidence.
+Minimal, elegant, typography-led, high whitespace. The reference north stars are **exampel_screenshots** — modern technical portfolios where the content is the design and restraint signals confidence.
 
-### What to emulate (from the read.cv reference)
+### What to emulate (from the references)
 - Clean single-column or generous two-column layouts with lots of breathing room.
 - Quiet typographic hierarchy: dates/labels in muted gray, content in near-black, small section headers ("About," "Work," "Writing").
 - Restrained palette — near-white background, one accent color used sparingly.
@@ -128,12 +128,17 @@ An MLB pitcher injury-risk model built on Statcast and injury-history data (2015
 **NBA Shot-Value Project**
 A model evaluating shot value in the NBA. Demonstrates range across sports, spatial/contextual modeling, and the ability to turn tracking-style data into actionable insight.
 
+**Batting Average Control Stat**
+A hitter-evaluation model focused on separating batting-average skill from noise by using plate-discipline, power, and batted-ball indicators. Demonstrates baseball analytics judgment, metric design, and the ability to build interpretable player-evaluation tools from underlying performance drivers rather than relying only on traditional box-score outcomes.
+
 *(Placeholder slots for future baseball analytics work and research investigations.)*
 
 ### Startups & AI
 
+**Keep in mind none of these projects are complete yet**
+
 **AI Construction Documentation Startup**
-A startup concept applying AI to construction documentation. Demonstrates entrepreneurial thinking and the ability to identify a real-world problem and design a product around it.
+A startup concept applying AI to construction documentation. Demonstrates entrepreneurial thinking and the ability to identify a real-world problem and design a product around it. 
 
 **AI Workflow Tools / Second-Brain Systems**
 Experiments and tools built around AI-assisted workflows. Demonstrates that I use and build with AI deliberately, not just talk about it — initiative plus practical execution.
