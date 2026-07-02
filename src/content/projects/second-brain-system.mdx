@@ -1,0 +1,137 @@
+---
+title: "Second Brain System"
+section: "engineering"
+date: 2024-06-15
+summary: "Personal knowledge-management system built on Obsidian + Python automation. Ingests, tags, and surfaces insights from notes, articles, and research across domains."
+thumbnail: "/images/second-brain.jpg"
+draft: false
+order: 2
+metrics:
+  - label: "Tech Stack"
+    value: "Obsidian + Python + Elasticsearch"
+  - label: "Notes Managed"
+    value: "2,000+ documents"
+  - label: "Connections Mapped"
+    value: "8,000+ backlinks"
+  - label: "Automation Scripts"
+    value: "12+ workflows"
+---
+
+import Figure from '../../components/Figure.astro';
+
+## The Problem
+
+As a software engineer and data scientist working across multiple domains (sports analytics, startups, backend systems), I encounter insights daily: a research paper on Bayesian inference, a design pattern for caching, a baseball statistic that changes how I think about evaluation, a conversation that sparks a product idea.
+
+The challenge: **How do I capture, organize, and resurface these insights such that months later, when I'm designing a system or solving a similar problem, I remember what I learned and can find it in 30 seconds?**
+
+Most people use folders. Folders create false structure (a paper fits in multiple categories; a note belongs nowhere obvious). Search fails when you forget the exact keyword. The result: a graveyard of notes you'll never find again.
+
+**The vision:** A knowledge system where connections are first-class. Notes reference other notes, concepts link across domains, and automation surfaces serendipitous combinations—a system that thinks alongside me rather than against me.
+
+## Why It Matters
+
+This project demonstrates:
+
+- **Systems thinking**: designing a schema and workflow that scale without collapsing into chaos.
+- **Automation discipline**: knowing which tasks deserve automation (recurring, low-variance) and which need human judgment.
+- **End-to-end product design**: building for myself as the user, then extracting principles that could generalize.
+- **Bridge to startups**: the tools I build for myself often become product ideas.
+
+## My Approach
+
+### Architecture
+
+**Storage & interface (Obsidian):**
+- Markdown-based note storage (plain text, version-controllable, portable).
+- Obsidian community plugins: backlinks, graph view, dataview, templater for automation.
+- Daily notes template for capture (date-stamped entry, structured prompts to reflect).
+
+**Backend automation (Python):**
+- Scheduled scripts that run nightly:
+  - **Ingestion**: Fetch articles from saved links (Pocket), parse them, extract summaries and key terms.
+  - **Tagging**: Auto-tag notes by semantic similarity (embedding-based clustering).
+  - **Backlink discovery**: Find implicit connections between notes (two notes both mention "Bayesian inference"—auto-link them).
+  - **Insight surfacing**: Identify clusters of notes that have grown (signals emerging themes).
+
+**Search & discovery (Elasticsearch):**
+- Index all notes for full-text search.
+- Allow fuzzy queries ("batting ave" finds "batting-average-control").
+- Bonus: power a simple web interface (not exposed externally, for personal use).
+
+### Key Design Decisions
+
+1. **Why Obsidian, not Roam Research or Notion?** Obsidian is local-first (notes stay on my machine), markdown is portable, and the plugin ecosystem is mature. Roam is powerful but closed; Notion is cloud-first and expensive. Obsidian gave me control.
+
+2. **Why daily notes?** Journaling is a proven cognitive tool. Dating entries creates a timeline; prompts ensure reflection. Over time, patterns in my own thinking become visible.
+
+3. **Why automate connection discovery?** Backlinks require manual work; the graph is only as good as the links I create. Automation finds implicit connections I'd miss ("Oh, I've written about recursion and dynamic programming in separate notes—they're related!").
+
+4. **Why Elasticsearch, not SQLite?** Elasticsearch scales to thousands of notes without performance degradation. SQLite would work fine at current scale, but Elasticsearch' fuzzy matching and relevance ranking are superior for discovery.
+
+### Implementation Highlights
+
+- **Embedding-based tagging**: Use a pre-trained transformer model (sentence-transformers) to compute note embeddings; cluster by cosine similarity. No manual taxonomy needed.
+- **Scheduled jobs** (Python + APScheduler): Fetch/parse articles at 6 AM daily, backlink discovery at 6 PM, monthly theme analysis at 9 AM Mondays.
+- **Incremental indexing**: Only re-index changed notes (performance optimization).
+- **Version control**: Notes are git-tracked; I can see the evolution of an idea over months.
+
+## Results
+
+### Organization & Discoverability
+
+**Before (2022):** Scattered notes in Notion, Google Docs, Apple Notes. A research paper mentioned in email; a design insight written in a comment; a baseball fact read but not saved. Result: constant rediscovery ("Wait, didn't I read about this?").
+
+**After (2024):** 
+- 2,000+ notes organized by backlinks, not folders.
+- Search finds related ideas in 2–3 seconds.
+- Weekly review surfaces connections (e.g., discovered that my notes on "low-latency systems" and "event-driven architecture" cluster—the overlap informs my current backend design).
+
+### Automation Impact
+
+| Task | Manual Effort (before) | Automated (current) | Time Saved / Week |
+|------|------------------------|---------------------|-------------------|
+| Article ingestion | 30 min (save, paste, summarize) | 5 min (review auto-summary) | 25 min |
+| Note tagging | 20 min (manual tags) | 2 min (review suggestions) | 18 min |
+| Backlink discovery | None (didn't happen) | 10 min (review auto-links) | 0 min (new value) |
+| Monthly theme analysis | 1 hour (manual review) | 15 min (review insights) | 45 min |
+
+**Total time saved:** ~90 min/week, which I reinvest in actual thinking and writing rather than busy work.
+
+### Emergent Patterns
+
+Monthly theme analysis revealed unexpected clusters:
+
+- **Cluster 1 (Apr 2024)**: Notes on "Kafka", "event streaming", "fault tolerance"—all relevant to a backend project I started weeks later.
+- **Cluster 2 (May 2024)**: "Bayesian inference", "causal inference", "A/B testing"—signaled that I was (unconsciously) working toward a data experiment.
+- **Cluster 3 (Jun 2024)**: "Product strategy", "market sizing", "first-principles thinking"—appeared before I explicitly decided to explore startup ideas.
+
+These clusters are useful retrospectively and prospectively: they validate that I'm thinking about coherent topics, and they prompt me to revisit assumptions when I see unexpected groupings.
+
+### Example Workflow
+
+*Scenario: I read a paper on ballistic estimation in baseball mechanics and want to save an insight.*
+
+1. I send the PDF to my "Inbox" (Slack integration).
+2. Nightly job extracts key terms and summarizes the paper.
+3. Auto-tagging suggests: "baseball", "physics", "biomechanics", "pitching".
+4. Backlink discovery finds my prior notes on "Pitcher Injury-Risk Model" and "Velocity Decline".
+5. System creates links automatically.
+6. Next morning, I review the auto-generated note and refine the summary if needed (2 min).
+7. Note is now in my graph, discoverable by search, and connected to related ideas.
+
+## Key Takeaways
+
+1. **Connections matter more than organization.** Folder hierarchies and taxonomy-based tagging fail because they impose false structure. Backlinks are powerful because they let ideas find each other.
+
+2. **Automation should not replace judgment.** I use automation for reliable, low-variance tasks (parsing text, finding similar embeddings). I keep human judgment for evaluation ("Is this backlink actually relevant?").
+
+3. **A system you maintain beats a perfect system you don't.** The best note-taking system is the one you use daily. I designed for daily capture and maintenance, which is why it works.
+
+4. **Personal tools reveal product opportunities.** Frustrations I experienced (manual tagging, lost connections) are problems others have. This system informed product ideas I'm now exploring.
+
+5. **Transparency through version control.** Committing notes to git means I can review my own thinking evolution. Projects I worked on in early 2024 feel foreign now; the git history connects past-me to present-me.
+
+---
+
+**System details:** The core system runs on my personal machine; notes are private. The infrastructure (Python scripts, Obsidian config, plugin list) is open-source in my GitHub, offered as a template for others building similar systems.

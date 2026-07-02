@@ -88,15 +88,15 @@
 - [ ] `/about`: specific narrative per brief (Mudd → SWE → data science → sports analytics → startups throughline). Typography-led, no bio-card template.
 - [ ] Nav reflects final sections; active-state styling.
 
-### M3 — Content buildout (pour content through existing machinery)
-- [ ] Patio project page (links out to live app; screen-recording/screenshots as visuals).
-- [ ] NBA Shot-Value page + spatial ECharts court/heatmap viz (JSON).
-- [ ] Batting Average Control Stat page + viz (JSON).
-- [ ] Second Brain System page.
-- [ ] AI Construction Documentation page (mark as concept/WIP).
-- [ ] AI Workflow Tools / Second-Brain page (mark WIP).
-- [ ] Add `draft: true` placeholder MDX for future/internship + future baseball/startup slots.
-- [ ] Verify each new project needed **content only** (no component/engineering changes) — if not, note the gap here.
+### M3 — Content buildout (pour content through existing machinery) ✅ done
+- [x] Patio project page (links out to live app; screen-recording/screenshots as visuals).
+- [x] NBA Shot-Value page + spatial ECharts court/heatmap viz (JSON).
+- [x] Batting Average Control Stat page + viz (JSON).
+- [x] Second Brain System page.
+- [x] AI Construction Documentation page (mark as concept/WIP).
+- [x] AI Workflow Tools / Second-Brain page (mark WIP).
+- [x] Add `draft: true` placeholder MDX for future/internship + future baseball/startup slots.
+- [x] Verify each new project needed **content only** (no component/engineering changes) — if not, note the gap here.
 
 ### M4 — Polish & launch
 - [ ] Full mobile/responsive QA across breakpoints.
