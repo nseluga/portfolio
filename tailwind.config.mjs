@@ -8,7 +8,7 @@ export default {
         // Locked color palette: near-white bg, near-black text, muted gray, one accent
         background: '#fafafa', // near-white background
         foreground: '#0a0a0a', // near-black text
-        muted: '#8a8a8a', // muted gray for labels/dates
+        muted: '#666666', // muted gray for labels/dates (darkened for contrast: AA compliant)
         accent: '#2563eb', // one accent color (blue)
       },
       fontSize: {

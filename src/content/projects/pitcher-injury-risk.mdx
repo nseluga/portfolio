@@ -3,7 +3,7 @@ title: "Pitcher Injury-Risk Model"
 section: "sports-analytics"
 date: 2024-03-15
 summary: "Built an MLB pitcher injury-risk prediction model using Statcast and injury-history data spanning 2015–2024, achieving 78% AUC-ROC with actionable risk stratification by age and usage."
-thumbnail: "/images/pitcher-injury.jpg"
+thumbnail: "/images/pitcher-injury.svg"
 draft: false
 order: 1
 metrics:
@@ -133,7 +133,9 @@ For sports analytics, this is a canonical use case: real data, clear outcome, me
   }}
 />
 
-**Chart interpretation:** The interactive chart above shows predicted injury risk across pitcher ages (22–36) stratified by workload intensity. Notice the inflection at age 30 under high usage—this is where cumulative stress and age intersect.
+**Chart interpretation:** The interactive chart above shows predicted injury risk across pitcher ages (22–36) stratified by workload intensity. Three lines represent different usage levels: high usage (peaked at 13.1% risk for 36-year-olds), medium usage (peaked at 9.9%), and low usage (peaked at 6.7%). Notice the inflection at age 30 under high usage—this is where cumulative stress and age intersect.
+
+**Chart data summary for screen readers:** This visualization displays predicted injury risk percentages by pitcher age and workload. High-usage pitchers show injury risk starting at 3.2% at age 22 and climbing to 13.1% at age 36. Medium and low usage show proportionally lower trajectories. All three usage categories demonstrate a consistent increase in injury risk with age.
 
 ### Validation Results
 - **Training AUC-ROC:** 0.79

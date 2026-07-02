@@ -34,7 +34,7 @@ export default function Chart({ option, style, className }: ChartProps) {
   }
 
   return (
-    <div className={className}>
+    <div className={className} role="img" aria-label={option.title?.text || 'Chart visualization'}>
       <EChartsReact
         option={option}
         style={chartStyle}

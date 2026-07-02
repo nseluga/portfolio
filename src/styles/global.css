@@ -47,6 +47,11 @@
 
   a {
     @apply text-accent underline hover:opacity-75 transition-opacity;
+    outline-offset: 2px;
+  }
+
+  a:focus-visible {
+    @apply outline-2 outline-accent;
   }
 
   code {
@@ -74,15 +79,28 @@
 /* Component layer: utility classes for common patterns */
 @layer components {
   .skip-link {
-    @apply absolute left-0 -top-10 z-50 bg-accent text-white px-4 py-2 rounded focus:top-0 transition-all;
+    @apply absolute left-0 -top-10 z-50 bg-accent text-white px-4 py-2 rounded focus:top-0 transition-all outline-2 outline-offset-2 outline-accent focus:outline-accent;
   }
 
   .nav-link {
     @apply text-foreground hover:text-accent transition-colors;
+    outline-offset: 4px;
+  }
+
+  .nav-link:focus-visible {
+    @apply outline-2 outline-accent;
   }
 
   .nav-link.active {
     @apply text-accent font-semibold;
+  }
+
+  button {
+    @apply outline-offset-2;
+  }
+
+  button:focus-visible {
+    @apply outline-2 outline-accent;
   }
 }
 
