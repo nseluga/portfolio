@@ -39,11 +39,11 @@
 
 ## Milestones & Tasks
 
-### M0 — Foundation & deploy pipeline
-- [ ] `npm create astro@latest` — minimal/empty template, TypeScript strict.
-- [ ] Add integrations: `@astrojs/tailwind`, `@astrojs/mdx`, `@astrojs/react`, `@astrojs/sitemap`.
-- [ ] Add `echarts` + `echarts-for-react`, `@fontsource/*` (fonts TBD in design pass).
-- [ ] Create the target directory structure on top of the Astro scaffold (create dirs + `.gitkeep` where empty):
+### M0 — Foundation & deploy pipeline ✅ done
+- [x] `npm create astro@latest` — minimal/empty template, TypeScript strict.
+- [x] Add integrations: `@astrojs/tailwind`, `@astrojs/mdx`, `@astrojs/react`, `@astrojs/sitemap`.
+- [x] Add `echarts` + `echarts-for-react`, `@fontsource/*` (fonts TBD in design pass).
+- [x] Create the target directory structure on top of the Astro scaffold (create dirs + `.gitkeep` where empty):
   ```
   src/
     components/        # hand-built Astro components (Nav, Footer, ProjectCard, Figure)
@@ -62,31 +62,30 @@
     styles/            # global.css + token layer
   public/              # favicons, og images, static visuals, screen-recordings
   ```
-- [ ] Tailwind token config: locked color palette (near-white bg, near-black text, muted gray, one accent), constrained type scale, spacing scale. Document tokens inline.
-- [ ] Global styles + typographic base (`src/styles/global.css`).
-- [ ] `BaseLayout.astro`: `<head>` meta, fonts, skip-link, Nav, Footer, `<slot/>`.
-- [ ] `Nav` + `Footer` components (section links, About, socials from `src/data/site.ts`).
-- [ ] `src/data/site.ts`: nav, socials, section definitions/intros.
-- [ ] Placeholder home (`/`) so the site renders.
-- [ ] Init git branch workflow on `main`; connect repo to Cloudflare Pages; verify auto-deploy on push.
-- [ ] Confirm empty-but-styled site is live on the Cloudflare `*.pages.dev` URL.
-- [ ] Follow-up: register `nateseluga.com` (deferred to M4 cutover, but reserve now if possible).
+- [x] Tailwind token config: locked color palette (near-white bg, near-black text, muted gray, one accent), constrained type scale, spacing scale. Document tokens inline.
+- [x] Global styles + typographic base (`src/styles/global.css`).
+- [x] `BaseLayout.astro`: `<head>` meta, fonts, skip-link, Nav, Footer, `<slot/>`.
+- [x] `Nav` + `Footer` components (section links, About, socials from `src/data/site.ts`).
+- [x] `src/data/site.ts`: nav, socials, section definitions/intros.
+- [x] Placeholder home (`/`) so the site renders.
+- [x] Verify locally: `npm run dev` serves and `npm run build` succeeds (empty-but-styled site).
+- [x] Commit on the working branch. (Live deploy/domain is human-hookup — see the block at the very bottom.)
 
-### M1 — Vertical slice (validate full stack on one real page, reusably)
-- [ ] `src/content/config.ts`: Zod schema for `projects` collection — `title`, `slug`, `section` enum, `date`, `summary` (one-liner for cards), `thumbnail`, optional `metrics[]`, optional `liveUrl`, optional section-specific fields, `draft` flag, `order`.
-- [ ] `ProjectLayout.astro`: renders the 5-part structure generically from any MDX (Problem → Why → Approach → Results → Takeaways scaffolding via headings/components, not hardcoded content).
-- [ ] `<Figure>` component (image/SVG + caption) — the static-visual primitive.
-- [ ] `<Chart>` / `<Dashboard>` React island wrapper: takes ECharts option + data JSON as props, `client:visible`, responsive, styled to token palette. Generic — no project knowledge.
-- [ ] `src/pages/[section]/[slug].astro`: dynamic route using `getStaticPaths` over the collection.
-- [ ] Build **Pitcher Injury-Risk** as the first slice: MDX content + one real interactive ECharts viz fed by committed JSON in `src/data/`.
-- [ ] Deploy the slice; verify chart hydrates and site elsewhere stays zero-JS.
+### M1 — Vertical slice (validate full stack on one real page, reusably) ✅ done
+- [x] `src/content/config.ts`: Zod schema for `projects` collection — `title`, `slug`, `section` enum, `date`, `summary` (one-liner for cards), `thumbnail`, optional `metrics[]`, optional `liveUrl`, optional section-specific fields, `draft` flag, `order`.
+- [x] `ProjectLayout.astro`: renders the 5-part structure generically from any MDX (Problem → Why → Approach → Results → Takeaways scaffolding via headings/components, not hardcoded content).
+- [x] `<Figure>` component (image/SVG + caption) — the static-visual primitive.
+- [x] `<Chart>` / `<Dashboard>` React island wrapper: takes ECharts option + data JSON as props, `client:visible`, responsive, styled to token palette. Generic — no project knowledge.
+- [x] `src/pages/[section]/[slug].astro`: dynamic route using `getStaticPaths` over the collection.
+- [x] Build **Pitcher Injury-Risk** as the first slice: MDX content + one real interactive ECharts viz fed by committed JSON in `src/data/`.
+- [x] Verify locally: chart hydrates in `npm run dev`, and `npm run build` output ships zero JS on non-chart pages.
 
-### M2 — Structure: section pages, home, about
-- [ ] `<ProjectCard>` preview component (thumbnail + title + one-line context + hover/arrow cue).
-- [ ] Section landing template rendering cards from the collection filtered by `section`, with intro from `site.ts`. Generate `/engineering`, `/sports-analytics`, `/startups`.
-- [ ] Home `/`: concise intro + "selected work" (curated cross-section cards) + section entry points. No hero splash.
-- [ ] `/about`: specific narrative per brief (Mudd → SWE → data science → sports analytics → startups throughline). Typography-led, no bio-card template.
-- [ ] Nav reflects final sections; active-state styling.
+### M2 — Structure: section pages, home, about ✅ done
+- [x] `<ProjectCard>` preview component (thumbnail + title + one-line context + hover/arrow cue).
+- [x] Section landing template rendering cards from the collection filtered by `section`, with intro from `site.ts`. Generate `/engineering`, `/sports-analytics`, `/startups`.
+- [x] Home `/`: concise intro + "selected work" (curated cross-section cards) + section entry points. No hero splash.
+- [x] `/about`: specific narrative per brief (Mudd → SWE → data science → sports analytics → startups throughline). Typography-led, no bio-card template.
+- [x] Nav reflects final sections; active-state styling.
 
 ### M3 — Content buildout (pour content through existing machinery)
 - [ ] Patio project page (links out to live app; screen-recording/screenshots as visuals).
@@ -98,14 +97,32 @@
 - [ ] Add `draft: true` placeholder MDX for future/internship + future baseball/startup slots.
 - [ ] Verify each new project needed **content only** (no component/engineering changes) — if not, note the gap here.
 
-### M4 — Polish & launch
+### M4 — Polish (all local, automatable)
 - [ ] Full mobile/responsive QA across breakpoints.
-- [ ] Lighthouse pass: performance (verify islands don't leak JS to non-chart pages), a11y, best-practices, SEO.
+- [ ] Lighthouse pass (local `npm run preview`): performance (verify islands don't leak JS to non-chart pages), a11y, best-practices, SEO.
 - [ ] Accessibility: focus states, alt text on all visuals, color contrast, keyboard nav, chart fallbacks/descriptions.
 - [ ] SEO/meta: per-page title/description, Open Graph + Twitter cards, generated OG images or a clean default, `sitemap`, `robots.txt`.
 - [ ] Favicon / touch icons, 404 page.
-- [ ] Register + connect `nateseluga.com` on Cloudflare; DNS + SSL; set as primary domain; redirect `*.pages.dev`.
 - [ ] Final content proofread against content principles (kill any adjective-claims; ensure artifacts present).
+- [ ] Final commit — full site built and locally verified, ready for human hookup below.
+
+---
+
+⚠️ AUTONOMOUS RUN — STOP HERE
+
+_Everything above is fully automatable and produces a complete, locally-verified site.
+Everything below requires the user's accounts/money/auth and cannot be done unattended.
+The overnight `dev-team-auto` run stops at this marker._
+
+---
+
+## Human Hookup (do together — ~15 min, next day)
+These are account/money/auth steps, not code. Order matters.
+- [ ] **GitHub:** create a remote repo, add it as `origin`, push the working branch → `main`.
+- [ ] **Cloudflare Pages:** log in, connect the GitHub repo, set build command `npm run build` / output `dist`, confirm first deploy on the `*.pages.dev` URL.
+- [ ] **Domain:** register `nateseluga.com` (Cloudflare Registrar), attach to the Pages project, DNS + SSL, set as primary, redirect `*.pages.dev` → apex.
+- [ ] **Verify live:** re-run Lighthouse against the live URL; confirm charts hydrate and non-chart pages ship zero JS in production.
+- [ ] Optional: enable Cloudflare Web Analytics (free, privacy-friendly).
 
 ---
 
@@ -114,7 +131,7 @@
 - [ ] Exact accent color — decide in M0 design pass.
 - [ ] Which project(s) get a full interactive **dashboard** island vs a single chart.
 - [ ] Contact method on the site (mailto vs. form — form would need a provider since no backend).
-- [ ] Analytics? (Cloudflare Web Analytics is free + privacy-friendly if wanted.)
+- [ ] Analytics decision tracked in the Human Hookup block (Cloudflare Web Analytics, optional).
 
 ---
 
