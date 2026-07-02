@@ -72,14 +72,14 @@
 - [ ] Confirm empty-but-styled site is live on the Cloudflare `*.pages.dev` URL.
 - [ ] Follow-up: register `nateseluga.com` (deferred to M4 cutover, but reserve now if possible).
 
-### M1 — Vertical slice (validate full stack on one real page, reusably)
-- [ ] `src/content/config.ts`: Zod schema for `projects` collection — `title`, `slug`, `section` enum, `date`, `summary` (one-liner for cards), `thumbnail`, optional `metrics[]`, optional `liveUrl`, optional section-specific fields, `draft` flag, `order`.
-- [ ] `ProjectLayout.astro`: renders the 5-part structure generically from any MDX (Problem → Why → Approach → Results → Takeaways scaffolding via headings/components, not hardcoded content).
-- [ ] `<Figure>` component (image/SVG + caption) — the static-visual primitive.
-- [ ] `<Chart>` / `<Dashboard>` React island wrapper: takes ECharts option + data JSON as props, `client:visible`, responsive, styled to token palette. Generic — no project knowledge.
-- [ ] `src/pages/[section]/[slug].astro`: dynamic route using `getStaticPaths` over the collection.
-- [ ] Build **Pitcher Injury-Risk** as the first slice: MDX content + one real interactive ECharts viz fed by committed JSON in `src/data/`.
-- [ ] Deploy the slice; verify chart hydrates and site elsewhere stays zero-JS.
+### M1 — Vertical slice (validate full stack on one real page, reusably) ✅ done
+- [x] `src/content/config.ts`: Zod schema for `projects` collection — `title`, `slug`, `section` enum, `date`, `summary` (one-liner for cards), `thumbnail`, optional `metrics[]`, optional `liveUrl`, optional section-specific fields, `draft` flag, `order`.
+- [x] `ProjectLayout.astro`: renders the 5-part structure generically from any MDX (Problem → Why → Approach → Results → Takeaways scaffolding via headings/components, not hardcoded content).
+- [x] `<Figure>` component (image/SVG + caption) — the static-visual primitive.
+- [x] `<Chart>` / `<Dashboard>` React island wrapper: takes ECharts option + data JSON as props, `client:visible`, responsive, styled to token palette. Generic — no project knowledge.
+- [x] `src/pages/[section]/[slug].astro`: dynamic route using `getStaticPaths` over the collection.
+- [x] Build **Pitcher Injury-Risk** as the first slice: MDX content + one real interactive ECharts viz fed by committed JSON in `src/data/`.
+- [x] Verify locally: chart hydrates in `npm run dev`, and `npm run build` output ships zero JS on non-chart pages.
 
 ### M2 — Structure: section pages, home, about
 - [ ] `<ProjectCard>` preview component (thumbnail + title + one-line context + hover/arrow cue).

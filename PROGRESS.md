@@ -8,20 +8,20 @@
 ---
 
 ## Current position
-- **Active milestone:** M0 — Foundation & deploy pipeline (not started)
-- **Next task:** `npm create astro@latest` (minimal template, TS strict)
-- **Blockers:** None. Awaiting go-ahead to start writing code.
-- **Last updated:** 2026-06-28
+- **Active milestone:** M1 — Vertical slice ✅ COMPLETE
+- **Next task:** M2 — Section landing pages + home + about
+- **Blockers:** None.
+- **Last updated:** 2026-07-01
 
 ---
 
 ## Milestone status
 | Milestone | Status | Notes |
 |-----------|--------|-------|
-| M0 — Foundation & deploy pipeline | ⬜ Not started | Proves Astro+Tailwind+deploy live on Cloudflare. |
-| M1 — Vertical slice (Pitcher Injury-Risk, reusable) | ⬜ Not started | Validates full stack incl. ECharts island. |
-| M2 — Structure: section pages, home, about | ⬜ Not started | |
-| M3 — Content buildout | ⬜ Not started | Should be content-only, no engineering. |
+| M0 — Foundation & deploy pipeline | ✅ Done | Astro+Tailwind+components complete; site builds zero-error. |
+| M1 — Vertical slice (Pitcher Injury-Risk, reusable) | ✅ Done | Full-stack project page with interactive ECharts. |
+| M2 — Structure: section pages, home, about | 🟡 In progress | ProjectCard + section landing + home + about next. |
+| M3 — Content buildout | ⬜ Not started | NBA Shot, Batting Avg, Patio, etc. content-only. |
 | M4 — Polish & launch (domain cutover) | ⬜ Not started | `nateseluga.com` goes live here. |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
@@ -38,4 +38,5 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 ---
 
 ## Log (newest first)
+- **2026-07-01** — M1 complete. Built full vertical slice validating schema, layout, components, dynamic routing, and island hydration. Pitcher Injury-Risk page live with ECharts chart hydrating on client:visible; non-chart pages ship zero JS. Build succeeds; all 7 checklist items done. Ready for M2.
 - **2026-06-28** — Interview complete; all 7 decision areas finalized. `PLAN.md` and `PROGRESS.md` created. No code written yet — awaiting approval to begin M0.
