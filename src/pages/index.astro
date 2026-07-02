@@ -1,5 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+// Get all projects and create a curated selection
+const allProjects = await getCollection('projects');
+const selectedProjects = allProjects
+  .filter((project) => !project.data.draft)
+  .sort((a, b) => (b.data.order || 0) - (a.data.order || 0))
+  .slice(0, 3); // Show first 3 projects across all sections as "selected work"
 ---
 
 <BaseLayout title="Nate Seluga | Portfolio" description="Software engineer, data scientist, sports analytics enthusiast.">
@@ -9,32 +18,48 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       Software engineer, data scientist, and sports analytics enthusiast. I build systems that work, analyze data that matters, and explore problems from first principles.
     </p>
 
+    {selectedProjects.length > 0 && (
+      <section class="mb-16">
+        <h2 class="text-2xl font-bold mb-8">Selected Work</h2>
+        <div class="grid gap-8">
+          {selectedProjects.map((project) => (
+            <ProjectCard
+              title={project.data.title}
+              summary={project.data.summary}
+              href={`/${project.data.section}/${project.slug}`}
+              thumbnail={project.data.thumbnail}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
     <section class="mb-16">
-      <h2 class="text-2xl font-bold mb-8">Selected Work</h2>
-      <div class="grid gap-8">
-        <div class="border border-gray-200 rounded p-6 hover:shadow-md transition-shadow">
+      <h2 class="text-2xl font-bold mb-6">Explore by Section</h2>
+      <div class="grid gap-6 md:grid-cols-3">
+        <a href="/engineering" class="section-entry-card">
           <h3 class="text-lg font-semibold mb-2">Software Engineering</h3>
-          <p class="text-muted mb-4">Full-stack development, infrastructure, and systems design.</p>
-          <a href="/engineering" class="inline-flex items-center gap-1">
-            Explore projects <span class="text-sm">→</span>
-          </a>
-        </div>
+          <p class="text-muted text-sm mb-3">Full-stack development, infrastructure, and systems design.</p>
+          <span class="inline-flex items-center gap-1 text-accent text-sm font-medium">
+            View all <span>→</span>
+          </span>
+        </a>
 
-        <div class="border border-gray-200 rounded p-6 hover:shadow-md transition-shadow">
+        <a href="/sports-analytics" class="section-entry-card">
           <h3 class="text-lg font-semibold mb-2">Sports Analytics</h3>
-          <p class="text-muted mb-4">Data-driven explorations in baseball and basketball with interactive visualizations.</p>
-          <a href="/sports-analytics" class="inline-flex items-center gap-1">
-            Explore projects <span class="text-sm">→</span>
-          </a>
-        </div>
+          <p class="text-muted text-sm mb-3">Data-driven explorations in baseball and basketball with interactive visualizations.</p>
+          <span class="inline-flex items-center gap-1 text-accent text-sm font-medium">
+            View all <span>→</span>
+          </span>
+        </a>
 
-        <div class="border border-gray-200 rounded p-6 hover:shadow-md transition-shadow">
+        <a href="/startups" class="section-entry-card">
           <h3 class="text-lg font-semibold mb-2">Startups & AI</h3>
-          <p class="text-muted mb-4">Early-stage ideas and AI-enabled tools exploring emerging directions.</p>
-          <a href="/startups" class="inline-flex items-center gap-1">
-            Explore projects <span class="text-sm">→</span>
-          </a>
-        </div>
+          <p class="text-muted text-sm mb-3">Early-stage ideas and AI-enabled tools exploring emerging directions.</p>
+          <span class="inline-flex items-center gap-1 text-accent text-sm font-medium">
+            View all <span>→</span>
+          </span>
+        </a>
       </div>
     </section>
 
@@ -46,3 +71,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .section-entry-card {
+    @apply block border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 no-underline;
+  }
+
+  .section-entry-card:hover span {
+    @apply text-accent;
+  }
+</style>
