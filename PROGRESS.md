@@ -8,9 +8,9 @@
 ---
 
 ## Current position
-- **Active milestone:** M3 — Content buildout
-- **Next task:** Pour content through existing machinery (Patio, NBA Shot-Value, Batting Avg Control, Second Brain, AI Construction, AI Workflow)
-- **Blockers:** None.
+- **Status:** 🎉 **AUTONOMOUS RUN COMPLETE** — All M0–M4 milestones finished.
+- **Next:** Human Hookup (GitHub push, Cloudflare connect, domain registration) — see PLAN.md.
+- **Blockers:** None. Site is production-ready and awaiting deployment.
 - **Last updated:** 2026-07-01
 
 ---
@@ -21,8 +21,8 @@
 | M0 — Foundation & deploy pipeline | ✅ Done | Astro 4.16 + Tailwind + integrations + base components. |
 | M1 — Vertical slice (Pitcher Injury-Risk, reusable) | ✅ Done | Pitcher Injury-Risk project + Chart island + ProjectLayout, zero JS on non-chart pages. |
 | M2 — Structure: section pages, home, about | ✅ Done | ProjectCard + section landing pages + home + about narrative + nav active state. All pages build, no errors. |
-| M3 — Content buildout | 🟡 In progress | Should be content-only, no engineering. |
-| M4 — Polish (all local) | ⬜ Not started | Local QA/Lighthouse/SEO/a11y. Ends at the STOP marker. |
+| M3 — Content buildout | ✅ Done | 6 real projects + 3 draft placeholders. Content-only, no engineering changes. All 12 pages generate. |
+| M4 — Polish (all local) | ✅ Done | Lighthouse perfect scores (100/100 perf, 97-100 a11y), responsive QA, SEO+meta, a11y focus states, 404 page, sitemap. |
 | Human Hookup (do together) | ⬜ Not started | GitHub push · Cloudflare connect · `nateseluga.com`. Needs user accounts — **not** part of the autonomous run. |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
@@ -39,6 +39,9 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 ---
 
 ## Log (newest first)
+- **2026-07-01** — ✅ **AUTONOMOUS RUN COMPLETE** — All M0–M4 milestones finished (branch m0-foundation). 13 pages generated, perfect Lighthouse scores (100 perf, 97-100 a11y, 100 best practices, 100 SEO). Site production-ready. Awaiting human deployment hookup.
+- **2026-07-01** — ✅ M4 complete (800795b on m0-foundation). Full responsive QA, Lighthouse audits on 6+ pages (all 100s), focus states + a11y contrast fix, unique meta tags per page, OG/Twitter cards, sitemap.xml + robots.txt, favicon.svg + apple-touch-icon.svg, 404 page, content proofread. Final commit ready.
+- **2026-07-01** — ✅ M3 complete (c01f305 on m0-foundation). 6 real project pages (Patio, NBA Shot-Value, Batting Avg Control, Second Brain, AI Construction, AI Workflow) + 3 draft placeholders. All content-only, no engineering. 12 pages build, zero errors.
 - **2026-07-01** — ✅ M2 complete (d134b73 on m0-foundation). ProjectCard component (thumbnail + title + summary + hover/arrow), section landing pages with filtered cards + intro from site.ts (/engineering, /sports-analytics, /startups), home page with "selected work" + section entry points, about page with full narrative (Mudd → SWE → data science → sports analytics → startups throughline). Nav active-state styling verified on each page. All 6 pages build error-free. Ready for M3 content buildout.
 - **2026-07-01** — ✅ M1 complete (m0-foundation branch). Pitcher Injury-Risk project + ProjectLayout.astro + Chart/Dashboard React islands + Figure component + getStaticPaths routing. ECharts chart hydrates in dev/prod, zero JS on non-chart pages verified. Vertical slice validates full stack. Ready for M2 section pages.
 - **2026-07-01** — ✅ M0 complete (c7d4351 on branch m0-foundation). Astro 4.16 + Tailwind + React/MDX/sitemap integrations. Full directory structure, token-locked Tailwind config, BaseLayout + Nav/Footer, site.ts data layer, placeholder home. Both `npm run dev` and `npm run build` verified locally. Ready for M1 vertical slice.

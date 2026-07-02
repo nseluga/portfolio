@@ -87,24 +87,24 @@
 - [x] `/about`: specific narrative per brief (Mudd → SWE → data science → sports analytics → startups throughline). Typography-led, no bio-card template.
 - [x] Nav reflects final sections; active-state styling.
 
-### M3 — Content buildout (pour content through existing machinery)
-- [ ] Patio project page (links out to live app; screen-recording/screenshots as visuals).
-- [ ] NBA Shot-Value page + spatial ECharts court/heatmap viz (JSON).
-- [ ] Batting Average Control Stat page + viz (JSON).
-- [ ] Second Brain System page.
-- [ ] AI Construction Documentation page (mark as concept/WIP).
-- [ ] AI Workflow Tools / Second-Brain page (mark WIP).
-- [ ] Add `draft: true` placeholder MDX for future/internship + future baseball/startup slots.
-- [ ] Verify each new project needed **content only** (no component/engineering changes) — if not, note the gap here.
+### M3 — Content buildout (pour content through existing machinery) ✅ done
+- [x] Patio project page (links out to live app; screen-recording/screenshots as visuals).
+- [x] NBA Shot-Value page + spatial ECharts court/heatmap viz (JSON).
+- [x] Batting Average Control Stat page + viz (JSON).
+- [x] Second Brain System page.
+- [x] AI Construction Documentation page (mark as concept/WIP).
+- [x] AI Workflow Tools / Second-Brain page (mark WIP).
+- [x] Add `draft: true` placeholder MDX for future/internship + future baseball/startup slots.
+- [x] Verify each new project needed **content only** (no component/engineering changes) — if not, note the gap here.
 
-### M4 — Polish (all local, automatable)
-- [ ] Full mobile/responsive QA across breakpoints.
-- [ ] Lighthouse pass (local `npm run preview`): performance (verify islands don't leak JS to non-chart pages), a11y, best-practices, SEO.
-- [ ] Accessibility: focus states, alt text on all visuals, color contrast, keyboard nav, chart fallbacks/descriptions.
-- [ ] SEO/meta: per-page title/description, Open Graph + Twitter cards, generated OG images or a clean default, `sitemap`, `robots.txt`.
-- [ ] Favicon / touch icons, 404 page.
-- [ ] Final content proofread against content principles (kill any adjective-claims; ensure artifacts present).
-- [ ] Final commit — full site built and locally verified, ready for human hookup below.
+### M4 — Polish (all local, automatable) ✅ done
+- [x] Full mobile/responsive QA across breakpoints.
+- [x] Lighthouse pass (local `npm run preview`): performance (verify islands don't leak JS to non-chart pages), a11y, best-practices, SEO.
+- [x] Accessibility: focus states, alt text on all visuals, color contrast, keyboard nav, chart fallbacks/descriptions.
+- [x] SEO/meta: per-page title/description, Open Graph + Twitter cards, generated OG images or a clean default, `sitemap`, `robots.txt`.
+- [x] Favicon / touch icons, 404 page.
+- [x] Final content proofread against content principles (kill any adjective-claims; ensure artifacts present).
+- [x] Final commit — full site built and locally verified, ready for human hookup below.
 
 ---
 
