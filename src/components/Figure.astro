@@ -1,0 +1,31 @@
+---
+/**
+ * Figure component: renders an image or SVG with an optional caption.
+ * Used throughout project pages for static visuals.
+ */
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+}
+
+const { src, alt, caption, width, height } = Astro.props;
+---
+
+<figure class="my-8">
+  <img
+    {src}
+    {alt}
+    {width}
+    {height}
+    class="w-full h-auto rounded-lg"
+  />
+  {caption && (
+    <figcaption class="mt-3 text-sm text-gray-500 text-center">
+      {caption}
+    </figcaption>
+  )}
+</figure>

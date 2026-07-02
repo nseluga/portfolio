@@ -1,0 +1,21 @@
+---
+/**
+ * ChartWrapper: Astro wrapper component for the React Chart island.
+ * Enables client:visible directive for progressive hydration.
+ * Used in MDX projects.
+ */
+
+import Chart from './charts/Chart';
+
+interface Props {
+  option: Record<string, any>;
+  style?: React.CSSProperties;
+  className?: string;
+}
+
+const { option, style, className } = Astro.props;
+---
+
+<div class="my-8">
+  <Chart client:visible {option} {style} {className} />
+</div>

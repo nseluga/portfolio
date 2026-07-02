@@ -1,0 +1,81 @@
+{
+  "chart": {
+    "title": "Pitcher Injury Risk by Age & Usage",
+    "xAxis": {
+      "type": "category",
+      "name": "Age",
+      "data": ["22", "24", "26", "28", "30", "32", "34", "36"]
+    },
+    "yAxis": {
+      "type": "value",
+      "name": "Injury Risk (%)",
+      "axisLabel": {
+        "formatter": "{value}%"
+      }
+    },
+    "legend": {
+      "data": ["High Usage", "Medium Usage", "Low Usage"],
+      "top": 20
+    },
+    "tooltip": {
+      "trigger": "axis",
+      "formatter": "{b}<br/>{a}: {c}%"
+    },
+    "grid": {
+      "left": 80,
+      "right": 60,
+      "top": 80,
+      "bottom": 60
+    },
+    "series": [
+      {
+        "name": "High Usage",
+        "type": "line",
+        "data": [3.2, 4.1, 5.8, 7.2, 8.9, 10.3, 11.7, 13.1],
+        "smooth": true,
+        "lineStyle": {
+          "width": 2
+        },
+        "areaStyle": {
+          "opacity": 0.1
+        },
+        "itemStyle": {
+          "color": "#1f2937",
+          "borderWidth": 2
+        }
+      },
+      {
+        "name": "Medium Usage",
+        "type": "line",
+        "data": [2.1, 2.8, 3.7, 4.9, 6.2, 7.5, 8.8, 9.9],
+        "smooth": true,
+        "lineStyle": {
+          "width": 2
+        },
+        "areaStyle": {
+          "opacity": 0.1
+        },
+        "itemStyle": {
+          "color": "#6b7280",
+          "borderWidth": 2
+        }
+      },
+      {
+        "name": "Low Usage",
+        "type": "line",
+        "data": [1.2, 1.5, 2.1, 2.8, 3.6, 4.5, 5.5, 6.7],
+        "smooth": true,
+        "lineStyle": {
+          "width": 2
+        },
+        "areaStyle": {
+          "opacity": 0.1
+        },
+        "itemStyle": {
+          "color": "#9ca3af",
+          "borderWidth": 2
+        }
+      }
+    ]
+  }
+}
