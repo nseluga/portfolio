@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SECTIONS } from '../../data/site';
+
+const section = SECTIONS['sports-analytics'];
+---
+
+<BaseLayout
+  title={section.title}
+  description={section.intro}
+  currentPath="/sports-analytics"
+>
+  <div class="py-12">
+    <h1 class="text-4xl font-bold mb-4">{section.title}</h1>
+    <p class="text-lg text-muted mb-12 max-w-2xl">
+      {section.intro}
+    </p>
+
+    <section class="space-y-6">
+      <p class="text-muted italic">Projects coming soon.</p>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Nate Seluga | Portfolio" description="Software engineer, data scientist, sports analytics enthusiast.">
+  <div class="py-12">
+    <h1 class="text-5xl font-bold mb-6">Nate Seluga</h1>
+    <p class="text-xl text-muted mb-12 max-w-2xl">
+      Software engineer, data scientist, and sports analytics enthusiast. I build systems that work, analyze data that matters, and explore problems from first principles.
+    </p>
+
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-8">Selected Work</h2>
+      <div class="grid gap-8">
+        <div class="border border-gray-200 rounded p-6 hover:shadow-md transition-shadow">
+          <h3 class="text-lg font-semibold mb-2">Software Engineering</h3>
+          <p class="text-muted mb-4">Full-stack development, infrastructure, and systems design.</p>
+          <a href="/engineering" class="inline-flex items-center gap-1">
+            Explore projects <span class="text-sm">→</span>
+          </a>
+        </div>
+
+        <div class="border border-gray-200 rounded p-6 hover:shadow-md transition-shadow">
+          <h3 class="text-lg font-semibold mb-2">Sports Analytics</h3>
+          <p class="text-muted mb-4">Data-driven explorations in baseball and basketball with interactive visualizations.</p>
+          <a href="/sports-analytics" class="inline-flex items-center gap-1">
+            Explore projects <span class="text-sm">→</span>
+          </a>
+        </div>
+
+        <div class="border border-gray-200 rounded p-6 hover:shadow-md transition-shadow">
+          <h3 class="text-lg font-semibold mb-2">Startups & AI</h3>
+          <p class="text-muted mb-4">Early-stage ideas and AI-enabled tools exploring emerging directions.</p>
+          <a href="/startups" class="inline-flex items-center gap-1">
+            Explore projects <span class="text-sm">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-6">About</h2>
+      <p class="text-muted mb-4">
+        Currently focused on building and analyzing systems. <a href="/about">Learn more about my background.</a>
+      </p>
+    </section>
+  </div>
+</BaseLayout>
