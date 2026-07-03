@@ -135,6 +135,8 @@ A hitter-evaluation model focused on separating batting-average skill from noise
 
 ### Startups & AI
 
+> **Status (2026-07-02): currently hidden.** This section is pulled from the nav and homepage until at least one project here is actually shipped. The vision below is retained; restore the section when there's real work to back it. See PROGRESS.md.
+
 **Keep in mind none of these projects are complete yet**
 
 **AI Construction Documentation Startup**

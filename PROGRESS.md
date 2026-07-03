@@ -11,7 +11,7 @@
 - **Status:** 🎉 **AUTONOMOUS RUN COMPLETE** — All M0–M4 milestones finished.
 - **Next:** Human Hookup (GitHub push, Cloudflare connect, domain registration) — see PLAN.md.
 - **Blockers:** None. Site is production-ready and awaiting deployment.
-- **Last updated:** 2026-07-01
+- **Last updated:** 2026-07-02 (Startups & AI section hidden — see log)
 
 ---
 
@@ -39,6 +39,8 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 ---
 
 ## Log (newest first)
+
+- **2026-07-02** — 🙈 **Startups & AI section hidden** (ccc9f2c → merged to `main` as 187bde7). Per advisory review, the section reads as thin (one experiment, one explicitly-labeled "Concept", one placeholder) and none of its projects are actually built — an empty-looking category hurts more than it helps. Nav link (`site.ts`) and homepage section card (`index.astro`) commented out for one-line restore; the two live startups projects (`ai-workflow-tools`, `ai-construction-docs`) set to `draft: true` so they no longer surface in homepage "Selected Work". `/startups` landing page still builds but is now unlinked. `SECTIONS` entry in `site.ts` left intact. Build passes (11 pages). Restore when there's shipped work to show.
 - **2026-07-01** — ✅ **AUTONOMOUS RUN COMPLETE** — All M0–M4 milestones finished (branch m0-foundation). 13 pages generated, perfect Lighthouse scores (100 perf, 97-100 a11y, 100 best practices, 100 SEO). Site production-ready. Awaiting human deployment hookup.
 - **2026-07-01** — ✅ M4 complete (800795b on m0-foundation). Full responsive QA, Lighthouse audits on 6+ pages (all 100s), focus states + a11y contrast fix, unique meta tags per page, OG/Twitter cards, sitemap.xml + robots.txt, favicon.svg + apple-touch-icon.svg, 404 page, content proofread. Final commit ready.
 - **2026-07-01** — ✅ M3 complete (c01f305 on m0-foundation). 6 real project pages (Patio, NBA Shot-Value, Batting Avg Control, Second Brain, AI Construction, AI Workflow) + 3 draft placeholders. All content-only, no engineering. 12 pages build, zero errors.

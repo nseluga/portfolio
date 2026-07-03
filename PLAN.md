@@ -33,7 +33,7 @@
 ### Sections & planned projects
 - **Software Engineering:** Patio (flagship, links out to live app), Second Brain System. + future/internship placeholders.
 - **Sports Analytics:** Pitcher Injury-Risk Model (anchor credibility piece; has inline ECharts viz), NBA Shot-Value (spatial court chart), Batting Average Control Stat. + future placeholders.
-- **Startups & AI:** AI Construction Documentation, AI Workflow Tools / Second-Brain. (None complete yet — mark as concepts/WIP.) + future placeholders.
+- **Startups & AI:** AI Construction Documentation, AI Workflow Tools / Second-Brain. (None complete yet — mark as concepts/WIP.) + future placeholders. **[HIDDEN 2026-07-02 — section pulled from nav/homepage until there's shipped work; see PROGRESS.md. Section code + `SECTIONS` entry left intact for one-line restore.]**
 
 ---
 
