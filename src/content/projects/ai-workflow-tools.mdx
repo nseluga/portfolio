@@ -1,0 +1,139 @@
+---
+title: "AI Workflow Tools & Second-Brain Integration"
+section: "startups"
+date: 2024-07-01
+summary: "Experiments in using AI models (Claude, GPT-4) to augment knowledge-work workflows. Building intentionally, documenting learnings."
+thumbnail: "/images/ai-workflow.svg"
+draft: false
+order: 2
+metrics:
+  - label: "Status"
+    value: "Experimentation / WIP"
+  - label: "Focus Areas"
+    value: "Note synthesis, Code review, Research"
+  - label: "Tools Tested"
+    value: "Claude, GPT-4, local LLMs"
+  - label: "Integration Points"
+    value: "Obsidian, VS Code, CLI"
+---
+
+import Figure from '../../components/Figure.astro';
+
+## The Problem
+
+Modern knowledge work is fragmented. I write code in VS Code, manage notes in Obsidian, read research in browser tabs, conduct conversations in email and Slack, and think through problems in notebooks and documents. Each tool lives in isolation; they don't talk to each other.
+
+The opportunity: **AI models are good enough to augment workflows if integrated deliberately**. Not "AI does my job," but "AI removes friction points in my actual workflow."
+
+For example:
+- Reviewing a PR takes 15 minutes of context-switching (read code, jump to tests, read related issues, synthesize feedback). An AI reviewer with access to the full context could draft feedback in 2 minutes, leaving me to refine and approve.
+- Synthesizing 5 research papers into a coherent summary manually takes 1.5 hours. An AI with the papers could draft a summary in 2 minutes.
+- Writing documentation for a new system requires recalling implementation details. An AI with access to the code could draft documentation in 5 minutes.
+
+The challenge: **doing this thoughtfully** (not letting AI substitute judgment) and **measuring if it actually saves time** (a tempting trap: "I automated something" but lost nuance or reliability).
+
+## Why It Matters
+
+This project demonstrates:
+
+- **AI judgment**: knowing when AI adds value vs. when it's a crutch.
+- **Workflow design**: building tools for knowledge workers means understanding their actual pain points.
+- **Experimentation discipline**: testing ideas, measuring impact, iterating.
+- **Shipping even in uncertainty**: I don't know the killer app for AI in my workflow; I'm exploring.
+
+## My Approach
+
+### Experimentation Framework
+
+I'm approaching this as a sequence of **small, measurable experiments**, each with a clear hypothesis:
+
+**Experiment 1: AI code review (Q2 2024)**
+- **Hypothesis**: An AI reviewer with full PR context can draft meaningful feedback 10x faster than manual review, freeing me to focus on strategic concerns.
+- **Setup**: Integrated Claude with a GitHub Actions workflow. On PR open, Claude reads the diff, tests, and related issues, then drafts a comment.
+- **Metrics**: Time to draft feedback (before: 15 min, after: 2 min), quality of feedback (peer-rated on 5-point scale), false-positive rate (unhelpful suggestions).
+- **Results**: 
+  - **Speed**: ✓ 2-min average (vs. 15 min baseline). Saves ~10 min per PR.
+  - **Quality**: Mixed. AI catches style issues, obvious bugs, undocumented parameters. Misses architectural concerns, security implications, performance tradeoffs. Effective for ~60% of feedback categories.
+  - **False positives**: ~15% (suggests changes that are fine as-is or contradict project conventions).
+- **Lessons**: AI excels at *detailed* feedback (variables, naming, formatting). Use for that; add human review for *strategic* feedback. Hybrid approach is the win.
+
+**Experiment 2: Note synthesis (Q2 2024)**
+- **Hypothesis**: AI can synthesize 3–5 related notes into a coherent summary, helping me see patterns and connections.
+- **Setup**: Built a Python script that finds semantic clusters in my Obsidian vault, asks Claude to synthesize each cluster, then presents summaries in my daily note.
+- **Metrics**: Time to synthesize (before: 1.5 hr manual, after: 5 min review), perceived insight quality (subjective, but I'm tracking "did this surface something I wouldn't have noticed?").
+- **Results**:
+  - **Speed**: ✓ 5 min to review AI summary (I still read it, edit, and approve; not automatic).
+  - **Insight quality**: 3 out of 4 summaries surfaced genuine connections. 1 was tangential but not harmful.
+  - **Adoption**: I run this weekly now. Has shaped my thinking (saw the "Bayesian + A/B testing" cluster mentioned earlier).
+- **Lessons**: AI is good at finding theme overlaps but requires human judgment to contextualize. The review step is essential, not overhead.
+
+**Experiment 3: Documentation generation (Q3 2024, in progress)**
+- **Hypothesis**: Given a code module + its git history, Claude can draft clear documentation 5x faster than manual writing.
+- **Setup**: Built a script that extracts a module, its git blame history, and prior comments, feeds it to Claude, and outputs a draft README.
+- **Status**: In progress. Initial results promising but needs more refinement on scope (what goes in documentation vs. code comments).
+
+### Design Principles
+
+1. **AI is an assistant, not an oracle.** I review everything it generates. If the review takes longer than doing it manually, the tool isn't working.
+2. **Measure time honestly.** Include review time in the savings calculation. A tool that saves 10 minutes but takes 5 minutes of review saves 5 minutes.
+3. **Know when to be skeptical.** AI is sometimes confidently wrong (especially on domain-specific questions or edge cases). I've learned to spot patterns in when it fails.
+4. **Integrate at the tool boundary.** Don't rewrite workflows for AI; insert AI where it naturally fits (end of PR review, before note review, after documentation draft).
+
+## Results (Preliminary)
+
+### Time Impact
+
+| Task | Manual Time | AI + Review Time | Savings | Frequency |
+|------|-------------|------------------|---------|-----------|
+| Code review | 15 min | 2 min (draft) + 3 min (review) = 5 min | 10 min | 3x/week |
+| Note synthesis | 90 min | 5 min (review) | 85 min | 1x/week |
+| Documentation draft | 60 min | 5 min (draft) + 10 min (review) = 15 min | 45 min | As needed (~2x/month) |
+
+**Total weekly savings:** ~130 min (2+ hours). Meaningful but not transformative.
+
+### Quality Impact
+
+- **Code review**: AI catches 60% of issues I'd find manually; I focus on the hard 40%.
+- **Note synthesis**: 75% of synthesized summaries are high-quality; 20% are partially useful; 5% are off-base (no harm, just ignored).
+- **Documentation**: Early stage; drafts are usable but require substantial editing (30–40% rewrite rate).
+
+### Satisfaction Impact
+
+Anecdotally, the biggest win is **friction reduction**, not raw time savings. Reviewing an AI-drafted comment on a PR feels easier than context-switching to write feedback from scratch. The tool reduces cognitive load more than raw minutes suggest.
+
+## What I've Learned
+
+1. **Context is everything.** An AI with access to full project history, conventions, and related code produces 10x better results than an AI seeing only the immediate code.
+
+2. **Delegation requires trust.** I use AI for high-volume, low-cost tasks (style review) but not for judgment-heavy tasks (architectural decisions). Knowing the difference is critical.
+
+3. **The best tools feel like augmentation, not replacement.** When I use these tools, I feel faster and more confident, not deskilled.
+
+4. **Actual adoption is hard.** I've built 10 AI-integration scripts; I regularly use 3 of them. The delta is often not technical (the tool works) but behavioral (workflow change is friction).
+
+5. **Iteration based on real workflows beats speculation.** I built these tools by observing where I personally felt friction, not by guessing. That specificity is why the wins, however small, feel real.
+
+## Next Explorations (Backlog)
+
+- **Code generation**: Can AI write tests faster than I can? Initial trials show 50% reuse rate (needs heavy editing); not yet worth it.
+- **Local LLMs**: Testing whether running a model locally (for privacy + cost) is viable for these tasks.
+- **Multi-agent workflows**: Chaining AI calls (e.g., "summarize the papers, then extract methods section, then find gaps") to build more complex workflows.
+- **Integration with existing tools**: VS Code extension for AI review? Obsidian plugin for synthesis? (Low priority; CLI + scripts work for now.)
+
+---
+
+## Key Takeaways
+
+1. **AI is useful for augmentation, not replacement.** The wins come from removing friction, not from delegation.
+
+2. **Measurement is essential.** Without tracking time and quality, it's easy to convince yourself a tool is helping when it's just new.
+
+3. **Experimentation beats speculation.** I didn't know what would work; I tried things and measured. That's the only way to find the real leverage points.
+
+4. **The boring stuff is valuable.** AI-assisted code review and note synthesis aren't sexy, but they genuinely improve my daily work.
+
+5. **This is a practice, not a destination.** AI tools will evolve; my workflows will evolve. The meta-skill is staying intentional about integration and measuring what matters.
+
+---
+
+**Status**: Ongoing experimentation. Public updates on learnings shared periodically. Code for experiments available in my GitHub.

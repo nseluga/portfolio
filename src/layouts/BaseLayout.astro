@@ -1,0 +1,64 @@
+---
+import { SITE } from '../data/site';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentPath?: string;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  currentPath = Astro.url.pathname,
+} = Astro.props;
+
+const fullTitle = title === SITE.title ? title : `${title} | ${SITE.title}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={SITE.url} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Fonts are loaded in global.css via @fontsource -->
+
+    <!-- Favicon and touch icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+  </head>
+  <body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <Nav currentPath={currentPath} />
+
+    <!-- Main content -->
+    <main id="main-content" class="max-w-4xl mx-auto px-4 py-12">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+  </body>
+</html>
