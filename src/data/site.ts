@@ -15,7 +15,8 @@ export const SITE = {
 export const NAV_LINKS = [
   { label: 'Engineering', href: '/engineering' },
   { label: 'Sports Analytics', href: '/sports-analytics' },
-  { label: 'Startups & AI', href: '/startups' },
+  // Hidden for now — restore when there's shipped work to show.
+  // { label: 'Startups & AI', href: '/startups' },
   { label: 'About', href: '/about' },
 ];
 
