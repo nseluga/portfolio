@@ -1,0 +1,19 @@
+{
+  "name": "Nate Seluga — Portfolio",
+  "short_name": "Nate Seluga",
+  "description": "Software engineer, data scientist, sports analytics enthusiast.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "100x100",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

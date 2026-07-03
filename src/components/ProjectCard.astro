@@ -1,0 +1,69 @@
+---
+/**
+ * ProjectCard: A reusable preview component for projects.
+ * Shows: thumbnail (if available), title, one-line summary, hover/arrow cue
+ */
+
+interface Props {
+  title: string;
+  summary: string;
+  href: string;
+  thumbnail?: string;
+}
+
+const { title, summary, href, thumbnail } = Astro.props;
+---
+
+<a href={href} class="project-card">
+  {thumbnail && (
+    <div class="project-card-thumbnail">
+      <img src={thumbnail} alt={title} />
+    </div>
+  )}
+
+  <div class="project-card-content">
+    <h3 class="project-card-title">{title}</h3>
+    <p class="project-card-summary">{summary}</p>
+    <div class="project-card-cue">
+      View <span class="arrow">→</span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .project-card {
+    @apply block border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 no-underline;
+  }
+
+  .project-card-thumbnail {
+    @apply w-full aspect-video bg-gray-100 overflow-hidden;
+  }
+
+  .project-card-thumbnail img {
+    @apply w-full h-full object-cover;
+  }
+
+  .project-card-content {
+    @apply p-5;
+  }
+
+  .project-card-title {
+    @apply text-lg font-semibold text-foreground mb-2;
+  }
+
+  .project-card-summary {
+    @apply text-sm text-muted leading-relaxed mb-4;
+  }
+
+  .project-card-cue {
+    @apply text-sm text-accent font-medium inline-flex items-center gap-1;
+  }
+
+  .arrow {
+    @apply inline-block text-base;
+  }
+
+  .project-card:hover .arrow {
+    @apply transform translate-x-0.5 transition-transform;
+  }
+</style>

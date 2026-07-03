@@ -1,0 +1,35 @@
+---
+/**
+ * Dynamic project page route: [section]/[slug]
+ * Renders a single project from the projects collection using ProjectLayout.
+ * Uses getStaticPaths to generate all project routes at build time.
+ */
+
+import { getCollection } from 'astro:content';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+
+  return projects
+    .filter((project) => !project.data.draft) // exclude draft projects
+    .map((project) => ({
+      params: {
+        section: project.data.section,
+        slug: project.slug, // use the auto-generated slug from filename
+      },
+      props: { project },
+    }));
+}
+
+interface Props {
+  project: any; // CollectionEntry<'projects'>
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+---
+
+<ProjectLayout entry={project}>
+  <Content />
+</ProjectLayout>

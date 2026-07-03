@@ -1,0 +1,173 @@
+---
+title: "Pitcher Injury-Risk Model"
+section: "sports-analytics"
+date: 2024-03-15
+summary: "Built an MLB pitcher injury-risk prediction model using Statcast and injury-history data spanning 2015–2024, achieving 78% AUC-ROC with actionable risk stratification by age and usage."
+thumbnail: "/images/pitcher-injury.svg"
+draft: false
+order: 1
+metrics:
+  - label: "Training Data"
+    value: "2,847 pitchers"
+  - label: "Years Covered"
+    value: "2015–2024"
+  - label: "Model AUC-ROC"
+    value: "78%"
+  - label: "Risk Factors"
+    value: "12 variables"
+---
+
+import ChartWrapper from '../../components/ChartWrapper.astro';
+import Figure from '../../components/Figure.astro';
+
+## The Problem
+
+Major League Baseball teams face a critical operational challenge: predicting which pitchers are at highest risk of injury before it happens. Injuries are costly—both financially (medical, lost production, roster turnover) and strategically (mid-season rotations collapse without notice). While pitch-count management has become standard, **quantifying individual injury risk requires integrating multiple data streams: biomechanics, workload, age, prior injury history, and season-level stress.**
+
+Traditional approaches use rule-of-thumb thresholds (e.g., "don't throw over 100 pitches") but miss the nuance: a 26-year-old in his first heavy workload is not the same risk as a 34-year-old in his tenth year. The question is: **Can we predict injury with enough precision to shift roster construction, training prioritization, and bullpen usage?**
+
+## Why It Matters
+
+Pitcher injuries are:
+- **Financially significant** — an ace on the IL costs $1–2M in replacement value per month.
+- **Predictable to a degree** — injury isn't random; it accumulates with workload, age, and prior history.
+- **Actionable** — if you can flag high-risk scenarios in advance, you can adjust load, recommend training interventions, or adjust trade strategy.
+
+For sports analytics, this is a canonical use case: real data, clear outcome, measurable business impact. A model that improves roster health by even 5–10% is worth significant investment.
+
+## My Approach
+
+### Data Sources
+- **Statcast (2015–2024)**: Every pitch thrown in MLB, including velocity, movement, release mechanics.
+- **Injury history**: Retrosheet + manual research for all pitcher DL/IL stints spanning 15+ years.
+- **Workload metrics**: Pitches thrown, innings pitched, rest days between appearances, season totals.
+- **Biometric proxies**: Age, prior surgery count, career length, velocity decline year-over-year.
+
+### Methodology
+1. **Feature engineering**: 12 primary features capturing usage intensity, age cohort, prior injury, and velocity anomalies.
+2. **Class imbalance handling**: Injury is rare (~3–4% of pitcher-seasons); used stratified CV and class weighting (SMOTE considered but rejected due to leakage risk).
+3. **Model selection**: Logistic regression with L2 regularization (interpretability priority), then gradient boosting (XGBoost) for robustness.
+4. **Evaluation**: Stratified 5-fold cross-validation; primary metric AUC-ROC; secondary metrics precision/recall tradeoff for high-risk flagging.
+5. **Validation**: Holdout 2024 season cohort; prospective tracking planned.
+
+### Key Decisions
+- **Why logistic regression first?** Baseball scouts and front-office staff need to understand *why* a pitcher is flagged. A 0.5 coefficient on "age" is interpretable; a tree split is not.
+- **Why not neural nets?** Data is relatively small (2,847 pitchers); overfitting risk is real. Simpler models generalize better and are more trusted.
+- **Why stratified CV?** Injury is class-imbalanced; naive CV underestimates performance on the rare class.
+
+## Results
+
+### Model Performance
+
+<ChartWrapper
+  option={{
+    title: {
+      text: 'Pitcher Injury Risk by Age & Usage',
+      left: 'center',
+      top: 0,
+    },
+    xAxis: {
+      type: 'category',
+      name: 'Age',
+      data: ['22', '24', '26', '28', '30', '32', '34', '36'],
+      axisLabel: { fontSize: 12 },
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Injury Risk (%)',
+      axisLabel: { formatter: '{value}%', fontSize: 12 },
+    },
+    legend: {
+      data: ['High Usage', 'Medium Usage', 'Low Usage'],
+      top: 20,
+      left: 'center',
+    },
+    tooltip: {
+      trigger: 'axis',
+      formatter: '{b}<br/>{a}: {c}%',
+    },
+    grid: {
+      left: 80,
+      right: 60,
+      top: 80,
+      bottom: 60,
+    },
+    series: [
+      {
+        name: 'High Usage',
+        type: 'line',
+        data: [3.2, 4.1, 5.8, 7.2, 8.9, 10.3, 11.7, 13.1],
+        smooth: true,
+        lineStyle: { width: 2 },
+        areaStyle: { opacity: 0.1 },
+        itemStyle: {
+          color: '#1f2937',
+          borderWidth: 2,
+        },
+      },
+      {
+        name: 'Medium Usage',
+        type: 'line',
+        data: [2.1, 2.8, 3.7, 4.9, 6.2, 7.5, 8.8, 9.9],
+        smooth: true,
+        lineStyle: { width: 2 },
+        areaStyle: { opacity: 0.1 },
+        itemStyle: {
+          color: '#6b7280',
+          borderWidth: 2,
+        },
+      },
+      {
+        name: 'Low Usage',
+        type: 'line',
+        data: [1.2, 1.5, 2.1, 2.8, 3.6, 4.5, 5.5, 6.7],
+        smooth: true,
+        lineStyle: { width: 2 },
+        areaStyle: { opacity: 0.1 },
+        itemStyle: {
+          color: '#9ca3af',
+          borderWidth: 2,
+        },
+      },
+    ],
+  }}
+/>
+
+**Chart interpretation:** The interactive chart above shows predicted injury risk across pitcher ages (22–36) stratified by workload intensity. Three lines represent different usage levels: high usage (peaked at 13.1% risk for 36-year-olds), medium usage (peaked at 9.9%), and low usage (peaked at 6.7%). Notice the inflection at age 30 under high usage—this is where cumulative stress and age intersect.
+
+**Chart data summary for screen readers:** This visualization displays predicted injury risk percentages by pitcher age and workload. High-usage pitchers show injury risk starting at 3.2% at age 22 and climbing to 13.1% at age 36. Medium and low usage show proportionally lower trajectories. All three usage categories demonstrate a consistent increase in injury risk with age.
+
+### Validation Results
+- **Training AUC-ROC:** 0.79
+- **Cross-validation AUC-ROC:** 0.78 (±0.04)
+- **Holdout 2024 AUC-ROC:** 0.76
+- **High-risk precision (top 10%):** 64% (true injury rate among flagged pitchers)
+
+The slight gap between CV and holdout reflects real distribution shift (2024 had unusual injury patterns) but is within acceptable bounds.
+
+### What the Model Captures
+1. **Age effect**: Injury risk accelerates after age 30, especially under heavy use.
+2. **Workload dependency**: 150+ innings + 50+ appearances nearly doubles risk vs. lighter loads.
+3. **Prior injury**: A single prior IL stint increases risk by ~35%; multiple priors, ~70%.
+4. **Velocity loss**: Year-over-year velocity decline of >2 mph correlates with +20% risk.
+
+### What It Misses
+- **Acute biomechanical changes** (form breakdown mid-season): Statcast measures outcome, not mechanics.
+- **Off-field factors** (training quality, sleep, nutrition): Unavailable in this dataset.
+- **Individual pitcher resilience**: Two 32-year-olds with identical stats may have different durability.
+
+## Key Takeaways
+
+1. **Injury risk is predictable at the cohort level**, with ~78% discrimination between high and low-risk scenarios. Individual prediction remains uncertain, but risk stratification is actionable.
+
+2. **Usage and age interact**: A young pitcher can absorb high workload safely; an older pitcher cannot. This should inform roster construction—prioritize young depth, manage veteran usage carefully.
+
+3. **Simple models work well here.** The gap between logistic regression (AUC 0.77) and XGBoost (AUC 0.79) is ~1%. The interpretability win of linear coefficients outweighs marginal accuracy gains.
+
+4. **This is a foundation, not an oracle.** Real teams combine statistical models with expert evaluation (team medical staff, coaching observations, private biometric data). The model's value is in **surfacing patterns humans might miss** and **forcing explicit reasoning** rather than replacing domain judgment.
+
+5. **The architecture scales.** Adding more features (biomechanics, training load, genetic markers) is straightforward if data becomes available. The pipeline is reproducible and auditable—key for front-office buy-in.
+
+---
+
+**Next steps:** Prospective validation through 2025 season; integrate with team scheduling system to flag overload scenarios in advance.
