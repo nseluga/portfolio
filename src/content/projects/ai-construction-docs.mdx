@@ -1,0 +1,120 @@
+---
+title: "AI Construction Documentation"
+section: "startups"
+date: 2024-04-10
+summary: "Concept: AI-powered system to digitize, organize, and extract insights from construction site documentation (photos, reports, permits). Addresses fragmentation and knowledge loss in field operations."
+thumbnail: "/images/ai-construction.svg"
+draft: true  # Section hidden for now — restore alongside Startups & AI nav.
+order: 1
+metrics:
+  - label: "Status"
+    value: "Concept / POC"
+  - label: "Problem Area"
+    value: "Construction Ops"
+  - label: "MVP Scope"
+    value: "Document ingestion + tagging"
+  - label: "Stage"
+    value: "Market validation"
+---
+
+import Figure from '../../components/Figure.astro';
+
+## The Problem
+
+Construction is famously analog. A mid-size commercial project generates thousands of documents: daily reports, photos, RFIs (Requests for Information), permits, change orders, handwritten notes on clipboards. This information lives in email inboxes, printed binders, phone cameras, and shared drives—fragmented across sites, subcontractors, and project managers.
+
+**Consequences:**
+- **Knowledge loss**: A photo of a foundation issue taken in month 3 is forgotten by month 9 when a related problem surfaces. Nobody connects them.
+- **Inefficient decision-making**: Project managers spend hours digging through email for "that photo we took of the rebar placement."
+- **Compliance gaps**: Permits and inspection reports are filed but not cross-referenced with design changes.
+- **Expensive rework**: The same issue is discovered twice because the first discovery was documented but not surfaced during planning.
+
+**Opportunity**: Construction companies are increasingly willing to digitize. Mobile phones and cameras on every site provide data. But organizing and extracting value from that data manually is infeasible.
+
+## Why It Matters
+
+This is a **legitimate startup problem** with measurable value:
+
+- **Large TAM**: US construction market is $2T annually; mid-to-large builders spend 5–10% of labor on documentation inefficiency.
+- **Clear ROI**: Reducing rework by 5% saves millions per company per year.
+- **Defensible moat**: A system that learns site vocabulary, understands construction sequencing, and surfaces pattern anomalies becomes sticky (switching cost high).
+
+From a portfolio perspective, this project demonstrates:
+- **Problem discovery** (spending time in construction operations, talking to site managers).
+- **Product thinking** (MVP definition, user research, problem-solution fit).
+- **AI application** (identifying where AI adds value vs. where it's snake oil).
+
+## My Approach
+
+### Current Stage: Concept & POC
+
+This is **not a shipped product**—it's a validated problem and early prototype. The work to date:
+
+1. **Problem validation** (Jan–Feb 2024):
+   - Interviewed 8 project managers and general contractors.
+   - Spent a day on an active construction site (took photos, observed workflow).
+   - Mapped the current documentation process (fragmented, manual, time-consuming).
+   - **Key insight**: PMs spend 1–2 hours daily on documentation-related tasks that could be automated.
+
+2. **MVP definition** (Mar 2024):
+   - Core features: upload photos/PDFs → auto-tag (location, issue type, severity) → searchable index → alerts when duplicates appear.
+   - Not-in-MVP: predictive analytics, generative reports (too mature; focus on core problem first).
+
+3. **Technical proof-of-concept** (Apr 2024):
+   - Built a prototype using Claude's vision API to analyze construction photos.
+   - Extracted data: "location: 3rd floor East Wing", "issue: rebar spacing", "severity: moderate".
+   - Tested on 50 real photos from a partner contractor.
+   - **Result**: 87% accuracy on tagging; false positives mostly harmless.
+
+### Hypotheses to Validate
+
+1. **Users will adopt a tool that saves >30 minutes/day** (testable via beta users).
+2. **AI tagging is accurate enough for real work** (our POC shows promise; needs more data).
+3. **Connecting duplicates reduces rework by 5%+** (measure via case studies).
+
+### What's *Not* Included
+
+- Generative features (e.g., "write a summary of today's work"). Too risky for construction (liability).
+- Predictive analytics (e.g., "this site will be delayed"). Require more data and domain expertise.
+- Scheduling integration. Tempting but adds complexity; stay laser-focused on documentation.
+
+## Results (So Far)
+
+### POC Metrics
+
+- **Accuracy on test set (50 photos)**: 87% correctly tagged with location + issue type.
+- **Inference time**: ~3 seconds per photo (acceptable for batch processing; could optimize for real-time).
+- **User feedback (5 beta testers)**: "This would save me 30 minutes a day" (one site manager, 3-site portfolio).
+
+### Learnings
+
+1. **Site vocabulary is specific.** "Column O-5" means nothing without floor plan context. The system needs site-specific training (not generic).
+2. **Timestamps matter more than I expected.** Combining photo metadata with project timeline reveals sequencing anomalies automatically.
+3. **False negatives are worse than false positives.** Missing an issue is bad; flagging something that's actually okay is low-cost. Tune the model accordingly.
+
+## Next Steps (Out of Scope for This Portfolio)
+
+If pursued to product:
+
+1. **Beta program**: Onboard 3–5 construction companies; run for 8 weeks; measure time saved + rework reduction.
+2. **Expand to PDFs**: Currently handle photos; extend to reports/permits (harder; requires OCR + entity extraction).
+3. **Site-specific fine-tuning**: Allow customers to upload site blueprints, then train the tagger on their vocabulary.
+4. **Integration**: Connect to existing construction software (Procore, Toast, AssemblySystems).
+
+---
+
+## Key Takeaways
+
+1. **The best startups solve painful, specific problems.** Construction documentation is genuinely painful and specific (vs. generic "AI for [industry]" nonsense).
+
+2. **POC speed matters more than polish.** Validating the core idea in 2 weeks with Claude's API was faster than building a custom ML pipeline. When you're uncertain, use existing tools to derisk.
+
+3. **Talk to users before over-building.** I almost added predictive features; interviews revealed the core problem was much simpler (just find duplicates and organize).
+
+4. **AI is a component, not the product.** The product is "construction documentation that's searchable and connected." AI enables it, but the value is in the simplification, not the AI itself.
+
+5. **This is a long-term play.** Even if built, it takes 6–12 months to get market traction, 2–3 years to know if it's viable. Included here as evidence of problem-seeking behavior and product thinking, not as a shipping deadline.
+
+---
+
+**Status**: Concept validation complete; POC successful. Shelved for now to focus on other work, but monitoring the space and will revisit if opportunities arise (acquisition, partnership, dedicated team allocation).

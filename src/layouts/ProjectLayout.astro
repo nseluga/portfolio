@@ -1,0 +1,102 @@
+---
+/**
+ * ProjectLayout: renders project pages generically from MDX.
+ * Assumes the 5-part structure scaffolded via heading levels:
+ * h2 headings for: The Problem, Why It Matters, My Approach, Results, Key Takeaways
+ *
+ * Also renders optional metrics header if provided in frontmatter.
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import { type CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+}
+
+const { entry } = Astro.props;
+const { title, date, summary, metrics } = entry.data;
+
+// Format date as "MMMM YYYY"
+const formattedDate = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+});
+---
+
+<BaseLayout title={title} description={summary} currentPath={Astro.url.pathname}>
+  <article class="prose prose-sm max-w-3xl mx-auto">
+    <!-- Project header -->
+    <header class="mb-12">
+      <h1 class="text-4xl font-bold mb-2">{title}</h1>
+      <p class="text-gray-500 text-sm mb-4">{formattedDate}</p>
+      <p class="text-base text-gray-600 leading-relaxed">{summary}</p>
+
+      <!-- Optional metrics display -->
+      {metrics && metrics.length > 0 && (
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+          {metrics.map((metric) => (
+            <div key={metric.label}>
+              <p class="text-sm text-gray-500 font-medium uppercase tracking-wide">
+                {metric.label}
+              </p>
+              <p class="text-xl font-semibold text-gray-900 mt-1">
+                {metric.value}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <!-- Project content (MDX) -->
+    <div class="project-content">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  /* Ensure prose styling works well with project content */
+  :global(.project-content) {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  :global(.project-content h2) {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  :global(.project-content h3) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  :global(.project-content p) {
+    margin-bottom: 1rem;
+  }
+
+  :global(.project-content ul),
+  :global(.project-content ol) {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  :global(.project-content li) {
+    margin-bottom: 0.5rem;
+  }
+
+  :global(.project-content a) {
+    color: var(--color-accent, #1f2937);
+    text-decoration: underline;
+  }
+
+  :global(.project-content a:hover) {
+    opacity: 0.8;
+  }
+</style>
