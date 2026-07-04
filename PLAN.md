@@ -104,8 +104,8 @@ project page ("View code ↗").
   - Tell the real story: solo-built social betting app where friends wager virtual "caps" on backyard games (Caps, Pong, Beerball); centerpiece is a **scipy-powered house-odds engine** (~760 LOC): recency-weighted player means, harmonic-mean team strength, normal-percentile line biasing for a ~4% house edge, push-proof x.5 lines — fed by a self-improving stats pipeline as bets settle; honor-system dual-confirmation settlement state machine; JWT auth; ~6,150 LOC, 20 routes, 6 pages.
   - Frame honestly as a **pre-launch MVP mid-pivot to React Native/iOS**, backed by a rigorous self-audit (the repo's own PLAN.md) — sell the applied statistics and engineering judgment.
   - Verify or remove the `patio.nateseluga.com` live link (unverifiable during audit).
-- [ ] **C1.5 Second Brain System — resolve the missing-repo problem**
-  - The writeup claims the infrastructure is "open-source in my GitHub"; no such repo exists. Either (a) Nate publishes the repo and we link it, or (b) rewrite to drop the open-source claim and any unverifiable specifics. Default to (b) until a repo exists; flag (a) as a follow-up for Nate.
+- [ ] **C1.5 Second Brain System — remove project page from site**
+  - This project is no longer being developed. Remove it entirely: set `draft: true` in the MDX frontmatter (do not delete the file) and remove it from any curated lists in `site.ts`. No rewrite needed.
 - [ ] **C1.6 Cross-cutting fixes (all projects)**
   - Add `repoUrl` (and optional `collaborators`) to the Zod schema + ProjectLayout header link.
   - Fix frontmatter dates to match reality (current dates like 2024-03-15 predate the repos).
@@ -213,7 +213,6 @@ These are account/money/auth steps, not code. Order matters. (Unchanged from v1.
 ### Needs-Nate follow-ups (surfaced by the audit)
 - [ ] Resume PDF for C3.3.
 - [ ] Patio: confirm whether `patio.nateseluga.com` is live (link or cut); capture real UI screenshots.
-- [ ] Second Brain: publish the repo or approve the reframed writeup without the open-source claim (C1.5).
 - [ ] Decide whether the NBA project page should name the course (CS158) and collaborator — recommended yes for honesty; confirm collaborator consent.
 
 ---
