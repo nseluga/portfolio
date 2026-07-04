@@ -93,7 +93,7 @@ project page ("View code ↗").
 - [ ] **C1.2 NBA Shot-Value → reframe as calibration-first EV study** (`audits/audit-nba-shot-value.md`)
   - Kill: "2.1M shots (2019–2024)" (real: 128,069 shots, 2014–15 Kaggle shot logs, 122,203 cleaned), "R² = 0.68" (it's classification — tuned XGBoost AUC 0.6365), "500-cell hexagonal grid" and all x/y-coordinate features (dataset has none), per-zone precision numbers, star-vs-role-player EV claims (model is deliberately player-agnostic), "holdout 2024 season" (real: random 80/20).
   - Tell the real story: Harvey Mudd CS158 course project (with Michael O'Brien); 4-model comparison (LR/DT/RF/XGB, raw vs engineered); hard predictability ceiling at AUC ~0.63–0.64 with shooter skill as the named missing variable; well-calibrated probabilities (Brier 0.2296) → trustworthy expected points = p(make) × shot value; EV findings: open 0–4 ft ≈ 1.85 EV, mid-range trough, corner-3 (22–24 ft) bump; `defender_distance_ratio` is the top SHAP feature.
-  - Credit **Michael O'Brien** as co-author (confirmed by Nate) and name the course (CS158 ML). Link the formal PDF writeup in the repo. Add `collaborators: ["Michael O'Brien"]` to frontmatter.
+  - Credit **Michael O'Brien** as co-author (confirmed by Nate). Do not name the course. Link the formal PDF writeup in the repo. Add `collaborators: ["Michael O'Brien"]` to frontmatter.
 - [ ] **C1.3 Batting Average Control Stat → rename to the real metric, "BAA (Batting Average Ability)"** (`audits/audit-batting-average.md`)
   - Kill: "predictive R² 0.52" and "correlation with future BA 0.58" (no forecasting model exists — all modeling is same-season), elastic net (real: OLS/RF/statsmodels MixedLM), "5-fold CV by season" (real: random 80/20), shrinkage step, Statcast feature list (real: FanGraphs rates + sprint speed), the RMSE bar chart, the archetype table, Betts/Judge examples, "wider rookie intervals" (real PI coverage is 54.5% — poorly calibrated).
   - Tell the real story: skill-isolation metric, not a forecast — mixed-effects model with player random intercepts (ICC: 24.7% of AVG variance is between-player), CLR transform for batted-ball composition, PA-weighted fitting; Test R² 0.4570 / MAE 0.0215 for AVG from peripherals; RF and ensembles tried and **rejected on evidence** (BABIP Test R² 0.293 vs linear 0.372); BAA indexed 100 ± 10 per season with a per-season `luck_component`; face validity: Arraez 2023 = 133.2 vs Gallo 2023 = 61.2; sprint speed as the #2 BABIP driver.
@@ -157,7 +157,7 @@ content, effortless nav).
       comments so they can be added later. Every page should have an obvious next action.
 - [ ] **C3.4 About page rewrite:** the current version is generic narrative ("I care about
       evidence over claims") with zero verifiable specifics. Rewrite with concrete facts:
-      class year, relevant coursework (e.g. CS158 ML), the real projects by name, what he's
+      class year, the real projects by name, what he's
       currently looking for (role type + timing). Cut the "What Drives Me" adjectives;
       let the projects carry that. Keep it typography-led.
 - [ ] **C3.5 Section intros:** tighten `site.ts` intros to match audited reality (e.g.
