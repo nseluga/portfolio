@@ -2,7 +2,7 @@
 
 > Working document for the agent building this site. Update it every pass: check off
 > completed items, add follow-ups as they surface, keep it an accurate picture of remaining
-> work. Source of truth for *what/why/feel* is `portfolio-brief.md`; this file is *how*.
+> work. Source of truth for _what/why/feel_ is `portfolio-brief.md`; this file is _how_.
 >
 > **v2 (2026-07-03):** The build phase (v1, M0–M4) is complete — the site's engineering is
 > done and verified. This plan now focuses on **content**: a 2026-07-03 audit of every
@@ -46,29 +46,32 @@ is a credibility asset, not a weakness.
 
 ## Finalized decisions (unchanged from v1)
 
-| Area | Decision |
-|------|----------|
-| **Framework** | Astro, static output; interactivity via React islands only. |
-| **Content model** | MDX via Content Collections; `section` frontmatter enum; global data in `src/data/`. |
-| **Styling** | Tailwind, locked tokens, hand-built components, self-hosted fonts. |
+| Area               | Decision                                                                                                         |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| **Framework**      | Astro, static output; interactivity via React islands only.                                                      |
+| **Content model**  | MDX via Content Collections; `section` frontmatter enum; global data in `src/data/`.                             |
+| **Styling**        | Tailwind, locked tokens, hand-built components, self-hosted fonts.                                               |
 | **Visualizations** | ECharts in `client:visible` islands; data pre-computed offline → JSON committed to repo; browser never computes. |
-| **Live apps** | Outbound links only ("View live ↗"). |
-| **Deployment** | Cloudflare Pages on push to `main`; `nateseluga.com`. |
+| **Live apps**      | Outbound links only ("View live ↗").                                                                             |
+| **Deployment**     | Cloudflare Pages on push to `main`; `nateseluga.com`.                                                            |
 
 ### Design guardrails (from the brief — enforce on every visual choice)
-- Minimal, elegant, typography-led, high whitespace. Content *is* the design.
+
+- Minimal, elegant, typography-led, high whitespace. Content _is_ the design.
 - Muted-gray labels, near-black body, one accent used sparingly, near-white background.
 - **Avoid:** hero splashes, gradients, decorative shapes, resume-card templates, skill bars, testimonial carousels, walls of text.
 - Content rule: evidence over claims; show the artifact, don't describe it; depth over quantity — **and now: every claim traceable to the repo.**
 
 ### Project page structure (unchanged)
-1. The Problem  2. Why It Matters  3. My Approach  4. Results (with visuals)  5. Key Takeaways
+
+1. The Problem 2. Why It Matters 3. My Approach 4. Results (with visuals) 5. Key Takeaways
 
 ---
 
 ## Milestones & Tasks
 
 ### C0 — Audit groundwork ✅ done (2026-07-03)
+
 - [x] Create `career-advisor` skill (`~/.claude/skills/career-advisor.md`): senior tech-career
       advisor persona; axes = accuracy, clarity, credibility, recruiter impact; benchmark
       helenbentley.com.
@@ -80,6 +83,7 @@ is a credibility asset, not a weakness.
       infrastructure is "open-source in my GitHub" (tracked in C1.5).
 
 ### C1 — Rewrite project writeups (accuracy first) ⬜
+
 Each rewrite works from its audit file — the audit's "Real findings", "Strongest
 visualizations", and "Recommended framing" sections are the spec. Keep the 5-part page
 structure. Add `repoUrl` to the frontmatter schema and link the repo prominently on every
@@ -88,7 +92,7 @@ project page ("View code ↗").
 - [ ] **C1.1 Pitcher Injury-Risk → reframe as "Pitcher Injury Risk+"** (`audits/audit-pitcher-injury-risk.md`)
   - Kill: "78% AUC-ROC" (real: tuned RF test AUC 0.579, walk-forward CV mean 0.571), "top-10% precision 64%", "2,847 pitchers / 12 variables", Retrosheet sourcing, the invented age/usage chart (3.2%→13.1%), "+35%/+70% risk" bullets.
   - Tell the real (better) story: multi-model research platform over Statcast 2015–2024 — 3,249 pitchers, 205,911 pitcher-game rows, 76 features; baseline classifiers + survival models (ensemble C-index 0.566) + multi-task severity + the **Injury Risk+** composite (ERA+-style, mean 100 by season × archetype, 9,752 pitcher-seasons, YoY r = 0.583); isotonic calibration (ECE 0.059 → 0.029); temporal/walk-forward validation.
-  - Lead findings: injury history + 90-day cumulative workload dominate (interventional SHAP shows `pitches_90d` beats ACWR); >2 mph chronic velocity decline ≈ doubles observed 30-day injury rate (6% → 12%, Risk+ 96.9 → 119.5); honest "discrimination is genuinely hard" framing — that candor *is* the credibility play for baseball-ops readers.
+  - Lead findings: injury history + 90-day cumulative workload dominate (interventional SHAP shows `pitches_90d` beats ACWR); >2 mph chronic velocity decline ≈ doubles observed 30-day injury rate (6% → 12%, Risk+ 96.9 → 119.5); honest "discrimination is genuinely hard" framing — that candor _is_ the credibility play for baseball-ops readers.
   - Frontmatter metrics → real ones (pitcher-game rows, features, CV AUC, IR+ YoY stability).
 - [ ] **C1.2 NBA Shot-Value → reframe as calibration-first EV study** (`audits/audit-nba-shot-value.md`)
   - Kill: "2.1M shots (2019–2024)" (real: 128,069 shots, 2014–15 Kaggle shot logs, 122,203 cleaned), "R² = 0.68" (it's classification — tuned XGBoost AUC 0.6365), "500-cell hexagonal grid" and all x/y-coordinate features (dataset has none), per-zone precision numbers, star-vs-role-player EV claims (model is deliberately player-agnostic), "holdout 2024 season" (real: random 80/20).
@@ -113,6 +117,7 @@ project page ("View code ↗").
   - Proofread rule for the pass: any number that can't be pointed to in the repo gets cut.
 
 ### C2 — Real visualizations & assets ⬜
+
 The single-JSON status quo (`src/data/pitcher-injury-risk.json`, itself fabricated) gets
 replaced by data exported from the actual repos. Never compute in the browser; commit
 pre-computed JSON (or static images where interactivity adds nothing).
@@ -129,7 +134,8 @@ pre-computed JSON (or static images where interactivity adds nothing).
 - [ ] **C2.3 BAA:** export the flagship BAA-vs-BA scatter (2019–2024, per-season trendlines)
       to JSON for an ECharts island; optional second visual: RF feature-importance bars or
       the Arraez/Gallo leaderboard as a small table.
-- [ ] **C2.4 Patio:** real screenshots of the live UI (none exist in the repo — capture from
+- [ ] **C2.4 Patio:** skip these screenshots when running autonomously:
+      real screenshots of the live UI (none exist in the repo — capture from
       a running instance) and/or a short muted screen-recording per the v1 decision; a
       simple diagram of the odds-engine feedback loop (stats → aggregates → lines → bets →
       stats) would show the best subsystem.
@@ -138,6 +144,7 @@ pre-computed JSON (or static images where interactivity adds nothing).
       actual work.
 
 ### C3 — Site-wide copy, hierarchy & recruiter impact ⬜
+
 Career-advisor pass (see `~/.claude/skills/career-advisor.md`; benchmark helenbentley.com:
 immediate identity statement, ruthless curation, role/impact framing, personality through
 content, effortless nav).
@@ -167,6 +174,7 @@ content, effortless nav).
       confirm visual hierarchy still holds with new content lengths; mobile pass.
 
 ### C4 — AI-native layer ⬜
+
 Recruiters increasingly ask AI assistants about candidates; make the site machine-legible
 so those summaries are accurate.
 
@@ -185,6 +193,7 @@ so those summaries are accurate.
       from C1.6.
 
 ### C5 — Verification & wrap-up ⬜
+
 - [ ] **C5.1 Accuracy re-audit:** re-run a career-advisor + per-repo spot-check pass over the
       rewritten pages: every number on the site must be findable in a repo output. This is
       the gate for calling C1 done.
@@ -203,7 +212,9 @@ requires the user's accounts/money/auth and cannot be done unattended._
 ---
 
 ## Human Hookup (do together — ~15 min)
+
 These are account/money/auth steps, not code. Order matters. (Unchanged from v1.)
+
 - [ ] **GitHub:** repo exists (`nseluga/portfolio`) — merge working branch → `main`.
 - [ ] **Cloudflare Pages:** connect repo, build `npm run build`, output `dist`, verify `*.pages.dev` deploy.
 - [ ] **Domain:** register `nateseluga.com` (Cloudflare Registrar), attach, DNS + SSL, redirect.
@@ -211,6 +222,7 @@ These are account/money/auth steps, not code. Order matters. (Unchanged from v1.
 - [ ] Optional: Cloudflare Web Analytics.
 
 ### Needs-Nate follow-ups (surfaced by the audit)
+
 - [ ] Patio: confirm whether `patio.nateseluga.com` is live (link or cut); capture real UI screenshots.
 - [ ] LinkedIn URL — add to C3.3 contact block when available.
 - [ ] Resume PDF — add to `public/resume.pdf` and uncomment link in C3.3 when updated.
@@ -218,6 +230,7 @@ These are account/money/auth steps, not code. Order matters. (Unchanged from v1.
 ---
 
 ## Open follow-ups / decisions deferred
+
 - [ ] Which project gets a full **dashboard** island vs single chart (Injury Risk+ is the candidate — it has a real Streamlit app to link and real leaderboard data to embed).
 - [ ] Contact method: mailto (current) vs form — unchanged, mailto is fine for now.
 - [ ] OG images: default is clean; per-project OG images from real charts are a nice-to-have after C2.
@@ -225,6 +238,7 @@ These are account/money/auth steps, not code. Order matters. (Unchanged from v1.
 ---
 
 ## Conventions (for the agent)
+
 - Reusable components in `src/components/`; layouts in `src/layouts/`; project MDX in `src/content/projects/`; chart JSON in `src/data/`; static visuals in `public/`.
 - Never compute analytics in the browser — commit pre-aggregated JSON **exported from the actual project repos** (note the generating notebook/script in a JSON `_source` field or adjacent comment).
 - Every new project addable via content only; component gaps get fixed, not hacked around.
