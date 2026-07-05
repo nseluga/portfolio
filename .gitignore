@@ -28,3 +28,6 @@ Thumbs.db
 .netlify
 .vercel
 *.log
+
+# Claude Code
+.claude/
