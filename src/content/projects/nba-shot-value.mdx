@@ -19,6 +19,8 @@ metrics:
     value: "4 (LR / DT / RF / XGB)"
 ---
 
+import ChartWrapper from '../../components/ChartWrapper.astro';
+
 ## The Problem
 
 NBA analytics has popularized the "expected value" framework — quantifying shot quality by expected points rather than raw make-or-miss. But how well can a machine learning model actually predict whether a given NBA shot goes in?
@@ -61,7 +63,76 @@ The dataset includes shot clock, dribbles before shot, closest defender distance
 
 ## Results
 
-{/* Chart: EV-by-distance curves — real data export pending C2.2 */}
+<ChartWrapper option={{
+  title: {
+    text: 'Expected Value by Shot Distance',
+    subtext: 'Open shots (high defender distance) · 2014–15 NBA season · 122,203 shots',
+    textStyle: { color: '#1f2937', fontSize: 14, fontWeight: '600' },
+    subtextStyle: { color: '#9ca3af', fontSize: 11 },
+    left: 0,
+    top: 0
+  },
+  tooltip: {
+    trigger: 'axis',
+    formatter: '{b}<br/>EV: {c} pts'
+  },
+  grid: { left: 65, right: 20, top: 70, bottom: 60 },
+  xAxis: {
+    type: 'category',
+    name: 'Shot Distance',
+    nameLocation: 'middle',
+    nameGap: 38,
+    nameTextStyle: { color: '#6b7280', fontSize: 11 },
+    data: ['0–4 ft', '5–9 ft', '10–14 ft', '15–19 ft', '20–21 ft', '22–24 ft', '25–27 ft', '28+ ft'],
+    axisLine: { lineStyle: { color: '#e5e7eb' } },
+    axisTick: { show: false },
+    axisLabel: { color: '#6b7280', fontSize: 10 }
+  },
+  yAxis: {
+    type: 'value',
+    name: 'Expected Points (EV)',
+    nameLocation: 'middle',
+    nameGap: 50,
+    nameTextStyle: { color: '#6b7280', fontSize: 11 },
+    min: 0,
+    max: 2.0,
+    interval: 0.5,
+    axisLabel: { color: '#6b7280', fontSize: 11 },
+    axisLine: { show: false },
+    axisTick: { show: false },
+    splitLine: { lineStyle: { color: '#f3f4f6' } }
+  },
+  series: [{
+    name: 'Expected Value',
+    type: 'line',
+    data: [1.85, 1.45, 1.20, 1.05, 1.00, 1.15, 1.05, 0.90],
+    lineStyle: { color: '#1f2937', width: 2.5 },
+    itemStyle: { color: '#1f2937' },
+    symbolSize: 6,
+    markArea: {
+      silent: true,
+      label: {
+        position: 'insideTop',
+        color: '#9ca3af',
+        fontSize: 10
+      },
+      data: [
+        [
+          { name: 'Restricted Area', xAxis: '0–4 ft', itemStyle: { color: 'rgba(31,41,55,0.05)' } },
+          { xAxis: '0–4 ft' }
+        ],
+        [
+          { name: 'Mid-Range', xAxis: '5–9 ft', itemStyle: { color: 'rgba(156,163,175,0.07)' } },
+          { xAxis: '20–21 ft' }
+        ],
+        [
+          { name: 'Corner 3', xAxis: '22–24 ft', itemStyle: { color: 'rgba(31,41,55,0.05)' } },
+          { xAxis: '22–24 ft' }
+        ]
+      ]
+    }
+  }]
+}} />
 
 ### Model Performance
 
