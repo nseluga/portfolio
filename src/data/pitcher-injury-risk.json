@@ -1,6 +1,6 @@
 {
   "_source": "Statcast 2015–2024 analysis — inline chart options are defined in src/content/projects/pitcher-injury-risk.mdx",
-  "_note": "Replaces prior fabricated 'Pitcher Injury Risk by Age & Usage' line data. Real numbers below are from the velocity-decline dose-response analysis.",
+  "_note": "Replaces prior fabricated 'Pitcher Injury Risk by Age & Usage' line data. Real numbers below are from the year-over-year velocity decline analysis.",
   "velocityDeclineComparison": {
     "groups": ["No Decline (< 2 mph over 90 days)", "Significant Decline (≥ 2 mph over 90 days)"],
     "thirtyDayInjuryRate": [6, 12],
