@@ -1,181 +1,104 @@
 ---
-title: "Batting Average Control Stat"
+title: "Batting Average Ability (BAA)"
 section: "sports-analytics"
 date: 2024-02-20
-summary: "Developed a hitter-evaluation metric isolating batting-average skill from noise by decomposing results into plate discipline, power, and batted-ball quality components."
+summary: "A same-season skill-isolation metric that separates how much of a hitter's batting average reflects repeatable ability versus luck, built with mixed-effects modeling over 4,374 MLB player-seasons."
 thumbnail: "/images/batting-average-control.svg"
 draft: false
 order: 3
+repoUrl: "https://github.com/nseluga/Batting-Average-Ability"
 metrics:
-  - label: "Training Data"
-    value: "MLB 2015–2024"
-  - label: "Players Analyzed"
-    value: "1,200+ hitters"
-  - label: "Predictive R²"
-    value: "0.52"
-  - label: "Correlation with Future BA"
-    value: "0.58"
+  - label: "Player-Seasons"
+    value: "4,374"
+  - label: "Unique Players"
+    value: "1,173"
+  - label: "Test R²"
+    value: "0.4570"
+  - label: "MAE"
+    value: "0.0215"
 ---
-
-import ChartWrapper from '../../components/ChartWrapper.astro';
-import Figure from '../../components/Figure.astro';
 
 ## The Problem
 
-Batting average is simple—hits divided by at-bats—and remains one of baseball's most-watched stats. Yet a .300 hitter one year might hit .260 the next, and not because he suddenly became worse. Luck, batting-ball luck (BABIP), umpire strike-zone variance, and small-sample noise all muddy the signal.
+Batting average is simple — hits divided at-bats — and remains one of baseball's most-watched stats. Yet a .300 hitter one year might bat .260 the next without becoming meaningfully worse. BABIP luck, park effects, and small-sample noise all muddy the signal.
 
-**The challenge:** Can we separate true batting-average skill from the noise? And can we predict next-year batting average more accurately than this-year's?
+**The question this project answers:** How much of a hitter's batting average in a given season reflects repeatable skill versus circumstance?
 
-Traditional approaches use batting average on balls in play (BABIP) to adjust for luck, but BABIP adjustment is crude—it assumes all contact is equal. The insight: **decompose batting average into its drivers: plate discipline (strikeout rate), power (extra-base hit rate), and batted-ball quality (hard-hit percentage, spray angle). Use these components to infer the hitter's true ability.**
+This is a **skill-isolation problem, not a forecasting problem.** BAA is a same-season metric. It estimates what a player's batting average *should* have been given their peripherals — plate discipline, batted-ball composition, and sprint speed — not what it will be next year.
 
 ## Why It Matters
 
-For player evaluation and contract valuation:
+Batting average gets derided in modern analytics precisely because it conflates skill with luck. But the luck component is real and measurable. A .320 hitter with a .400 BABIP on weak contact is due to regress; a .265 hitter with elite contact quality and sprint speed is undervalued by the raw number.
 
-- **Predictive power**: Teams sign players based on expected future performance, not past average. A .320 hitter with poor discipline and soft contact might decline; a .270 hitter with excellent discipline and hard contact might rise.
-- **Injury & aging curves**: A decline in strikeout rate combined with stable hard-hit rates suggests injury (command loss), not skill loss. Different interventions apply.
-- **Young player assessment**: A rookie with elite discipline and hard contact but low BABIP is more likely to improve than a rookie with poor discipline but lucky BABIP.
+BAA makes that distinction quantitative. The metric is indexed to 100 each season (± 10 covers roughly the middle of the distribution), so a BAA of 133 means the player's peripherals imply an average 33% above the league mean for that season — regardless of what their actual batting average was.
 
-For sports-analytics audiences, this demonstrates baseball-specific judgment—using domain knowledge to build a more interpretable metric.
+Face validity check: **Luis Arraez 2023 = 133.2** (elite contact rate, consistently puts the ball in play). **Joey Gallo 2023 = 61.2** (extreme strikeout rate, low contact frequency). The index separates them cleanly.
 
 ## My Approach
 
-### Framework
+### Data
 
-Decompose batting average into components:
+- **Source:** FanGraphs rate statistics plus Statcast sprint speed — 2015–2024 MLB seasons.
+- **Scale:** 4,374 player-seasons across 1,173 unique players.
+- **Filtering:** Minimum PA threshold applied per season; PA-weighted fitting gives more influence to qualified hitters.
+
+Features used: strikeout rate, walk rate, contact rate, batted-ball type rates (ground ball, fly ball, line drive, pop-up), hard-hit rate, and sprint speed. Batted-ball rates are compositional (they sum to 1), so a **centered log-ratio (CLR) transform** is applied before modeling to handle the simplex constraint correctly.
+
+### Model
+
+A **mixed-effects model** (OLS base with player random intercepts via statsmodels MixedLM) fits AVG from the peripheral features. The player random intercepts capture stable between-player differences that the observed features don't fully account for — things like hand-eye coordination and bat path that show up in outcomes but not in rate stats alone.
+
+The **intraclass correlation (ICC) is 24.7%**, meaning roughly a quarter of the variance in batting average across this dataset is attributable to stable between-player differences after controlling for peripherals. That's the signal BAA is designed to isolate.
+
+Train-test split: random 80/20.
+
+### Why Not Random Forests or Ensembles?
+
+Both were tested. On BABIP prediction — a direct sub-problem — the linear model achieved a test R² of **0.372** versus **0.293** for random forest. The tree-based model consistently underperformed on this target. Ensembles were rejected on evidence, not assumption.
+
+The linear model is also interpretable: **sprint speed is the #2 driver of BABIP** (after contact-quality features), which is analytically sensible and makes the model's internal logic defensible.
+
+### BAA Index Construction
+
+After fitting, each player-season receives a **`luck_component`**: the difference between their actual batting average and the model's expected batting average from peripherals. BAA is then constructed as:
 
 ```
-BA = (Hits ÷ AB)
-   = (1B + 2B + 3B + HR) ÷ AB
-
-Reparameterize:
-BA = [(Hits / Contact) × (Contact / AB)] × AB ÷ AB
-   = [BABIP × (1 - K%) × (1 - BB% ÷ PA)]
+BAA = 100 × (expected_BA / season_mean_expected_BA)
 ```
 
-But this is still crude. Instead, use **hierarchical features**:
-
-1. **Plate Discipline (input control)**: Strikeout rate, walk rate, swing rate.
-2. **Batted-Ball Quality (production)**: Hard-hit %, sweet-spot %, barrels per plate appearance.
-3. **Result Conversion (luck)**: BABIP, home-run rate per fly ball.
-
-**Hypothesis:** Discipline and batted-ball quality are repeatable; luck (BABIP) is not. Regress current BA toward a skill-based expected value to predict next year.
-
-### Methodology
-
-1. **Feature extraction** (from public Statcast data):
-   - Strikeout rate, walk rate, contact rate.
-   - Hard-hit rate (exit velocity ≥90 mph).
-   - Sweet-spot rate (launch angle 8–32°).
-   - Barrels per plate appearance.
-   - Spray angle variance (consistency).
-
-2. **Regression model**:
-   - Target: Next-season batting average.
-   - Features: Current-season plate-discipline + batted-ball metrics.
-   - Model: Elastic Net (L1 + L2 regularization) to prevent overfitting.
-   - Validation: 5-fold cross-validation on 2015–2023 hitters; test on 2024.
-
-3. **Shrinkage adjustment**:
-   - Weight current BA by confidence interval (based on PA volume).
-   - Compute expected BA from component-based model.
-   - Final prediction: weighted average of current BA and component-based expectation.
-
-### Key Modeling Decisions
-
-- **Why not a black-box model?** Trees and neural nets don't reveal *why* a hitter is underperforming. Linear regression, even when regularized, remains interpretable: you can see which coefficients drive predictions.
-- **Why elastic net?** Discipline and batted-ball features are correlated (good hitters do many things well). Ridge regression shrinks all coefficients; Lasso zero them out. Elastic Net balances—it shrinks less-important features without hard exclusion.
-- **Why cross-validation by season, not random split?** Batting average trends over career arc. A random split mixes young and old hitters; season-based splits respect the temporal structure.
+Indexed per season so cross-year comparisons reflect relative skill rather than era-adjusted run environments.
 
 ## Results
 
-### Predictive Power
+### Model Performance
 
-Comparing models on the holdout 2024 season:
+| Metric | Value |
+|--------|-------|
+| Test R² (AVG from peripherals) | 0.4570 |
+| Test MAE | 0.0215 |
+| Prediction interval coverage | 54.5% |
 
-<ChartWrapper
-  option={{
-    title: {
-      text: 'Prediction Error: BA Control vs. Naive (Current-Year BA)',
-      left: 'center',
-      top: 0,
-      textStyle: { fontSize: 14, fontWeight: 'bold' },
-    },
-    xAxis: {
-      type: 'category',
-      data: ['Component Model', 'Current BA (Naive)', 'Average of Both'],
-      axisLabel: { fontSize: 12 },
-    },
-    yAxis: {
-      type: 'value',
-      name: 'RMSE (Batting Average points)',
-      axisLabel: { formatter: '{value}', fontSize: 12 },
-    },
-    tooltip: {
-      trigger: 'axis',
-      formatter: '{b}<br/>RMSE: {c}',
-    },
-    grid: {
-      left: 80,
-      right: 60,
-      top: 60,
-      bottom: 60,
-    },
-    series: [
-      {
-        type: 'bar',
-        data: [0.032, 0.041, 0.035],
-        itemStyle: {
-          color: '#1f2937',
-          borderRadius: [4, 4, 0, 0],
-        },
-        emphasis: {
-          itemStyle: { color: '#4b5563' },
-        },
-      },
-    ],
-  }}
-/>
+The prediction interval coverage of 54.5% is below the nominal 95% level — the intervals are poorly calibrated. This is an honest limitation: the model fits the mean well (MAE ≈ 21 points of batting average) but the uncertainty estimates are too narrow.
 
-**Results:**
-- **Component Model RMSE**: 0.032 (predicts within 32 points of actual BA).
-- **Naive current BA RMSE**: 0.041 (naively using this year's BA predicts worse).
-- **Correlation with 2024 actual BA**: 0.58 (component model) vs 0.48 (current BA).
-- **R² (variance explained)**: 0.52 on holdout 2024 data.
+### Face Validity
 
-### Performance by Hitter Type
+The index produces intuitive rankings:
 
-The model works differently across player archetypes:
+- **Luis Arraez 2023 — BAA 133.2:** One of the game's best pure contact hitters; his peripherals justify a high expected average, and he delivered.
+- **Joey Gallo 2023 — BAA 61.2:** High-strikeout, low-contact profile; his peripherals predict a well-below-average batting average independent of BABIP luck.
 
-| Archetype | # Players | BA Volatility (Year-to-Year SD) | Model Advantage |
-|-----------|-----------|--------------------------------|-----------------|
-| High-discipline, high hard-hit | 120 | 0.018 | Minimal (skill already stable) |
-| High-discipline, low hard-hit | 95 | 0.022 | Moderate (deflates BABIP-lucky over-performers) |
-| Low-discipline, high hard-hit | 140 | 0.029 | High (flags strikeout-risk declines) |
-| Low-discipline, low hard-hit | 320 | 0.035 | Very High (many are noise; model filters) |
+Sprint speed emerging as the **#2 BABIP driver** (after contact-quality composites) is analytically meaningful: fast hitters beat out more infield hits and reach on errors, a real and repeatable skill the raw BABIP treats as noise.
 
-**Insight:** The model adds most value for low-discipline hitters (who experience high variance) and moderate value for stable, high-skill players (who are already predictable).
-
-### Example Predictions
-
-*2023 season → 2024 actual:*
-
-- **Mookie Betts (2023 .307 BA)**: Model predicted .305 (actual .295). Current BA naively predicted .307. Model was closer.
-- **Aaron Judge (2023 .288 BA)**: Model predicted .280 (actual .289). Current BA predicted .288. Model slightly off; current BA better here.
-- **Average across 200+ qualified hitters**: Component model beats naive prediction 58% of the time.
+{/* Chart: BAA-vs-BA scatter — real data export pending C2.3 */}
 
 ## Key Takeaways
 
-1. **Decomposition reveals signal.** Traditional BABIP adjustment is a blunt instrument. Breaking BA into discipline + power + contact quality gives coaches and analysts a clearer picture of *what changed* and *why it matters*.
+1. **Skill isolation, not forecasting.** BAA answers "how much of this season's batting average reflects repeatable ability?" It is not a prediction of next year's average. That distinction matters for how it should be used in player evaluation.
 
-2. **Luck is real but not persistent.** A .320 hitter with a .380 BABIP is likely to regress unless his contact quality is elite. The model captures this quantitatively.
+2. **Between-player signal is real.** An ICC of 24.7% confirms that players differ systematically in batting-average ability after controlling for observable peripherals. Ignoring that structure inflates error.
 
-3. **Early-career prediction is hardest.** Young hitters' components stabilize over 2–3 seasons. The model has lower confidence on rookies (small sample size) and correctly reflects that in wider prediction intervals.
+3. **Simpler wins on evidence.** Random forest and ensemble models were tested and rejected — the linear model outperformed on BABIP by 0.079 R² points. Model complexity should be earned, not assumed.
 
-4. **The best model is interpretable.** A 0.02 R² gain from adding a complex feature isn't worth it if nobody understands why. The elastic-net model remains readable: "strikeout rate increases, BA expected to drop by X."
+4. **Sprint speed is a legitimate batting-average driver.** Its position as the #2 BABIP predictor validates treating athleticism as a hitting input, not just a baserunning input.
 
-5. **Integration matters more than accuracy.** A model predicting BA within ±.030 is useful only if teams use it. Presenting it as a single number ("BA Control Stat") rather than a complex regression output ensures adoption.
-
----
-
-**Data and reproducibility:** Full model code and 2015–2024 player estimates are available in the project repository. The model updates annually with new season data.
+5. **The natural extension is a stability test.** The model isolates same-season skill. The open question — how well does BAA in year N predict batting average in year N+1, net of the player's year-N peripherals? — would convert this from a descriptive metric into a forecasting tool and is the clearest next experiment.
