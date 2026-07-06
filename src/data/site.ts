@@ -4,7 +4,7 @@
 
 export const SITE = {
   title: 'Nate Seluga',
-  description: 'Software engineer, data scientist, sports analytics enthusiast.',
+  description: 'CS junior at Harvey Mudd College. Building full-stack apps and sports analytics models.',
   url: 'https://nateseluga.com',
   author: 'Nate Seluga',
 };
@@ -37,13 +37,13 @@ export const SECTIONS = {
     title: 'Software Engineering',
     slug: 'engineering',
     intro:
-      'Flagship projects in full-stack development, infrastructure, and systems design. From live apps to data pipelines.',
+      'Full-stack products built from the ground up. Patio is a social betting app for backyard games — React 19, Flask, Supabase, and a scipy house-odds engine at its core.',
   },
   'sports-analytics': {
     title: 'Sports Analytics',
     slug: 'sports-analytics',
     intro:
-      'Data-driven explorations in baseball and basketball. Statistical models, interactive visualizations, and deep dives into what the numbers reveal.',
+      'Statistical models and ML research in baseball and basketball. Projects: multi-model MLB pitcher injury prediction (Injury Risk+), batting average skill isolation (BAA), and NBA shot-value estimation with SHAP interpretability.',
   },
   startups: {
     title: 'Startups & AI',
