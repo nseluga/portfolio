@@ -19,6 +19,7 @@ metrics:
 ---
 
 import Figure from '../../components/Figure.astro';
+import ChartWrapper from '../../components/ChartWrapper.astro';
 
 ## The Problem
 
@@ -72,7 +73,112 @@ Interventional SHAP analysis (conditioning on counterfactual workload paths) ide
 
 ## Results
 
-{/* Chart: velocity-decline dose-response — real data export pending C2.1 */}
+<ChartWrapper option={{
+  title: {
+    text: 'Velocity Decline × Injury Risk',
+    textStyle: { color: '#1f2937', fontSize: 14, fontWeight: '600' },
+    left: 0,
+    top: 0
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'shadow' },
+    formatter: '{b}: {c}%'
+  },
+  grid: { left: 55, right: 20, top: 50, bottom: 70 },
+  xAxis: {
+    type: 'category',
+    data: ['No Decline (< 2 mph)', 'Significant Decline (≥ 2 mph)'],
+    axisLine: { lineStyle: { color: '#e5e7eb' } },
+    axisTick: { show: false },
+    axisLabel: { color: '#6b7280', fontSize: 11 }
+  },
+  yAxis: {
+    type: 'value',
+    name: '30-Day Injury Rate',
+    nameTextStyle: { color: '#6b7280', fontSize: 11 },
+    min: 0,
+    max: 15,
+    axisLabel: { formatter: '{value}%', color: '#6b7280', fontSize: 11 },
+    axisLine: { show: false },
+    axisTick: { show: false },
+    splitLine: { lineStyle: { color: '#f3f4f6' } }
+  },
+  series: [{
+    name: '30-Day Injury Rate',
+    type: 'bar',
+    data: [
+      { value: 6, itemStyle: { color: '#9ca3af' } },
+      { value: 12, itemStyle: { color: '#1f2937' } }
+    ],
+    barWidth: '45%',
+    label: {
+      show: true,
+      position: 'top',
+      formatter: '{c}%',
+      fontSize: 12,
+      color: '#374151',
+      fontWeight: '600'
+    }
+  }]
+}} />
+
+<ChartWrapper option={{
+  title: {
+    text: 'Injury Risk+ by Velocity Decline Group',
+    textStyle: { color: '#1f2937', fontSize: 14, fontWeight: '600' },
+    left: 0,
+    top: 0
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'shadow' },
+    formatter: '{b}: IR+ {c}'
+  },
+  grid: { left: 55, right: 20, top: 50, bottom: 70 },
+  xAxis: {
+    type: 'category',
+    data: ['No Decline (< 2 mph)', 'Significant Decline (≥ 2 mph)'],
+    axisLine: { lineStyle: { color: '#e5e7eb' } },
+    axisTick: { show: false },
+    axisLabel: { color: '#6b7280', fontSize: 11 }
+  },
+  yAxis: {
+    type: 'value',
+    name: 'Injury Risk+',
+    nameTextStyle: { color: '#6b7280', fontSize: 11 },
+    min: 80,
+    max: 130,
+    axisLabel: { color: '#6b7280', fontSize: 11 },
+    axisLine: { show: false },
+    axisTick: { show: false },
+    splitLine: { lineStyle: { color: '#f3f4f6' } }
+  },
+  series: [{
+    name: 'Injury Risk+',
+    type: 'bar',
+    data: [
+      { value: 96.9, itemStyle: { color: '#9ca3af' } },
+      { value: 119.5, itemStyle: { color: '#1f2937' } }
+    ],
+    barWidth: '45%',
+    label: {
+      show: true,
+      position: 'top',
+      formatter: '{c}',
+      fontSize: 12,
+      color: '#374151',
+      fontWeight: '600'
+    },
+    markLine: {
+      silent: true,
+      symbol: 'none',
+      lineStyle: { color: '#9ca3af', type: 'dashed', width: 1 },
+      label: { formatter: 'League avg (100)', position: 'end', color: '#9ca3af', fontSize: 10 },
+      data: [{ yAxis: 100 }]
+    }
+  }]
+}} />
 
 ### Key Findings
 
