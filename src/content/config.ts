@@ -15,8 +15,8 @@ const projects = defineCollection({
       label: z.string(),
       value: z.string(),
     })).optional(), // optional key metrics display
-    liveUrl: z.string().url().optional(), // optional link to live app
-    repoUrl: z.string().url().optional(), // optional link to source repo
+    liveUrl: z.string().url().refine(v => /^https?:\/\//i.test(v), 'Must be an http/https URL').optional(), // optional link to live app
+    repoUrl: z.string().url().refine(v => /^https?:\/\//i.test(v), 'Must be an http/https URL').optional(), // optional link to source repo
     collaborators: z.array(z.string()).optional(), // optional list of collaborators
     draft: z.boolean().default(false),
     order: z.number().default(0),
