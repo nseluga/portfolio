@@ -16,6 +16,8 @@ const projects = defineCollection({
       value: z.string(),
     })).optional(), // optional key metrics display
     liveUrl: z.string().url().optional(), // optional link to live app
+    repoUrl: z.string().url().optional(), // optional link to source repo
+    collaborators: z.array(z.string()).optional(), // optional list of collaborators
     draft: z.boolean().default(false),
     order: z.number().default(0),
     // Optional section-specific fields can be added per project

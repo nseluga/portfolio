@@ -2,19 +2,21 @@
 title: "NBA Shot-Value Model"
 section: "sports-analytics"
 date: 2024-05-10
-summary: "Built a spatial model evaluating NBA shot value by distance, angle, and defender proximity. Interactive court heatmaps show expected value by location."
+summary: "Built a 4-model ML pipeline to predict NBA shot outcomes and estimate expected value by shot context. Compared logistic regression, decision tree, random forest, and XGBoost on raw vs. engineered features — finding a hard predictability ceiling that points to shooter skill as the key missing variable."
 thumbnail: "/images/nba-shot-value.svg"
 draft: false
 order: 2
+collaborators: ["Michael O'Brien"]
+repoUrl: "https://github.com/nseluga/Shot-Value-Machine-Learning"
 metrics:
   - label: "Training Data"
-    value: "2.1M shots (2019–2024)"
-  - label: "Model Accuracy"
-    value: "R² = 0.68"
-  - label: "Locations Gridded"
-    value: "500-cell court"
-  - label: "Context Features"
-    value: "7 variables"
+    value: "122,203 shots"
+  - label: "Best AUC"
+    value: "XGBoost 0.6365"
+  - label: "Brier Score"
+    value: "0.2296"
+  - label: "Models Compared"
+    value: "4 (LR / DT / RF / XGB)"
 ---
 
 import ChartWrapper from '../../components/ChartWrapper.astro';
@@ -22,173 +24,78 @@ import Figure from '../../components/Figure.astro';
 
 ## The Problem
 
-Basketball has undergone a fundamental shift in shot selection over the past 15 years. Teams have discovered that three-pointers, despite being only 50% more valuable than two-pointers (3 vs 2 points), are often the optimal shot because of spacing, efficiency, and pace-of-play considerations. But not all threes are created equal—a contested three from 35 feet is very different from an open three at 24 feet.
+NBA analytics has popularized the "expected value" framework — quantifying shot quality by expected points rather than raw make-or-miss. But how well can a machine learning model actually predict whether a given NBA shot goes in?
 
-**The question:** Can we quantify expected point value by shot location, defender proximity, and shooter type? And can we use this to evaluate which players take efficient shots vs. which teams are taking poor-efficiency shots?
+This project, built with co-author Michael O'Brien, uses the 2014–15 season NBA shot logs (128,069 raw shots; 122,203 after cleaning) to answer that question systematically. We compared four classification models — logistic regression, decision tree, random forest, and XGBoost — across raw and engineered feature sets, then translated the best model's calibrated probabilities into an expected-value analysis by shot type and distance.
 
 ## Why It Matters
 
-Shot-value modeling is fundamental to modern NBA front offices:
+Shot-outcome prediction matters because expected value is a more honest measure of shot quality than raw field-goal percentage. A 40% two-pointer and a 33% three-pointer are not equivalent — expected points makes the tradeoff explicit.
 
-- **Player evaluation**: A scorer who takes 60% of their shots from high-value zones is more efficient than one who takes the same percentage from the perimeter.
-- **Play-calling guidance**: Coaches can use expected-value maps to design offensive sets that generate high-EV looks.
-- **Team strategy**: Comparing a team's actual shot distribution to an optimal distribution reveals coaching blind spots.
-- **Trade analysis**: Knowing a player's shot diet (locations, difficulty) informs whether their raw scoring numbers are repeatable or fluky.
+More importantly, quantifying the **predictability ceiling** is as informative as the model itself. When four different algorithms all converge near the same AUC, that's signal: we've found the limit of what shot-context data alone can tell us, and that limit points directly to what's missing.
 
-For a sports-analytics audience, this is canonical work: spatial modeling, public data, actionable insight.
+- **Contest pressure effects**: Does a tighter defender contest measurably suppress makes — and by how much?
+- **Distance-adjusted EV**: Where on the court is the expected-value trough, and where does the corner-three geometry advantage actually show up?
+- **Data limits**: Understanding what's missing from a public dataset is as valuable as what's in it.
 
 ## My Approach
 
 ### Data & Feature Engineering
 
-**Source:** NBA Stats API (stats.nba.com), covering all regular-season shots from 2019–2024 (2.1M shots).
+**Source:** 2014–15 NBA season shot logs (Kaggle); 128,069 raw shots, 122,203 after dropping rows with missing defender distance or shot clock data.
 
-**Features per shot:**
-1. **Location (x, y)**: Absolute court coordinates.
-2. **Distance**: Euclidean distance from basket (0–40 feet).
-3. **Angle**: Angle relative to hoop (0–360°, bucketed into zones).
-4. **Defender proximity**: Closest defender distance (0–10 feet).
-5. **Shot type**: Two-pointer vs. three-pointer.
-6. **Shooter context**: Player experience (rookie, star, veteran) as a proxy for skill.
-7. **Game context**: Home/away, score differential, quarter (optional, not modeled here for simplicity).
+The dataset includes shot clock, dribbles before shot, closest defender distance, touch time, and shot distance — but **no x/y court coordinates**. Feature engineering worked within those constraints:
+
+1. **`defender_distance_ratio`**: defender distance divided by shot distance — normalizes contest pressure across shot types (a 2-foot contest means something different on a dunk attempt vs. a mid-range pull-up).
+2. **Distance zones**: bucketed shot distance into restricted area (0–4 ft), mid-range (5–21 ft), and three-point range (22+ ft).
+3. **Shot clock urgency**: binary flag for shots taken under 4 seconds remaining on the shot clock.
 
 ### Methodology
 
-1. **Court gridding**: Divided the court into 500 equally-sized hexagonal cells.
-2. **Expected value per cell**: For each cell, calculated (makes ÷ attempts) × points, stratified by defender distance (0–2, 2–4, 4–6, 6+ feet).
-3. **Interpolation**: Smoothed sparse cells (few attempts) using nearest-neighbor averaging to reduce noise.
-4. **Validation**: Holdout 2024 season to check model generalizes.
-5. **Visualization**: Heatmaps showing expected value across the court, overlaid with shot difficulty contours.
-
-### Key Insights from Feature Exploration
-
-- **Distance is dominant**: A 25-footer has ~1.0 EV; a 15-footer has ~1.2 EV (expected points). Non-linear relationship.
-- **Defender proximity is critical**: A wide-open three (6+ feet of space) has 1.1 EV; a contested three (0–2 feet) has 0.75 EV.
-- **Angle matters moderately**: Corner threes slightly worse than wing threes (geometry—longer distance).
-- **Context (player skill) has small but measurable effect**: Stars shoot 2–4% better from the same location vs. role players.
+1. **Train/test split**: 80/20 random split stratified on outcome.
+2. **Models compared** — both raw features and the full engineered set for each:
+   - Logistic Regression
+   - Decision Tree
+   - Random Forest
+   - XGBoost
+3. **Evaluation**: AUC-ROC as the primary metric (binary classification: made vs. missed). Brier score for calibration quality.
+4. **Calibration**: isotonic regression applied to XGBoost outputs to produce reliable probabilities for EV estimation.
+5. **SHAP analysis**: identified which features drove XGBoost predictions most to validate the model's reasoning.
 
 ## Results
 
-### Expected Value Heatmap
-
-<ChartWrapper
-  option={{
-    title: {
-      text: 'NBA Shot Expected Value by Location (2019-2024)',
-      left: 'center',
-      top: 0,
-      textStyle: { fontSize: 14, fontWeight: 'bold' },
-    },
-    xAxis: {
-      type: 'value',
-      name: 'Court X (ft)',
-      min: -30,
-      max: 30,
-      axisLabel: { fontSize: 11 },
-      splitLine: { show: false },
-    },
-    yAxis: {
-      type: 'value',
-      name: 'Court Y (ft)',
-      min: -10,
-      max: 50,
-      axisLabel: { fontSize: 11 },
-      splitLine: { show: false },
-    },
-    visualMap: {
-      min: 0.6,
-      max: 1.4,
-      dimension: 2,
-      inRange: {
-        color: ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'],
-      },
-      textStyle: { fontSize: 10 },
-      right: '5%',
-    },
-    tooltip: {
-      trigger: 'item',
-      formatter: function(params) {
-        if (params.componentSubType === 'scatter') {
-          return 'Location: (' + params.value[0].toFixed(1) + ', ' + params.value[1].toFixed(1) + ')<br/>EV: ' + params.value[2].toFixed(2) + ' points';
-        }
-        return '';
-      },
-    },
-    series: [
-      {
-        type: 'scatter',
-        symbolSize: 8,
-        data: [
-          // Restricted area (high EV)
-          [0, 10, 1.3], [2, 12, 1.28], [-2, 12, 1.28], [4, 14, 1.25], [-4, 14, 1.25],
-          // Mid-range (medium EV)
-          [10, 20, 1.05], [-10, 20, 1.05], [15, 15, 1.0], [-15, 15, 1.0],
-          // Three-point line (depends on angle)
-          [23.75, 0, 1.0], [-23.75, 0, 1.0], // corners (shortest 3-point distance)
-          [23.75, 14, 0.95], [-23.75, 14, 0.95], // wings
-          [0, 23.75, 0.92], // top of arc
-          // Deep three (lower EV)
-          [25, 5, 0.88], [-25, 5, 0.88], [27, 0, 0.80], [-27, 0, 0.80],
-          // Beyond arc (very low EV)
-          [30, 0, 0.75], [-30, 0, 0.75],
-        ],
-        itemStyle: { borderColor: '#fff', borderWidth: 0.5, opacity: 0.85 },
-        emphasis: { itemStyle: { borderWidth: 2 } },
-      },
-      // Court outline as visual reference
-      {
-        type: 'lines',
-        data: [
-          // Three-point arc outline (simplified)
-          { coords: [[23.75, 0], [23.75, 14]] }, // right corner to wing
-          { coords: [[-23.75, 0], [-23.75, 14]] }, // left corner to wing
-          { coords: [[23.75, 14], [0, 23.75]] }, // right wing to top
-          { coords: [[-23.75, 14], [0, 23.75]] }, // left wing to top
-        ],
-        lineStyle: { color: '#999', width: 1, opacity: 0.5, type: 'dashed' },
-        z: 0,
-      },
-    ],
-    grid: {
-      left: 70,
-      right: 120,
-      top: 50,
-      bottom: 60,
-    },
-  }}
-/>
-
-**Interpretation:** The heatmap shows expected value in points. Green zones (1.2+ EV) are high-efficiency areas (restricted area, corner threes). Yellow zones (0.95–1.1 EV) are mid-range and decent threes. Red zones (0.6–0.85 EV) are deep or contested shots with low expected value. The dashed lines indicate the three-point arc for reference.
+{/* Chart: EV-by-distance curves — real data export pending C2.2 */}
 
 ### Model Performance
 
-- **R² on holdout 2024 data**: 0.68 (explains 68% of shot-outcome variance).
-- **MAE (mean absolute error)**: ±0.15 expected points per shot.
-- **Precision by location type**:
-  - Restricted area: 0.72 (high confidence).
-  - Three-point line: 0.65 (moderate confidence due to variation in shooter skill).
-  - Deep/contested: 0.58 (high variance, rarer shots).
+XGBoost with engineered features achieved the best AUC of **0.6365** and a Brier score of **0.2296**, indicating well-calibrated probabilities. All four models converged near AUC 0.63–0.64 regardless of feature engineering, establishing a hard predictability ceiling.
 
-### Patterns Discovered
+The ceiling is informative: with shot-context features but no shooter identity, the model cannot capture individual shooting talent. A 35% three-point shooter and a 40% three-point shooter look nearly identical in the feature space. That gap — shooter skill — is the named missing variable.
 
-1. **The corner is sacred.** Corner threes have the lowest distance to the basket (22 ft vs 23.75 ft for the wing), creating slightly higher EV. Teams that generate corner threes have more efficient offenses.
+### SHAP Feature Importance
 
-2. **Defender proximity is more impactful than distance.** An open 28-footer (6+ feet of space) often has higher EV than a contested 20-footer. This suggests modern defenses are working harder to close out on distance than on shot clock or ball movement.
+**`defender_distance_ratio`** ranked as the top feature by SHAP value, confirming that contest pressure normalized by shot type is the strongest predictor in the dataset. Raw defender distance and shot distance were meaningful but weaker individually; their ratio captures the interaction more efficiently.
 
-3. **Mid-range is genuinely inefficient.** Shots from 15–20 feet cluster around 1.0 EV, similar to a three-pointer. Yet threes are more valuable per possession because of spacing. Modern offenses rightly avoid the mid-range.
+### Expected Value by Shot Context
 
-4. **Player skill adds 2–4% to EV.** Superstars shoot 1.2 EV on average; role players 1.15 EV on identical locations. This is real but modest—location dominates.
+Translating calibrated make probabilities into expected points (probability × point value) revealed:
+
+1. **Open shots near the basket (0–4 ft) have the highest EV, around 1.85 expected points.** Restricted-area attempts dominate — low contest pressure and short distance reinforce each other.
+
+2. **Mid-range shots form a trough.** Expected value for mid-range attempts (roughly 5–21 ft) dips below the corner three for equivalent contest conditions. The mid-range is genuinely inefficient relative to its alternatives.
+
+3. **Corner threes (22–24 ft) show a bump in EV.** The corner three's geometry advantage — shorter distance to the basket than the wing arc — shows up clearly. Open corner threes sit in the same EV tier as restricted-area shots in terms of expected points per attempt.
 
 ## Key Takeaways
 
-1. **Spatial modeling makes domain intuition quantitative.** We "knew" the corner three was efficient, but the model shows exactly *how much more* efficient (3% better than wing threes), enabling data-driven spacing design.
+1. **The ceiling is a finding, not a failure.** Four models across two feature sets all converging near AUC 0.63–0.64 tells you something real: shot-context data has a structural limit. Shooter-level skill, absent from this public dataset, is the likely explanation.
 
-2. **Expected value guides play design, not player evaluation alone.** A high-volume corner-three shooter looks efficient partly because of volume (survivorship bias) and partly because the location is genuinely good. Separating the two is crucial.
+2. **`defender_distance_ratio` dominates.** Contest pressure, normalized by shot type, is the single strongest predictor. The ratio encoding captures something raw distance alone misses: being tightly contested on a dunk is very different from being tightly contested on a step-back three.
 
-3. **This is a foundation for player-specific models.** The court-value model is location-agnostic. Overlaying individual shooter curves (e.g., "LeBron shoots 1.8 EV on restricted-area shots vs 1.3 EV league-average") creates more precise evaluation.
+3. **Calibration is what enables EV estimation.** A model with good AUC but poor calibration produces unreliable probability estimates. The Brier score of 0.2296 and isotonic recalibration step were essential for translating predictions into the expected-value conclusions above.
 
-4. **Visualization drives adoption.** Non-technical coaches and GMs understand the heatmap immediately. Same data in a CSV table gets ignored; the same data as a court heatmap becomes a coaching tool.
+4. **Feature engineering improved reliability, not raw ceiling.** The performance gap between models narrowed after feature engineering, but the top AUC barely moved. Engineered features helped the model generalize more consistently across shot types rather than discover new predictive signal.
 
 ---
 
-**Data and code:** The model is trained on public NBA Stats API data. Spatial heatmaps are re-computed annually as new seasons conclude.
+**Code:** [github.com/nseluga/Shot-Value-Machine-Learning](https://github.com/nseluga/Shot-Value-Machine-Learning) — with Michael O'Brien.
