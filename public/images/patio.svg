@@ -1,10 +1,82 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f5f5f5;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ebebeb;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="675" fill="url(#grad)"/>
-  <rect x="50" y="50" width="1100" height="575" rx="8" fill="none" stroke="#d0d0d0" stroke-width="2"/>
+  <rect width="1200" height="675" fill="#f9fafb"/>
+
+  <!-- App header bar -->
+  <rect x="0" y="0" width="1200" height="80" fill="#1f2937"/>
+  <text x="80" y="52" font-family="system-ui,-apple-system,sans-serif" font-size="34" font-weight="700" fill="#ffffff">patio</text>
+  <text x="1120" y="52" font-family="system-ui,-apple-system,sans-serif" font-size="26" fill="#9ca3af" text-anchor="end">250 caps</text>
+  <text x="1080" y="52" font-family="system-ui,-apple-system,sans-serif" font-size="20" fill="#6b7280" text-anchor="end">balance</text>
+
+  <!-- Page heading -->
+  <text x="100" y="135" font-family="system-ui,-apple-system,sans-serif" font-size="22" fill="#6b7280">ACTIVE BETS · CAPS GAME</text>
+
+  <!-- Bet card 1 -->
+  <rect x="80" y="155" width="500" height="230" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+  <!-- Game type badge -->
+  <rect x="104" y="176" width="100" height="30" rx="4" fill="#f3f4f6"/>
+  <text x="154" y="197" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#374151" text-anchor="middle">CAPS</text>
+  <!-- Match -->
+  <text x="104" y="240" font-family="system-ui,-apple-system,sans-serif" font-size="26" font-weight="600" fill="#1f2937">Nate  vs.  Jordan</text>
+  <!-- Line -->
+  <text x="104" y="278" font-family="system-ui,-apple-system,sans-serif" font-size="20" fill="#6b7280">Line</text>
+  <text x="280" y="278" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="600" fill="#1f2937">Nate −115  ·  Jordan +115</text>
+  <!-- Wager -->
+  <text x="104" y="318" font-family="system-ui,-apple-system,sans-serif" font-size="20" fill="#6b7280">Your wager</text>
+  <text x="280" y="318" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="600" fill="#1f2937">50 caps</text>
+  <!-- Status -->
+  <rect x="104" y="338" width="110" height="28" rx="4" fill="#f0fdf4"/>
+  <text x="159" y="358" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#16a34a" text-anchor="middle">PENDING</text>
+
+  <!-- Bet card 2 -->
+  <rect x="620" y="155" width="500" height="230" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+  <rect x="644" y="176" width="120" height="30" rx="4" fill="#f3f4f6"/>
+  <text x="704" y="197" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#374151" text-anchor="middle">BEER PONG</text>
+  <text x="644" y="240" font-family="system-ui,-apple-system,sans-serif" font-size="26" font-weight="600" fill="#1f2937">Mike  vs.  Alex</text>
+  <text x="644" y="278" font-family="system-ui,-apple-system,sans-serif" font-size="20" fill="#6b7280">Line</text>
+  <text x="820" y="278" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="600" fill="#1f2937">Mike −105  ·  Alex −105</text>
+  <text x="644" y="318" font-family="system-ui,-apple-system,sans-serif" font-size="20" fill="#6b7280">Your wager</text>
+  <text x="820" y="318" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="600" fill="#1f2937">100 caps</text>
+  <rect x="644" y="338" width="110" height="28" rx="4" fill="#f0fdf4"/>
+  <text x="699" y="358" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#16a34a" text-anchor="middle">PENDING</text>
+
+  <!-- Odds engine section -->
+  <text x="100" y="435" font-family="system-ui,-apple-system,sans-serif" font-size="22" fill="#6b7280">HOUSE ODDS ENGINE</text>
+  <rect x="80" y="452" width="1040" height="160" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+
+  <!-- Engine flow diagram -->
+  <!-- Step boxes -->
+  <!-- Player stats -->
+  <rect x="110" y="476" width="175" height="60" rx="4" fill="#f3f4f6"/>
+  <text x="197" y="511" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#374151" text-anchor="middle">Player stats</text>
+  <!-- Arrow -->
+  <line x1="285" y1="506" x2="325" y2="506" stroke="#9ca3af" stroke-width="2"/>
+  <polygon points="325,500 337,506 325,512" fill="#9ca3af"/>
+  <!-- Recency weighting -->
+  <rect x="337" y="476" width="190" height="60" rx="4" fill="#f3f4f6"/>
+  <text x="432" y="504" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#374151" text-anchor="middle">Recency-weighted</text>
+  <text x="432" y="524" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#374151" text-anchor="middle">player means</text>
+  <!-- Arrow -->
+  <line x1="527" y1="506" x2="567" y2="506" stroke="#9ca3af" stroke-width="2"/>
+  <polygon points="567,500 579,506 567,512" fill="#9ca3af"/>
+  <!-- Line generation -->
+  <rect x="579" y="476" width="175" height="60" rx="4" fill="#f3f4f6"/>
+  <text x="666" y="504" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#374151" text-anchor="middle">4% house edge</text>
+  <text x="666" y="524" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#374151" text-anchor="middle">x.5 lines</text>
+  <!-- Arrow -->
+  <line x1="754" y1="506" x2="794" y2="506" stroke="#9ca3af" stroke-width="2"/>
+  <polygon points="794,500 806,506 794,512" fill="#9ca3af"/>
+  <!-- Bet settlement -->
+  <rect x="806" y="476" width="175" height="60" rx="4" fill="#f3f4f6"/>
+  <text x="893" y="504" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#374151" text-anchor="middle">Dual-confirm</text>
+  <text x="893" y="524" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#374151" text-anchor="middle">settlement</text>
+  <!-- Arrow back (self-improving loop) -->
+  <line x1="981" y1="506" x2="1021" y2="506" stroke="#9ca3af" stroke-width="2"/>
+  <polygon points="1021,500 1033,506 1021,512" fill="#9ca3af"/>
+  <text x="1055" y="510" font-family="system-ui,-apple-system,sans-serif" font-size="17" fill="#6b7280" text-anchor="start">→ stats</text>
+
+  <!-- Loop label -->
+  <text x="600" y="565" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#9ca3af" text-anchor="middle">self-improving feedback loop · ~760 LOC scipy · Flask + React 19 + Supabase</text>
+
+  <!-- Footer note -->
+  <text x="600" y="638" font-family="system-ui,-apple-system,sans-serif" font-size="20" fill="#9ca3af" text-anchor="middle">Pre-launch MVP · Social backyard-games betting · Virtual caps currency · iOS pivot in progress</text>
 </svg>

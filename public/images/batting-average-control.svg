@@ -1,10 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f5f5f5;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ebebeb;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="675" fill="url(#grad)"/>
-  <rect x="50" y="50" width="1100" height="575" rx="8" fill="none" stroke="#d0d0d0" stroke-width="2"/>
+  <rect width="1200" height="675" fill="#f9fafb"/>
+
+  <!-- Title -->
+  <text x="600" y="62" font-family="system-ui,-apple-system,sans-serif" font-size="38" font-weight="600" fill="#1f2937" text-anchor="middle">BAA Leaderboard — Face Validity Check</text>
+  <text x="600" y="100" font-family="system-ui,-apple-system,sans-serif" font-size="24" fill="#6b7280" text-anchor="middle">Batting Average Ability · 4,374 player-seasons · Test R² 0.457</text>
+
+  <!-- Table container -->
+  <rect x="140" y="140" width="920" height="400" rx="6" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+
+  <!-- Header row -->
+  <rect x="140" y="140" width="920" height="72" rx="6" fill="#f3f4f6"/>
+  <rect x="140" y="175" width="920" height="37" fill="#f3f4f6"/>
+
+  <!-- Header text -->
+  <text x="200" y="184" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="600" fill="#374151">Player</text>
+  <text x="560" y="184" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="600" fill="#374151" text-anchor="middle">Season</text>
+  <text x="790" y="184" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="600" fill="#374151" text-anchor="middle">BAA</text>
+  <text x="980" y="184" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="600" fill="#374151" text-anchor="middle">BA</text>
+
+  <!-- Divider under header -->
+  <line x1="140" y1="212" x2="1060" y2="212" stroke="#e5e7eb" stroke-width="1.5"/>
+
+  <!-- Row 1: Arraez 2023 -->
+  <rect x="140" y="212" width="920" height="88" fill="#ffffff"/>
+  <text x="200" y="265" font-family="system-ui,-apple-system,sans-serif" font-size="28" font-weight="600" fill="#1f2937">Luis Arraez</text>
+  <text x="560" y="265" font-family="system-ui,-apple-system,sans-serif" font-size="28" fill="#374151" text-anchor="middle">2023</text>
+  <!-- BAA pill: high -->
+  <rect x="730" y="244" width="120" height="38" rx="19" fill="#1f2937"/>
+  <text x="790" y="269" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">133.2</text>
+  <text x="980" y="265" font-family="system-ui,-apple-system,sans-serif" font-size="28" fill="#374151" text-anchor="middle">.354</text>
+  <line x1="140" y1="300" x2="1060" y2="300" stroke="#f3f4f6" stroke-width="1"/>
+
+  <!-- Row 2: League mean -->
+  <rect x="140" y="300" width="920" height="88" fill="#f9fafb"/>
+  <text x="200" y="353" font-family="system-ui,-apple-system,sans-serif" font-size="28" fill="#6b7280">League mean†</text>
+  <text x="560" y="353" font-family="system-ui,-apple-system,sans-serif" font-size="28" fill="#6b7280" text-anchor="middle">—</text>
+  <!-- BAA neutral pill -->
+  <rect x="730" y="332" width="120" height="38" rx="19" fill="#9ca3af"/>
+  <text x="790" y="357" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">100.0</text>
+  <text x="980" y="353" font-family="system-ui,-apple-system,sans-serif" font-size="28" fill="#6b7280" text-anchor="middle">.249</text>
+  <line x1="140" y1="388" x2="1060" y2="388" stroke="#f3f4f6" stroke-width="1"/>
+
+  <!-- Row 3: Gallo 2023 -->
+  <rect x="140" y="388" width="920" height="88" fill="#ffffff"/>
+  <rect x="140" y="420" width="920" height="56" rx="0" fill="#ffffff"/>
+  <text x="200" y="441" font-family="system-ui,-apple-system,sans-serif" font-size="28" font-weight="600" fill="#1f2937">Joey Gallo</text>
+  <text x="560" y="441" font-family="system-ui,-apple-system,sans-serif" font-size="28" fill="#374151" text-anchor="middle">2023</text>
+  <!-- BAA pill: low -->
+  <rect x="730" y="420" width="120" height="38" rx="19" fill="#6b7280"/>
+  <text x="790" y="445" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">61.2</text>
+  <text x="980" y="441" font-family="system-ui,-apple-system,sans-serif" font-size="28" fill="#374151" text-anchor="middle">.159</text>
+
+  <!-- Bottom border of table -->
+  <rect x="140" y="476" width="920" height="64" rx="0" fill="#ffffff"/>
+  <rect x="140" y="504" width="920" height="36" rx="0" fill="#ffffff"/>
+
+  <!-- Footnote -->
+  <text x="200" y="580" font-family="system-ui,-apple-system,sans-serif" font-size="21" fill="#9ca3af">† League mean BA is approximate (~.249 average, 2015–2024). BAA indexed 100 ± 10 per season.</text>
+  <text x="200" y="620" font-family="system-ui,-apple-system,sans-serif" font-size="21" fill="#9ca3af">Skill component isolated via mixed-effects model (ICC 24.7%). Luck excluded.</text>
 </svg>
