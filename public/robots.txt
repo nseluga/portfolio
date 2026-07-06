@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nateseluga.com/sitemap-index.xml
+Sitemap: https://nateseluga.com/sitemap.xml

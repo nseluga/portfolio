@@ -22,9 +22,22 @@ const formattedDate = new Date(date).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
 });
+
+const projectJsonLd: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: title,
+  description: summary,
+  datePublished: date.toISOString().slice(0, 10),
+  author: { '@type': 'Person', name: 'Nate Seluga' },
+  ...(repoUrl ? { codeRepository: repoUrl } : {}),
+  ...(collaborators && collaborators.length > 0
+    ? { contributor: collaborators.map((name: string) => ({ '@type': 'Person', name })) }
+    : {}),
+};
 ---
 
-<BaseLayout title={title} description={summary} currentPath={Astro.url.pathname}>
+<BaseLayout title={title} description={summary} currentPath={Astro.url.pathname} jsonLd={projectJsonLd}>
   <article class="prose prose-sm max-w-3xl mx-auto">
     <!-- Project header -->
     <header class="mb-12">

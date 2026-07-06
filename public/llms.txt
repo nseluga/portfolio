@@ -1,0 +1,48 @@
+# Nate Seluga — Portfolio
+
+## About
+
+Nate Seluga is a Computer Science junior at Harvey Mudd College (Class of 2027). He builds full-stack applications and statistical models, with a focus on sports analytics (MLB, NBA), machine learning, and software engineering. He is looking for internships in software engineering, ML/AI engineering, data science, and baseball analytics.
+
+Contact: nseluga@g.hmc.edu
+GitHub: https://github.com/nseluga
+Portfolio: https://nateseluga.com
+
+---
+
+## Projects
+
+### Pitcher Injury Risk+
+URL: https://nateseluga.com/sports-analytics/pitcher-injury-risk/
+Repo: https://github.com/nseluga/Pitcher-Injury-Risk
+
+A multi-model MLB pitcher health research platform built over Statcast 2015–2024 data (3,249 pitchers, 205,911 pitcher-game rows, 76 engineered features). Models include baseline classifiers, survival analysis (ensemble C-index 0.566), and an ERA+-style Injury Risk+ composite (mean 100 per season, year-over-year stability r = 0.583). Walk-forward cross-validation AUC is 0.571; the honest framing of this ceiling — discrimination is genuinely hard in injury prediction — is a feature, not a weakness. Key finding: pitchers with chronic velocity decline ≥2 mph show double the 30-day injury rate (6% → 12%, Injury Risk+ 96.9 → 119.5). Isotonic calibration improves ECE from 0.059 to 0.029.
+
+### Patio
+URL: https://nateseluga.com/engineering/patio/
+Repo: https://github.com/nseluga/patio
+
+A solo-built full-stack social betting app where friends wager virtual "caps" on backyard games (Caps, Beer Pong, Beerball). The centerpiece is a scipy-powered house-odds engine (~760 LOC): recency-weighted player means, harmonic-mean team strength, normal-percentile line biasing for a ~4% house edge, and push-proof x.5 lines that self-improve as bets settle. Includes a dual-confirmation settlement state machine and JWT authentication. Built with React 19, Flask, psycopg2, and Supabase Postgres (~6,150 LOC, 20 API routes, 6 pages). Pre-launch MVP currently pivoting to React Native/iOS.
+
+### Batting Average Ability (BAA)
+URL: https://nateseluga.com/sports-analytics/batting-average-control/
+Repo: https://github.com/nseluga/Batting-Average-Ability
+
+A same-season skill-isolation metric that separates repeatable batting ability from luck. Uses a mixed-effects model with player random intercepts (ICC: 24.7% of batting average variance is between-player), CLR-transformed batted-ball composition, and PA-weighted fitting over 4,374 player-seasons (1,173 players). Test R² is 0.457, MAE 0.022. Random forest and ensemble methods were tried and rejected on evidence (BABIP Test R² 0.293 vs. linear 0.372). BAA is indexed 100 ± 10 per season. Face validity: Arraez 2023 = BAA 133.2 (.354 BA), Gallo 2023 = BAA 61.2 (.159 BA).
+
+### NBA Shot-Value Model
+URL: https://nateseluga.com/sports-analytics/nba-shot-value/
+Repo: https://github.com/nseluga/Shot-Value-Machine-Learning
+Co-author: Michael O'Brien
+
+A 4-model ML comparison (logistic regression, decision tree, random forest, XGBoost) on 122,203 cleaned NBA shots from the 2014–15 season. XGBoost achieves AUC 0.6365 and Brier score 0.2296. The study identifies a hard predictability ceiling at ~0.63–0.64 AUC, with shooter skill as the named missing variable. Defender distance ratio is the top SHAP feature. Calibrated probabilities produce trustworthy expected-value estimates by zone: restricted area ≈ 1.85 EV, mid-range trough ≈ 1.00, corner-3 bump ≈ 1.15.
+
+---
+
+## Skills
+
+Languages: Python, JavaScript/TypeScript, SQL, R
+Frameworks: React, Flask, Astro, Tailwind CSS
+Data/ML: scikit-learn, XGBoost, statsmodels, scipy, SHAP, pandas, numpy
+Databases: PostgreSQL (Supabase), SQLite
+Domains: Sports analytics (MLB, NBA), statistical modeling, full-stack web, ML pipelines
