@@ -2,72 +2,51 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="About | Nate Seluga" description="About Nate Seluga" currentPath="/about">
+<BaseLayout title="About" description="Nate Seluga — CS junior at Harvey Mudd College, building full-stack apps and sports analytics models." currentPath="/about">
   <article class="prose prose-sm max-w-3xl">
     <h1>About</h1>
 
     <p class="text-lg text-muted">
-      I'm a software engineer and data scientist interested in building systems that work and analyzing problems that matter. Below is how I got here.
+      CS junior at Harvey Mudd College ('27). I build full-stack products and statistical models — and care about the gap between what a model claims and what the data actually shows.
     </p>
 
-    <h2>Harvey Mudd College</h2>
+    <h2>Background</h2>
 
     <p>
-      I studied Computer Science at Harvey Mudd College, a school that taught me to think rigorously, to question assumptions, and to measure things carefully. Mudd's emphasis on first-principles reasoning and experimental validation shapes how I approach problems today — whether that's debugging a system or building a statistical model.
+      I study Computer Science at Harvey Mudd College, where the curriculum emphasizes first-principles reasoning and experimental validation — habits that carry directly into how I build and evaluate models. Mudd's required core also means I've worked seriously across physics, biology, and engineering, which sharpens how I think about domain context.
     </p>
 
-    <p>
-      Beyond coursework, I worked on systems projects, data pipelines, and analytical models. I learned that the best technical work is paired with clear communication about constraints, trade-offs, and what the evidence actually shows.
-    </p>
-
-    <h2>Software Engineering</h2>
+    <h2>Projects</h2>
 
     <p>
-      I've built full-stack systems: backend services, frontend applications, databases, APIs, and automation pipelines. I care about shipping real products, designing systems that scale, and writing code that others can understand and maintain.
+      <strong>Pitcher Injury Risk+</strong> — A multi-model MLB pitcher health platform built over Statcast 2015–2024 (3,249 pitchers, 205,911 pitcher-game rows, 76 features). Spans baseline classifiers, survival models, and an ERA+-style <em>Injury Risk+</em> composite (mean 100 per season, YoY r = 0.583). Walk-forward CV AUC 0.571. Findings: injury history and 90-day cumulative workload dominate; chronic velocity decline ≥2 mph doubles observed injury rate (6% → 12%).
     </p>
 
     <p>
-      Early projects included web applications and infrastructure work. Over time, I've developed strong convictions about simplicity, testing, and the importance of knowing your data. A well-designed system is often boring to look at — that's a good sign.
-    </p>
-
-    <h2>Data Science & Analytics</h2>
-
-    <p>
-      I discovered I enjoyed the investigative side of engineering: asking "what does the data actually show?" and building models that clarify rather than obscure. This led me deeper into data science and statistics.
+      <strong>Patio</strong> — Solo-built social betting app for backyard games (Caps, Beer Pong, Beerball) where friends wager virtual <em>caps</em>. Centerpiece is a scipy house-odds engine (~760 LOC): recency-weighted player means, harmonic-mean team strength, ~4% house edge, push-proof x.5 lines. React 19 + Flask + Supabase Postgres. ~6,150 LOC, 20 routes, 6 pages. Pre-launch MVP; currently pivoting to React Native/iOS.
     </p>
 
     <p>
-      I learned to be skeptical of claims without evidence, to validate models carefully, and to communicate results clearly to audiences who don't know the statistical details. A model is only useful if someone acts on it.
-    </p>
-
-    <h2>Sports Analytics</h2>
-
-    <p>
-      My love of baseball and basketball intersected with my data skills. Sports are a perfect domain for rigorous analytics: the problems are clear, the data is abundant, and the outcomes are measurable. Pitcher injury prediction, shot value models, player evaluation — these are real puzzles with business impact.
+      <strong>Batting Average Ability (BAA)</strong> — A same-season skill-isolation metric for MLB hitters. Mixed-effects model with player random intercepts (ICC: 24.7% of batting average variance is between-player); CLR transform for batted-ball composition; PA-weighted fitting. Test R² 0.457 / MAE 0.022. Random forest tried and rejected on evidence (BABIP Test R² 0.293 vs. linear 0.372). Face validity: Arraez 2023 = BAA 133.2, Gallo 2023 = BAA 61.2.
     </p>
 
     <p>
-      Working in sports analytics taught me to think like a domain expert, not just a statistician. It's not enough to build an accurate model; it has to make sense to scouts, coaches, and front-office staff who will actually use it.
+      <strong>NBA Shot-Value Model</strong> (with Michael O'Brien) — 4-model ML comparison (LR / DT / RF / XGBoost) on 122,203 cleaned shots from the 2014–15 season. XGBoost AUC 0.6365, Brier 0.2296. Key finding: hard predictability ceiling at ~0.63–0.64 AUC; defender distance ratio is the top SHAP feature; calibrated probabilities produce trustworthy expected-value estimates by zone.
     </p>
 
-    <h2>Startups & Building</h2>
+    <h2>What I'm looking for</h2>
 
     <p>
-      As I've gained experience, I've become interested in building products and companies. Not just executing on someone else's vision, but identifying real problems and designing end-to-end solutions.
+      Roles in software engineering (backend, full-stack), ML/AI engineering (model development, inference, pipelines), data science (statistical modeling, analysis), or baseball analytics. Available for summer 2026 internships and full-time roles starting spring/summer 2027.
     </p>
+
+    <h2>Contact</h2>
 
     <p>
-      Whether that's a tool I build for myself, a product idea worth exploring, or a startup concept, I'm drawn to the challenge of taking an idea from conception to something people actually use. This requires wearing multiple hats — builder, designer, analyst, communicator.
+      <a href="mailto:nseluga@g.hmc.edu">nseluga@g.hmc.edu</a> ·
+      <a href="https://github.com/nseluga" target="_blank" rel="noopener noreferrer">github.com/nseluga ↗</a>
     </p>
-
-    <h2>What Drives Me</h2>
-
-    <p>
-      I care about evidence over claims. I want to build systems that work. I think deeply about problems before diving into solutions. And I believe the best technical work is paired with clear thinking about why it matters.
-    </p>
-
-    <p>
-      I'm most interested in working with people and teams who value rigor, clarity, and shipping real things. If that sounds like something worth exploring, let's talk.
-    </p>
+    <!-- LinkedIn: add when available -->
+    <!-- Resume PDF: add to /public/resume.pdf and link here when updated -->
   </article>
 </BaseLayout>
