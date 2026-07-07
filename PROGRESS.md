@@ -8,13 +8,11 @@
 ---
 
 ## Current position
-- **Status:** 🔄 **CONTENT OVERHAUL PHASE (PLAN v2)** — build phase (M0–M4) done; per-project
-  content audits complete (C0 ✅); writeup rewrites (C1) are next.
-- **Next:** C1 — rewrite the four project writeups from `audits/audit-*.md` (accuracy first),
-  starting with Pitcher Injury Risk+.
-- **Blockers:** None for C1–C2. C3.3 needs a resume PDF from Nate; C1.5 needs a decision on
-  the missing second-brain repo; Patio live-URL status unverified (see PLAN.md "Needs-Nate").
-- **Last updated:** 2026-07-03 (audits committed, PLAN.md rewritten as v2 — see log)
+- **Status:** ✅ **CONTENT OVERHAUL COMPLETE (C1–C5)** — all autonomous-run milestones done.
+  Branch `content/pitcher-injury-rewrite` merged into `overnight-content-overhaul`.
+- **Next:** Human Hookup — merge to `main`, Cloudflare Pages deploy, domain connect.
+- **Blockers (Needs-Nate):** Resume PDF for C3.3; Patio live URL; LinkedIn URL.
+- **Last updated:** 2026-07-06 (full C1–C5 content overhaul complete — see log)
 
 ---
 
@@ -33,11 +31,11 @@
 | Milestone | Status | Notes |
 |-----------|--------|-------|
 | C0 — Audit groundwork | ✅ Done | 4 repos cloned + audited (`audits/`); career-advisor skill created; second-brain repo found missing. |
-| C1 — Rewrite project writeups | ⬜ Not started | Per-project accuracy rewrites from audit notes; add `repoUrl` links. |
-| C2 — Real visualizations & assets | ⬜ Not started | Replace fabricated chart JSON/thumbnails with repo-exported data. |
-| C3 — Site-wide copy & recruiter impact | ⬜ Not started | Identity statement, curation, contact/resume, About rewrite. |
-| C4 — AI-native layer | ⬜ Not started | JSON-LD, llms.txt, projects.json, crawler posture. |
-| C5 — Verification & wrap-up | ⬜ Not started | Accuracy re-audit gate + build/QA. |
+| C1 — Rewrite project writeups | ✅ Done | All 4 rewritten with real data; repoUrl/collaborators schema wired; Second Brain hidden; dates fixed. |
+| C2 — Real visualizations & assets | ✅ Done | Real ECharts charts (pitcher 2-bar, NBA EV line, BAA table); 4 chart-sketch thumbnails; patio deferred (no live instance). |
+| C3 — Site-wide copy & recruiter impact | ✅ Done | HMC '27 identity statement; curation ordered; email+GitHub on home; about rewritten; section intros tightened. |
+| C4 — AI-native layer | ✅ Done | JSON-LD Person+SoftwareSourceCode; llms.txt; projects.json endpoint; sitemap fixed; robots.txt corrected. |
+| C5 — Verification & wrap-up | ✅ Done | All numbers re-audited; build clean (10 pages); zero-JS on non-chart pages; client:visible hydration confirmed. |
 | Human Hookup (do together) | ⬜ Not started | Merge to `main` · Cloudflare connect · `nateseluga.com`. Needs user accounts. |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
@@ -54,6 +52,28 @@ Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 ---
 
 ## Log (newest first)
+
+- **2026-07-06** — ✅ **AUTONOMOUS CONTENT OVERHAUL COMPLETE (C1–C5)** on branch
+  `content/pitcher-injury-rewrite`. Summary of work:
+  - **C1:** All 4 project writeups rewritten from real repo data — killed fabricated metrics
+    (78% AUC, 2.1M shots, predictive R² 0.52, sports betting platform) and replaced with
+    honest findings. `repoUrl`+`collaborators` added to Zod schema and ProjectLayout.
+    Second Brain set `draft: true`. Dates corrected. XSS refine guard + aria-label fixes.
+  - **C2:** Real ECharts bar chart (pitcher velocity decline 6% vs 12%, IR+ 96.9/119.5) and
+    EV-by-distance line chart (NBA, corner-3 bump visible). BAA leaderboard table.
+    4 chart-sketch SVG thumbnails replacing blank gradient boxes.
+  - **C3:** Identity statement → "CS junior at Harvey Mudd ('27)..." with concrete hooks.
+    Home page curation ordered (Injury Risk+ → Patio → BAA). Email + GitHub contact added
+    to home. About page rewritten with real projects, class year, job targets. Section intros
+    tightened to name real models.
+  - **C4:** Person JSON-LD on every page (from BaseLayout); SoftwareSourceCode JSON-LD per
+    project (from ProjectLayout). `public/llms.txt` written with accurate 2–3 sentence
+    project summaries. `projects.json` Astro endpoint at build time. Sitemap regenerated with
+    all 8 live pages; robots.txt URL corrected.
+  - **C5:** Numbers spot-checked against audit notes — all clean. Build: 10 pages, no errors.
+    Zero executable JS on non-chart pages (JSON-LD `<script>` tags are data, not code).
+    `client:visible` hydration confirmed on chart pages. About page title duplication fixed.
+  - **Deferred (Needs-Nate):** Patio screenshots (no live instance), LinkedIn URL, resume PDF.
 
 - **2026-07-03** — 📋 **PLAN.md rewritten as v2 (content overhaul)** (03e199e). Build-phase
   milestones collapsed into a "done" summary; new milestones C1–C5 target content accuracy,

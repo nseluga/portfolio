@@ -8,13 +8,26 @@ interface Props {
   title?: string;
   description?: string;
   currentPath?: string;
+  jsonLd?: Record<string, unknown>;
 }
 
 const {
   title = SITE.title,
   description = SITE.description,
   currentPath = Astro.url.pathname,
+  jsonLd,
 } = Astro.props;
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Nate Seluga',
+  email: 'mailto:nseluga@g.hmc.edu',
+  alumniOf: { '@type': 'EducationalOrganization', name: 'Harvey Mudd College' },
+  knowsAbout: ['Software Engineering', 'Machine Learning', 'Sports Analytics', 'Baseball Analytics', 'Statistical Modeling'],
+  sameAs: ['https://github.com/nseluga'],
+  url: SITE.url,
+};
 
 const fullTitle = title === SITE.title ? title : `${title} | ${SITE.title}`;
 ---
@@ -40,6 +53,10 @@ const fullTitle = title === SITE.title ? title : `${title} | ${SITE.title}`;
     <meta name="twitter:description" content={description} />
 
     <!-- Fonts are loaded in global.css via @fontsource -->
+
+    <!-- JSON-LD structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
     <!-- Favicon and touch icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

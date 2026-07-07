@@ -15,21 +15,48 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { title, date, summary, metrics } = entry.data;
+const { title, date, summary, metrics, repoUrl, collaborators } = entry.data;
 
 // Format date as "MMMM YYYY"
 const formattedDate = new Date(date).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
 });
+
+const projectJsonLd: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: title,
+  description: summary,
+  datePublished: date.toISOString().slice(0, 10),
+  author: { '@type': 'Person', name: 'Nate Seluga' },
+  ...(repoUrl ? { codeRepository: repoUrl } : {}),
+  ...(collaborators && collaborators.length > 0
+    ? { contributor: collaborators.map((name: string) => ({ '@type': 'Person', name })) }
+    : {}),
+};
 ---
 
-<BaseLayout title={title} description={summary} currentPath={Astro.url.pathname}>
+<BaseLayout title={title} description={summary} currentPath={Astro.url.pathname} jsonLd={projectJsonLd}>
   <article class="prose prose-sm max-w-3xl mx-auto">
     <!-- Project header -->
     <header class="mb-12">
       <h1 class="text-4xl font-bold mb-2">{title}</h1>
-      <p class="text-gray-500 text-sm mb-4">{formattedDate}</p>
+      <div class="text-gray-500 text-sm mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span>{formattedDate}</span>
+        {collaborators && collaborators.length > 0 && (
+          <span>with {collaborators.join(', ')}</span>
+        )}
+        {repoUrl && (
+          <a
+            href={repoUrl}
+            class="underline hover:text-gray-700 transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View code (opens in new tab)"
+          >View code ↗</a>
+        )}
+      </div>
       <p class="text-base text-gray-600 leading-relaxed">{summary}</p>
 
       <!-- Optional metrics display -->

@@ -1,112 +1,108 @@
 ---
-title: "Patio — Sports Betting Platform"
+title: "Patio"
 section: "engineering"
-date: 2024-08-20
-summary: "Full-stack sports betting application demonstrating end-to-end engineering: React frontend, Node.js backend, PostgreSQL database, real-time odds integration, and user authentication."
+date: 2025-08-10
+summary: "Solo-built full-stack social betting app for backyard games (Caps, Pong, Beerball). Centerpiece: a scipy house-odds engine (~760 LOC) with recency-weighted player means, ~4% house edge, and a dual-confirmation settlement state machine. React 19 + Flask + Supabase — ~6,150 LOC, 20 API routes."
 thumbnail: "/images/patio.svg"
-liveUrl: "https://patio.nateseluga.com"
+repoUrl: "https://github.com/nseluga/patio"
 draft: false
-order: 1
+order: 9
 metrics:
+  - label: "Codebase"
+    value: "~6,150 LOC"
+  - label: "API Routes"
+    value: "20 routes / 6 pages"
+  - label: "Odds Engine"
+    value: "~760 LOC (scipy)"
   - label: "Tech Stack"
-    value: "React + Node.js + PostgreSQL"
-  - label: "Features"
-    value: "Live odds, Betting slip, Account management"
-  - label: "Users Tracked"
-    value: "100+ beta testers"
-  - label: "Development Time"
-    value: "4 months"
+    value: "React 19 + Flask + Supabase"
 ---
-
-import Figure from '../../components/Figure.astro';
 
 ## The Problem
 
-Sports betting requires a seamless, responsive platform that integrates live odds data, executes bets reliably, and manages user accounts and balances in real time. Most betting platforms either prioritize speed at the cost of user experience, or build for polish but sacrifice low-latency data updates.
+Among a friend group that plays backyard games — Caps, Pong, Beerball — everyone wants to bet on the outcome, but nobody has a fair way to set lines. Without historical performance data and a principled model, whoever runs the book can bias the lines however they like. The result is either chaotic "vibes" odds or nobody bothers.
 
-The challenge: **build a full-stack betting platform that handles real-time data ingestion, executes transactions reliably, provides a smooth user interface, and scales gracefully under concurrent load.**
+Bets are denominated in virtual *caps* — a frictionless in-app currency that keeps stakes social without real money.
+
+The challenge: **build a social betting app that computes fair, data-driven lines automatically from the group's own play history, maintains a house edge to keep the book solvent, and lets friends settle bets through an honest peer-confirmation flow.**
 
 ## Why It Matters
 
-Sports betting is a massive industry (US market alone $50B+ annually), and platform engineering directly affects user retention, conversion, and regulatory compliance. This project demonstrates:
+Patio is a solo-built project that required solving several real engineering problems at once:
 
-- **Systems thinking**: designing a database schema that handles concurrent bets, balance updates, and audit trails without race conditions.
-- **Full-stack shipping**: integrating a frontend that feels responsive with a backend that prioritizes reliability.
-- **Real-time data handling**: ingesting live odds feeds and propagating updates to connected clients without overwhelming the server.
-- **End-to-end product sense**: from API design through user-facing features.
+- **Domain-specific probabilistic modeling**: computing fair odds for small-sample, skill-asymmetric competitions requires a real statistical approach — not just "50/50 with vibes."
+- **Full-stack product shipping**: building a working web app alone (React 19 frontend, Flask API, Supabase Postgres) from schema design through auth, routing, and UI.
+- **Honest self-auditing**: the project's own `PLAN.md` catalogs open bugs, unfinished flows, and a documented pivot to React Native/iOS — the codebase reflects how a real solo MVP evolves, not a polished portfolio facade.
+
+This demonstrates the ability to take a product from concept to functional, opinionated, testable software — and to reason clearly about what it does and doesn't do yet.
 
 ## My Approach
 
 ### Architecture
 
-**Frontend (React):**
-- Single-page application with responsive design (mobile-first, all breakpoints).
-- Component-based structure: `BetSlip`, `OddsBoard`, `AccountDashboard`, `BetHistory`.
-- State management via React Context (kept simple to avoid over-engineering).
-- Real-time odds updates via WebSocket connection to backend.
+**Frontend (React 19):**
+- 6 pages covering game selection, bet placement, leaderboard, and account management.
+- JWT-based session management; tokens stored in localStorage, sent in Authorization headers.
+- React Context for auth state; no additional state library (scope doesn't warrant it).
 
-**Backend (Node.js + Express):**
-- RESTful API for account management, bet placement, and history retrieval.
-- WebSocket server for live odds streaming.
-- Input validation and rate-limiting to prevent abuse.
-- Logging and error tracking for debugging production issues.
+**Backend (Python Flask + psycopg2):**
+- 20 REST routes handling users, games, bets, and settlement.
+- Direct psycopg2 connection pool to Supabase Postgres; parameterized queries throughout.
+- JWT issued at login; verified on every protected route via a decorator.
+- No live external data feeds — all odds are computed from internal stats.
 
-**Database (PostgreSQL):**
-- Schema designed for transaction safety: users, bets, odds snapshots, balance ledgers.
-- Foreign key constraints to maintain referential integrity.
-- Indexes on frequently-queried columns (user_id, bet_id, created_at) for performance.
-- Audit table to track balance changes (compliance + debugging).
+**Database (Supabase Postgres):**
+- Tables: `users`, `players`, `games`, `game_players`, `bets`, `bet_confirmations`, `player_stats`.
+- `player_stats` is updated as bets settle, feeding the next round of odds computation.
+- Supabase used for managed Postgres and row-level security; psycopg2 used directly (no ORM) for full control over query shape.
 
-**Odds Integration:**
-- Polling external odds API every few seconds (e.g., ESPN or a live odds provider).
-- Caching stale odds to reduce database writes.
-- Publishing deltas to connected WebSocket clients (only changed odds propagate).
+### The Odds Engine (~760 LOC, scipy-powered)
 
-### Key Design Decisions
+The core of the project is a house-odds engine that computes lines from accumulated player history. The algorithm:
 
-- **Why WebSocket for odds, not polling?** Polling from the browser multiple times per second creates unnecessary network churn. Server-side polling + WebSocket push is more efficient and keeps the UI responsive.
-- **Why PostgreSQL?** ACID properties are non-negotiable for financial transactions. MySQL works too, but Postgres offers JSON and advanced indexing useful for ledger queries.
-- **Why Context instead of Redux?** The app is small enough that Context suffices. Redux would add complexity without benefit at this scale.
-- **Why rate-limiting?** Prevents accidental DOS and limits bot activity. Uses a simple token-bucket approach (allows multiple bets per time window per user).
+1. **Recency-weighted player means** — each player's win rate is computed as an exponentially weighted mean over their last N appearances, so recent form matters more than stale results.
 
-### Implementation Highlights
+2. **Harmonic-mean team strength** — for team-vs-team matchups, each side's aggregate strength is computed via harmonic mean of individual player ratings, which penalizes weak-link effects more aggressively than arithmetic mean.
 
-- Used prepared statements for all SQL queries to prevent injection.
-- Implemented optimistic locking on balance updates (version field checked before commit).
-- Added a dead-letter queue for failed bet executions (can retry after inspection).
-- Frontend gracefully degrades if WebSocket drops (falls back to polling).
+3. **Normal-percentile line biasing** — the raw win probability is mapped through `scipy.stats.norm.ppf` to convert it into a point-spread equivalent, then shifted to embed a ~4% house edge (the book collects this margin over many bets).
+
+4. **Push-proof x.5 lines** — all lines are set at half-integer values (e.g. −3.5, +1.5) to eliminate pushes; a push refunds bets and earns the house nothing, so this is a structural necessity.
+
+5. **Self-improving stats pipeline** — when a bet settles, the result feeds back into `player_stats`, so the engine's inputs improve as more games are recorded. The model gets better the more the group plays.
+
+### Settlement State Machine
+
+Patio uses an honor-system dual-confirmation settlement flow:
+- The game winner submits their result.
+- The opposing player must confirm (or dispute) within a time window.
+- Only a double-confirmation advances the bet to `settled`; a dispute flags it for manual review.
+- This prevents either party from unilaterally claiming a win.
+
+The state machine covers: `pending` → `awaiting_confirmation` → `settled` / `disputed`.
+
+### Auth
+
+JWT auth via Flask; tokens issued at `/auth/login`, refreshed at `/auth/refresh`. All bet, settlement, and stats routes are protected. No third-party auth provider — the full auth flow is implemented in the backend.
 
 ## Results
 
-**Functionality:**
-- Users can browse live odds across ten-plus sports and hundreds of events.
-- Bet placement succeeds in sub-100-millisecond latency (median 40ms, 99th percentile 120ms).
-- All bets are persisted reliably; no lost transactions even under concurrent load.
-- Users see live balance updates as bets execute.
+Patio is a pre-launch MVP, honestly positioned as such. As of the last audit:
 
-**Performance:**
-- Page load: approximately 1.2 seconds (Lighthouse score: eighty-eight).
-- Odds latency: less than 500ms end-to-end (API poll → DB → WebSocket → browser).
-- Database query 99th percentile: less than 50ms (with proper indexes).
+- **~6,150 LOC** across frontend and backend.
+- **20 API routes** and **6 pages** covering core flows.
+- **~760 LOC odds engine** with full scipy-powered math — the most technically rigorous piece.
+- The project's own `PLAN.md` documents open bugs, incomplete edge-case handling in the settlement flow, and a planned pivot to React Native/iOS to make the app usable at actual backyard gatherings (where nobody has a laptop).
 
-**User Testing:**
-- 100+ beta testers over 2 months.
-- 95% successful bet placement on first attempt.
-- Zero reported balance discrepancies.
-- Median session length: 15 minutes.
+No live user numbers are reported — the app has not launched publicly. The focus has been on getting the model and the core flows right before pushing to production.
 
 ## Key Takeaways
 
-1. **Full-stack engineering is about more than code.** The entire system—from API contracts to database schema—must be designed as one coherent whole. A slow database ruins a beautiful UI; poor API design frustrates frontend developers.
+1. **Domain modeling is the hardest part.** The odds engine required thinking carefully about what "fair" means in a skill-asymmetric small-sample game — not just copying a standard Elo formula. Harmonic-mean team strength and recency weighting came from reasoning about the domain, not from a textbook.
 
-2. **Concurrency is hard.** Race conditions in financial systems are subtle and catastrophic. Optimistic locking, prepared statements, and audit trails caught multiple edge cases during QA.
+2. **Building solo means owning the whole stack honestly.** There's no teammate to blame for a bad schema or a leaky auth flow. Writing a self-audit (PLAN.md) before polishing the surface was the most useful discipline I applied — it forced a clear-eyed view of what works, what's fragile, and what's missing.
 
-3. **Real-time features sound simple but aren't.** WebSocket management, reconnection logic, and state consistency between client and server require careful handling. A good foundation (resilience patterns, heartbeat checks) saves weeks of debugging later.
+3. **Small-sample statistics require humility.** Early versions of the odds engine produced nonsensical lines for players with fewer than five games. The fix — a prior that regresses all players toward the group mean when N is small — came from understanding the math, not from adding more code.
 
-4. **Iterating with users matters.** Beta testing revealed that many users bet multiple legs in parallel (parlay-style). The initial UI didn't make this obvious; restructuring the bet slip to surface related bets improved conversion by 20%.
+4. **Supabase + psycopg2 is a clean combination.** Supabase handles auth bootstrapping and managed Postgres; psycopg2 keeps query control in the application layer. No ORM magic hiding what's actually hitting the database.
 
-5. **Simplicity scales better than cleverness.** The most impactful optimization was indexing. Adding sophisticated caching or sharding would have been premature; straightforward database tuning solved the real bottleneck.
-
----
-
-**Live app:** View the platform in action at [patio.nateseluga.com](https://patio.nateseluga.com) (beta access available).
+5. **A pivot is a design decision, not a failure.** The move to React Native/iOS is motivated by a real product insight: nobody pulls out a laptop at a backyard party. Recognizing that the current web-first form factor limits adoption — and planning a concrete path forward — is product thinking, not a retreat.
