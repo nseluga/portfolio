@@ -83,6 +83,22 @@ stress-test key claims. Each project gets a grilling session with the appropriat
 (baseball-research-advisor for analytics projects, codebase-design + design-an-interface
 for engineering) — we'll use your writing samples to calibrate tone and specificity.
 
+#### R0 — OS repo project page (Engineering, draft first)
+
+Add a draft of Nate's personal OS repo (`~/os`) as a project in the Engineering section.
+The OS is a real, auditable artifact: 48 custom Claude Code skills, a persistent memory
+system, knowledge files, and hooks — built and used daily. Strongest AI work on the
+portfolio because the repo exists and can be opened.
+
+- [ ] Create `src/content/projects/os-workflow.mdx` (section: `engineering`, draft: true).
+      Lead with what exists: skill count, memory system, hooks. Link the GitHub repo.
+      Pick 2–3 skills as concrete examples (e.g. career-advisor, dev-team,
+      baseball-research-advisor) and describe what each enables. No invented metrics.
+- [ ] Update homepage bio (`index.astro`) to include AI tooling alongside full-stack and
+      statistical modeling — covers all three target roles.
+- [ ] Then refine the page together in a later R-pass (grilling framing, voice calibration,
+      deciding which examples to lead with).
+
 #### R1 — Pitcher Injury Risk+ (baseball-research-advisor + grilling)
 
 - [ ] Read your writing samples (to calibrate voice).
