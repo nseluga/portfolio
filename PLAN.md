@@ -1,30 +1,28 @@
-# Portfolio Website — Content Overhaul Plan & Working TODO (v2)
+# Portfolio Website — Manual Refinement Plan & Working TODO (v3)
 
-> Working document for the agent building this site. Update it every pass: check off
+> Working document for the agent building this site with Nate. Update it every pass: check off
 > completed items, add follow-ups as they surface, keep it an accurate picture of remaining
 > work. Source of truth for _what/why/feel_ is `portfolio-brief.md`; this file is _how_.
 >
-> **v2 (2026-07-03):** The build phase (v1, M0–M4) is complete — the site's engineering is
-> done and verified. This plan now focuses on **content**: a 2026-07-03 audit of every
-> project repo (`audits/`) found that the current writeups are largely **fabricated** —
-> invented metrics, wrong methodologies, wrong tech stacks — while the real projects are
-> stronger and more interesting than the fiction. The work below replaces fiction with
-> evidence and raises the site's recruiter impact.
+> **v3 (2026-07-06):** Content overhaul (v2, C1–C5) is complete — all writeups rewritten from
+> audits, real visualizations committed, site copy refined, AI-native layer wired. This plan
+> now focuses on **manual refinement with Nate**: working through each section with the appropriate
+> skill (baseball-research-advisor for analytics projects, codebase-design + design-an-interface
+> for engineering), using grilling to stress-test framing, and calibrating writing style to
+> match examples of Nate's voice. Final polish before Human Hookup.
 
 ---
 
-## Where things stand
+## Status
 
-- **Built & verified (v1, M0–M4):** Astro SSG + Tailwind + MDX content collections + ECharts
-  React islands. 11 pages build cleanly, perfect local Lighthouse scores, zero JS on
-  non-chart pages. See PROGRESS.md log for details.
-- **Not yet deployed:** Human Hookup (GitHub → Cloudflare Pages → `nateseluga.com`) still
-  pending — see the block at the bottom.
-- **Startups & AI section hidden** (2026-07-02) until there's shipped work. Unchanged.
-- **New (2026-07-03):** Per-project content audits completed and committed in `audits/`.
-  A `career-advisor` skill (senior tech-career advisor persona, benchmark:
-  https://www.helenbentley.com/) was created at `~/.claude/skills/career-advisor.md` and
-  informs milestone C3.
+- **Built & audited:** Astro SSG + Tailwind + MDX + real ECharts visuals + AI-native layer
+  (JSON-LD, llms.txt, projects.json). 10 pages, clean build, zero JS on non-chart pages,
+  all content verified against repo outputs.
+- **Next:** Manual refinement with Nate — grilling each section (baseball projects with
+  baseball-research-advisor, Patio with codebase-design/design-an-interface), calibrating
+  to Nate's writing voice.
+- **Then:** Human Hookup (GitHub merge → Cloudflare Pages → `nateseluga.com`).
+- **Startups & AI section:** Hidden until shipped work exists (2026-07-02, unchanged).
 
 ### The core problem this plan fixes
 
@@ -70,136 +68,60 @@ is a credibility asset, not a weakness.
 
 ## Milestones & Tasks
 
-### C0 — Audit groundwork ✅ done (2026-07-03)
+### v2 (C0–C5) — Content overhaul ✅ done (2026-07-06)
 
-- [x] Create `career-advisor` skill (`~/.claude/skills/career-advisor.md`): senior tech-career
-      advisor persona; axes = accuracy, clarity, credibility, recruiter impact; benchmark
-      helenbentley.com.
-- [x] Locate and clone all project repos: `nseluga/patio`, `nseluga/Pitcher-Injury-Risk`,
-      `nseluga/Shot-Value-Machine-Learning`, `nseluga/Batting-Average-Ability`.
-- [x] Audit each repo vs. its writeup (high-reasoning pass, baseball-research-advisor
-      framing) → per-project notes committed in `audits/audit-*.md`.
-- [x] Finding: **Second Brain System has no public repo**, despite the writeup claiming its
-      infrastructure is "open-source in my GitHub" (tracked in C1.5).
+All repos audited, writeups rewritten from real findings, visualizations replaced with
+commits-pre-computed data, site copy refined by career-advisor, AI-native layer wired.
+Details in `PROGRESS.md` log. Branch `overnight-content-overhaul` ready to merge.
 
-### C1 — Rewrite project writeups (accuracy first) ⬜
+---
 
-Each rewrite works from its audit file — the audit's "Real findings", "Strongest
-visualizations", and "Recommended framing" sections are the spec. Keep the 5-part page
-structure. Add `repoUrl` to the frontmatter schema and link the repo prominently on every
-project page ("View code ↗").
+### v3 — Manual refinement with Nate (in progress)
 
-- [ ] **C1.1 Pitcher Injury-Risk → reframe as "Pitcher Injury Risk+"** (`audits/audit-pitcher-injury-risk.md`)
-  - Kill: "78% AUC-ROC" (real: tuned RF test AUC 0.579, walk-forward CV mean 0.571), "top-10% precision 64%", "2,847 pitchers / 12 variables", Retrosheet sourcing, the invented age/usage chart (3.2%→13.1%), "+35%/+70% risk" bullets.
-  - Tell the real (better) story: multi-model research platform over Statcast 2015–2024 — 3,249 pitchers, 205,911 pitcher-game rows, 76 features; baseline classifiers + survival models (ensemble C-index 0.566) + multi-task severity + the **Injury Risk+** composite (ERA+-style, mean 100 by season × archetype, 9,752 pitcher-seasons, YoY r = 0.583); isotonic calibration (ECE 0.059 → 0.029); temporal/walk-forward validation.
-  - Lead findings: injury history + 90-day cumulative workload dominate (interventional SHAP shows `pitches_90d` beats ACWR); >2 mph chronic velocity decline ≈ doubles observed 30-day injury rate (6% → 12%, Risk+ 96.9 → 119.5); honest "discrimination is genuinely hard" framing — that candor _is_ the credibility play for baseball-ops readers.
-  - Frontmatter metrics → real ones (pitcher-game rows, features, CV AUC, IR+ YoY stability).
-- [ ] **C1.2 NBA Shot-Value → reframe as calibration-first EV study** (`audits/audit-nba-shot-value.md`)
-  - Kill: "2.1M shots (2019–2024)" (real: 128,069 shots, 2014–15 Kaggle shot logs, 122,203 cleaned), "R² = 0.68" (it's classification — tuned XGBoost AUC 0.6365), "500-cell hexagonal grid" and all x/y-coordinate features (dataset has none), per-zone precision numbers, star-vs-role-player EV claims (model is deliberately player-agnostic), "holdout 2024 season" (real: random 80/20).
-  - Tell the real story: Harvey Mudd course project (with Michael O'Brien); 4-model comparison (LR/DT/RF/XGB, raw vs engineered); hard predictability ceiling at AUC ~0.63–0.64 with shooter skill as the named missing variable; well-calibrated probabilities (Brier 0.2296) → trustworthy expected points = p(make) × shot value; EV findings: open 0–4 ft ≈ 1.85 EV, mid-range trough, corner-3 (22–24 ft) bump; `defender_distance_ratio` is the top SHAP feature.
-  - Credit **Michael O'Brien** as co-author (confirmed by Nate). Do not name the course. Link the formal PDF writeup in the repo. Add `collaborators: ["Michael O'Brien"]` to frontmatter.
-- [ ] **C1.3 Batting Average Control Stat → rename to the real metric, "BAA (Batting Average Ability)"** (`audits/audit-batting-average.md`)
-  - Kill: "predictive R² 0.52" and "correlation with future BA 0.58" (no forecasting model exists — all modeling is same-season), elastic net (real: OLS/RF/statsmodels MixedLM), "5-fold CV by season" (real: random 80/20), shrinkage step, Statcast feature list (real: FanGraphs rates + sprint speed), the RMSE bar chart, the archetype table, Betts/Judge examples, "wider rookie intervals" (real PI coverage is 54.5% — poorly calibrated).
-  - Tell the real story: skill-isolation metric, not a forecast — mixed-effects model with player random intercepts (ICC: 24.7% of AVG variance is between-player), CLR transform for batted-ball composition, PA-weighted fitting; Test R² 0.4570 / MAE 0.0215 for AVG from peripherals; RF and ensembles tried and **rejected on evidence** (BABIP Test R² 0.293 vs linear 0.372); BAA indexed 100 ± 10 per season with a per-season `luck_component`; face validity: Arraez 2023 = 133.2 vs Gallo 2023 = 61.2; sprint speed as the #2 BABIP driver.
-  - Fix scale claims: 4,374 player-seasons / 1,173 players (not "1,200+ hitters").
-  - Future-work section may honestly propose the next-season stability test as the natural extension.
-- [ ] **C1.4 Patio → describe the actual product** (`audits/audit-patio.md`)
-  - Kill: "sports betting platform", "Node.js backend" (real: React 19 + Python Flask + psycopg2 + Supabase Postgres), live odds feeds, WebSockets, "100+ beta testers", all latency/Lighthouse/conversion numbers, "zero balance discrepancies" (contradicted by the repo's own bug list), invented components (BetSlip, OddsBoard).
-  - Tell the real story: solo-built social betting app where friends wager virtual "caps" on backyard games (Caps, Pong, Beerball); centerpiece is a **scipy-powered house-odds engine** (~760 LOC): recency-weighted player means, harmonic-mean team strength, normal-percentile line biasing for a ~4% house edge, push-proof x.5 lines — fed by a self-improving stats pipeline as bets settle; honor-system dual-confirmation settlement state machine; JWT auth; ~6,150 LOC, 20 routes, 6 pages.
-  - Frame honestly as a **pre-launch MVP mid-pivot to React Native/iOS**, backed by a rigorous self-audit (the repo's own PLAN.md) — sell the applied statistics and engineering judgment.
-  - Verify or remove the `patio.nateseluga.com` live link (unverifiable during audit).
-- [ ] **C1.5 Second Brain System — remove project page from site**
-  - This project is no longer being developed. Remove it entirely: set `draft: true` in the MDX frontmatter (do not delete the file) and remove it from any curated lists in `site.ts`. No rewrite needed.
-- [ ] **C1.6 Cross-cutting fixes (all projects)**
-  - Add `repoUrl` (and optional `collaborators`) to the Zod schema + ProjectLayout header link.
-  - Fix frontmatter dates to match reality (current dates like 2024-03-15 predate the repos).
-  - Update every project `summary` (card one-liner) and `metrics[]` to audited-real values — these surface on the home page and section cards, so they must match the rewritten pages.
-  - Proofread rule for the pass: any number that can't be pointed to in the repo gets cut.
+Now working through each section with you to polish framing, calibrate writing voice, and
+stress-test key claims. Each project gets a grilling session with the appropriate skill
+(baseball-research-advisor for analytics projects, codebase-design + design-an-interface
+for engineering) — we'll use your writing samples to calibrate tone and specificity.
 
-### C2 — Real visualizations & assets ⬜
+#### R1 — Pitcher Injury Risk+ (baseball-research-advisor + grilling)
 
-The single-JSON status quo (`src/data/pitcher-injury-risk.json`, itself fabricated) gets
-replaced by data exported from the actual repos. Never compute in the browser; commit
-pre-computed JSON (or static images where interactivity adds nothing).
+- [ ] Read your writing samples (to calibrate voice).
+- [ ] Open grilling session: depth of findings, confidence language, how to frame "discrimination is hard", value of the IR+ composite.
+- [ ] Polish page copy: intro framing, results section wording, key-takeaways phrasing — make it sound like you.
+- [ ] Verify: every number, every model choice, every metric is defensible to a baseball-ops reader.
 
-- [ ] **C2.1 Pitcher Injury Risk+:** replace the invented age/usage ECharts data with real
-      exports — velocity-decline dose-response (Risk+ 96.9→119.5, injury rate 6%→12%) as the
-      inline interactive chart; age × workload danger-zone heatmap as the second visual;
-      link out to the Streamlit dashboard / Plotly HTML exports ("View live ↗" pattern).
-      Consider embedding 1–2 danger-zone heatmap PNGs via `<Figure>`.
-- [ ] **C2.2 NBA Shot-Value:** replace the fabricated court heatmap with the real
-      pressure-stratified EV-by-distance curves (from `value_defender.png` data) as ECharts
-      JSON; add the shot-uncertainty/calibration figure and SHAP beeswarm as static
-      `<Figure>` images pulled from the repo's `models/` PNGs.
-- [ ] **C2.3 BAA:** export the flagship BAA-vs-BA scatter (2019–2024, per-season trendlines)
-      to JSON for an ECharts island; optional second visual: RF feature-importance bars or
-      the Arraez/Gallo leaderboard as a small table.
-- [ ] **C2.4 Patio:** skip these screenshots when running autonomously:
-      real screenshots of the live UI (none exist in the repo — capture from
-      a running instance) and/or a short muted screen-recording per the v1 decision; a
-      simple diagram of the odds-engine feedback loop (stats → aggregates → lines → bets →
-      stats) would show the best subsystem.
-- [ ] **C2.5 Thumbnails:** replace the eight generic placeholder SVGs in `public/images/`
-      with real-artifact-derived thumbnails (chart crops, UI screenshots) so cards preview
-      actual work.
+#### R2 — NBA Shot-Value (baseball-research-advisor + grilling)
 
-### C3 — Site-wide copy, hierarchy & recruiter impact ⬜
+- [ ] Grilling: course-project framing, calibration results (what they mean), how to present
+      the AUC ceiling honestly, Michael O'Brien co-authorship positioning.
+- [ ] Polish copy: Results section clarity, the expected-points framing, takeaways.
+- [ ] Verify: Brier score interpretation, SHAP feature naming, EV findings phrasing match your voice.
 
-Career-advisor pass (see `~/.claude/skills/career-advisor.md`; benchmark helenbentley.com:
-immediate identity statement, ruthless curation, role/impact framing, personality through
-content, effortless nav).
+#### R3 — Batting Average Ability (baseball-research-advisor + grilling)
 
-- [ ] **C3.1 Home identity statement:** replace "Software engineer, data scientist, and
-      sports analytics enthusiast… I build systems that work" (adjective-speak) with a
-      specific, evidence-led line: who (CS @ Harvey Mudd, class year), what he builds
-      (full-stack products + baseball/basketball analytics models), and one concrete hook —
-      the 10-second recruiter test. No "enthusiast", no "passionate".
-- [ ] **C3.2 Selected Work curation:** hand-curate order (currently an arbitrary `order`
-      sort): lead with the strongest post-rewrite piece (likely Injury Risk+), then Patio,
-      then BAA/Shot-Value. Add one real metric per card. Cards must read correctly to a
-      non-technical recruiter.
-- [ ] **C3.3 Contact & next-action:** put email + GitHub visibly on the home page (not just
-      footer). Known facts: email = nseluga@g.hmc.edu, GitHub = github.com/nseluga. Omit
-      resume PDF link (not current) and LinkedIn (unknown) — leave placeholders in HTML
-      comments so they can be added later. Every page should have an obvious next action.
-- [ ] **C3.4 About page rewrite:** the current version is generic narrative ("I care about
-      evidence over claims") with zero verifiable specifics. Rewrite with concrete facts:
-      class year, the real projects by name, what he's
-      currently looking for (role type + timing). Cut the "What Drives Me" adjectives;
-      let the projects carry that. Keep it typography-led.
-- [ ] **C3.5 Section intros:** tighten `site.ts` intros to match audited reality (e.g.
-      sports-analytics intro should name the real models; engineering intro shouldn't
-      promise "flagship live apps" plural while only Patio exists).
-- [ ] **C3.6 Layout flow check:** home → section → project journey QA after rewrites;
-      confirm visual hierarchy still holds with new content lengths; mobile pass.
+- [ ] Grilling: skill-isolation (not-a-forecast) framing, mixed-effects + ICC interpretation, why linear beat RF, luck component.
+- [ ] Polish copy: Methods clarity, results scale and specificity, Arraez/Gallo examples.
+- [ ] Verify: Statistical claims defensible; rejection reasoning clear; face validity arguments solid.
 
-### C4 — AI-native layer ⬜
+#### R4 — Patio (codebase-design + design-an-interface + grilling)
 
-Recruiters increasingly ask AI assistants about candidates; make the site machine-legible
-so those summaries are accurate.
+- [ ] Grilling: product positioning (pre-launch MVP, not "platform"), house-odds engine as the star feature, React/Flask architecture story.
+- [ ] Polish copy: Problem/approach clarity, results section (what the engine does, why it matters), takeaways.
+- [ ] Verify: Engineering decisions sound smart; honesty about mid-pivot reads as strength not weakness.
 
-- [ ] **C4.1 JSON-LD structured data:** `Person` schema on home/about (name, alumniOf Harvey
-      Mudd, knowsAbout, sameAs → GitHub/LinkedIn, email); per-project
-      `SoftwareSourceCode`/`CreativeWork` schema with `codeRepository` → the real repo URLs.
-      Emit from `BaseLayout`/`ProjectLayout` off existing frontmatter — no per-page hand-authoring.
-- [ ] **C4.2 `llms.txt`:** add `public/llms.txt` — a natural-language summary of Nate
-      (background, skills, each project in 2–3 accurate sentences with repo + page links),
-      built from the same audited facts as the writeups. Keep it in lockstep with content
-      (add a "regenerate llms.txt" step to the content-change convention below).
-- [ ] **C4.3 Machine-readable project index:** optional `public/projects.json` (title, slug,
-      one-liner, real metrics, repo URL) generated at build time from the content collection.
-- [ ] **C4.4 Crawler posture:** keep `robots.txt` permissive (incl. AI crawlers); verify
-      sitemap URL correctness; per-page meta descriptions updated to the accurate one-liners
-      from C1.6.
+#### R5 — Site-wide voice pass (career-advisor + grilling)
 
-### C5 — Verification & wrap-up ⬜
+- [ ] Home identity statement: does it read like you? Specific enough for a 10-second recruiter test?
+- [ ] About page: concrete details, job targets clear, no generic adjectives.
+- [ ] Section intros (`site.ts`): do they name real models without overclaiming?
+- [ ] Tone check: evidence-led, no fluff, personality comes through the projects.
 
-- [ ] **C5.1 Accuracy re-audit:** re-run a career-advisor + per-repo spot-check pass over the
-      rewritten pages: every number on the site must be findable in a repo output. This is
-      the gate for calling C1 done.
-- [ ] **C5.2 Build & QA:** `npm run build` clean; zero-JS check on non-chart pages; chart
-      hydration check; Lighthouse re-run; mobile QA.
-- [ ] **C5.3 Update PROGRESS.md** and check off this plan as milestones complete.
+#### R6 — Final QA before Human Hookup
+
+- [ ] Mobile + responsive check (layout unchanged, no content breaks).
+- [ ] Build clean: `npm run build`.
+- [ ] Lighthouse re-run (expect 100s locally).
+- [ ] PROGRESS.md update.
 
 ---
 

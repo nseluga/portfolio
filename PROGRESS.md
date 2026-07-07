@@ -8,11 +8,13 @@
 ---
 
 ## Current position
-- **Status:** ✅ **CONTENT OVERHAUL COMPLETE (C1–C5)** — all autonomous-run milestones done.
-  Branch `content/pitcher-injury-rewrite` merged into `overnight-content-overhaul`.
-- **Next:** Human Hookup — merge to `main`, Cloudflare Pages deploy, domain connect.
-- **Blockers (Needs-Nate):** Resume PDF for C3.3; Patio live URL; LinkedIn URL.
-- **Last updated:** 2026-07-06 (full C1–C5 content overhaul complete — see log)
+- **Status:** ✅ **CONTENT OVERHAUL COMPLETE (C1–C5)** — autonomous-run milestones done.
+  Branch `overnight-content-overhaul` ready to merge.
+- **Next:** v3 manual refinement with Nate — grilling each section (baseball-research-advisor
+  for analytics, codebase-design for Patio), calibrating writing voice to Nate's style.
+- **Needs:** Writing samples from Nate to calibrate tone + voice.
+- **Blockers (Needs-Nate):** Resume PDF; Patio live URL; LinkedIn URL (for Human Hookup).
+- **Last updated:** 2026-07-06 (full C1–C5 complete; v3 planning phase)
 
 ---
 
