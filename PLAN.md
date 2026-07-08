@@ -81,7 +81,9 @@ Details in `PROGRESS.md` log. Branch `overnight-content-overhaul` ready to merge
 Now working through each section with you to polish framing, calibrate writing voice, and
 stress-test key claims. Each project gets a grilling session with the appropriate skill
 (baseball-research-advisor for analytics projects, codebase-design + design-an-interface
-for engineering) — we'll use your writing samples to calibrate tone and specificity.
+for engineering). **Style reference:** see `~/os/knowledge/library/style_reference/Project_Writeup.pdf`
+for Nate's voice — specific, evidence-driven, confident but careful with uncertainty, no
+marketing language. Use this as the target tone for all polished copy in the R-passes below.
 
 #### R0 — OS repo project page (Engineering, draft first)
 
@@ -101,7 +103,7 @@ portfolio because the repo exists and can be opened.
 
 #### R1 — Pitcher Injury Risk+ (baseball-research-advisor + grilling)
 
-- [ ] Read your writing samples (to calibrate voice).
+- [ ] Read the style reference (`~/os/knowledge/library/style_reference/Project_Writeup.pdf`) to calibrate voice.
 - [ ] Open grilling session: depth of findings, confidence language, how to frame "discrimination is hard", value of the IR+ composite.
 - [ ] Polish page copy: intro framing, results section wording, key-takeaways phrasing — make it sound like you.
 - [ ] Verify: every number, every model choice, every metric is defensible to a baseball-ops reader.
@@ -131,6 +133,7 @@ portfolio because the repo exists and can be opened.
 - [ ] About page: concrete details, job targets clear, no generic adjectives.
 - [ ] Section intros (`site.ts`): do they name real models without overclaiming?
 - [ ] Tone check: evidence-led, no fluff, personality comes through the projects.
+- [ ] Compare all copy against the style reference (`~/os/knowledge/library/style_reference/Project_Writeup.pdf`) — match the confidence level, specificity, and directness.
 
 #### R6 — Final QA before Human Hookup
 
@@ -181,4 +184,5 @@ These are account/money/auth steps, not code. Order matters. (Unchanged from v1.
 - Never compute analytics in the browser — commit pre-aggregated JSON **exported from the actual project repos** (note the generating notebook/script in a JSON `_source` field or adjacent comment).
 - Every new project addable via content only; component gaps get fixed, not hacked around.
 - Keep zero-JS on any page without an intentional island.
+- **Style rule: all explanations and project writeups follow Nate's voice as demonstrated in `~/os/knowledge/library/style_reference/Project_Writeup.pdf` — specific, evidence-driven, honest about scope/uncertainty, no marketing language. When polishing copy, compare against this reference.**
 - **Accuracy rule: no number, method, or artifact appears on the site unless it is traceable to a repo output. When content changes, update `llms.txt` and per-page meta in the same pass.**
