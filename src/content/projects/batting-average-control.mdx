@@ -42,7 +42,7 @@ Each method choice below exists to make the decomposition trustworthy. None of i
 
 - **Source:** FanGraphs rate statistics plus Statcast sprint speed — 2015–2024 MLB seasons.
 - **Scale:** 4,374 player-seasons across 1,173 unique players.
-- **Filtering:** Minimum PA threshold applied per season; PA-weighted fitting gives more influence to qualified hitters.
+- **Filtering:** Minimum **100 PA** per season; PA-weighted fitting gives more influence to qualified hitters.
 
 Features: strikeout rate, walk rate, contact rate, batted-ball type rates (ground ball, fly ball, line drive, pop-up), hard-hit rate, and sprint speed.
 
@@ -68,7 +68,7 @@ The linear model is also legible: **sprint speed is the #2 driver of BABIP** (st
 
 ### Constructing the components
 
-After fitting, each player-season gets a **`luck_component`**: actual batting average minus the model's expected average from peripherals. The BAA score is the skill side of the split, indexed to 100 each season so a BAA of 133 means the peripherals imply an average 33% above that season's league mean, regardless of what the hitter actually posted.
+After fitting, each player-season gets a **`luck_component`**: actual batting average minus the model's expected average from peripherals. The BAA score is the skill side of the split, indexed to 100 each season so a BAA of 133.2 means the peripherals imply an average 33% above that season's league mean, regardless of what the hitter actually posted.
 
 ## Results
 
