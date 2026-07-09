@@ -2,7 +2,7 @@
 title: "NBA Shot-Value Model"
 section: "sports-analytics"
 date: 2024-12-01
-summary: "Built a 4-model ML pipeline to predict NBA shot outcomes and estimate expected value by shot context. Compared logistic regression, decision tree, random forest, and XGBoost on raw vs. engineered features — finding a hard predictability ceiling that points to shooter skill as the key missing variable."
+summary: "Measured what NBA shot context alone is worth by deliberately excluding shooter identity. Ran four model classes (LR, DT, RF, XGBoost) on raw vs. engineered features to test whether the ~0.64 AUC was an information constraint, then used calibrated probabilities to build an expected-value curve by distance and contest pressure."
 thumbnail: "/images/nba-shot-value.svg"
 draft: false
 order: 7
@@ -23,43 +23,43 @@ import ChartWrapper from '../../components/ChartWrapper.astro';
 
 ## The Problem
 
-NBA analytics has popularized the "expected value" framework — quantifying shot quality by expected points rather than raw make-or-miss. But how well can a machine learning model actually predict whether a given NBA shot goes in?
+We started by taking something out. Before choosing a model or a metric, we decided to exclude shooter identity from the feature space entirely — no player IDs, no per-player shooting histories. That one design decision reframed the whole project. The question stopped being "will *this player* make *this shot*?" and became "what is *this kind of shot* worth to a league-average shooter?"
 
-This project, built with co-author Michael O'Brien, uses the 2014–15 season NBA shot logs (128,069 raw shots; 122,203 after cleaning) to answer that question systematically. We compared four classification models — logistic regression, decision tree, random forest, and XGBoost — across raw and engineered feature sets, then translated the best model's calibrated probabilities into an expected-value analysis by shot type and distance.
+That reframing matters because it changes what a middling accuracy number *means*. If you're trying to predict LeBron's next make and you top out at AUC 0.64, that reads like a modeling failure. But if you've deliberately withheld who's shooting, 0.64 is not a failure — it's a measurement. It's the ceiling of what shot *context* predicts once you've removed shooter skill from the picture. The research question here is "what does shot context alone predict?", not "how accurately can we predict makes?" — and the player-agnostic design is what makes the ceiling interpretable as a finding about information, rather than a shortfall in the pipeline.
+
+This project, built with co-author Michael O'Brien for Harvey Mudd's CS158 (machine learning), uses the 2014–15 NBA season shot logs (128,069 raw shots; 122,203 after cleaning) to map that ceiling and then put it to use: we translated the best model's calibrated probabilities into an expected-value curve by shot distance and contest pressure.
 
 ## Why It Matters
 
-Shot-outcome prediction matters because expected value is a more honest measure of shot quality than raw field-goal percentage. A 40% two-pointer and a 33% three-pointer are not equivalent — expected points makes the tradeoff explicit.
+The player-agnostic framing produces two things that a raw accuracy score can't.
 
-More importantly, quantifying the **predictability ceiling** is as informative as the model itself. When four different algorithms all converge near the same AUC, that's signal: we've found the limit of what shot-context data alone can tell us, and that limit points directly to what's missing.
+First, a **trustworthy expected-value estimate**. Expected points is a more honest measure of shot quality than field-goal percentage — a 40% two and a 33% three are not equivalent, and EV makes the tradeoff explicit. But EV is a *multiplication*: make probability times point value. That means the probabilities have to be right in magnitude, not just in rank order. AUC only tells you the model orders shots correctly; it says nothing about whether a shot the model calls "60%" actually goes in 60% of the time. So the EV goal forces a second metric — the Brier score — to validate the probability values themselves. That's why calibration, not AUC, is the number that actually gates the EV analysis.
 
-- **Contest pressure effects**: Does a tighter defender contest measurably suppress makes — and by how much?
-- **Distance-adjusted EV**: Where on the court is the expected-value trough, and where does the corner-three geometry advantage actually show up?
-- **Data limits**: Understanding what's missing from a public dataset is as valuable as what's in it.
+Second, an **honest measurement of what shot context is worth** with player effects removed. Because we withheld shooter identity, whatever the model finds is a property of the *situation*: where on the court the shot is, how far the closest defender is, how much clock is left. That's the useful unit for strategic analysis — where, and under what pressure, should a team take the shot? — and it's only clean because the player variable isn't smuggled in.
 
 ## My Approach
 
-### Data & Feature Engineering
+The core of the study is a test of one hypothesis: *if* the ceiling is an information constraint — the model plateaus because it can't see shooter skill — *then* no model class and no feature engineering should be able to break past it. If instead a stronger model or a smarter feature suddenly jumped the AUC, that would falsify the constraint story and mean we'd simply been under-modeling. Running four model classes across two feature sets is how you run that test.
+
+### Data & feature engineering
 
 **Source:** 2014–15 NBA season shot logs (Kaggle); 128,069 raw shots, 122,203 after dropping rows with missing defender distance or shot clock data.
 
-The dataset includes shot clock, dribbles before shot, closest defender distance, touch time, and shot distance — but **no x/y court coordinates**. Feature engineering worked within those constraints:
+The dataset gives shot clock, dribbles before the shot, closest defender distance, touch time, and shot distance — but **no x/y court coordinates**, and, by our own choice, no shooter identity. Feature engineering worked within those constraints:
 
-1. **`defender_distance_ratio`**: defender distance divided by shot distance — normalizes contest pressure across shot types (a 2-foot contest means something different on a dunk attempt vs. a mid-range pull-up).
-2. **Distance zones**: bucketed shot distance into restricted area (0–4 ft), mid-range (5–21 ft), and three-point range (22+ ft).
-3. **Shot clock urgency**: binary flag for shots taken under 4 seconds remaining on the shot clock.
+1. **`defender_distance_ratio`** — defender distance divided by shot distance. Raw defender distance is misleading on its own: a defender two feet away means one thing on a dunk and something completely different on a step-back three. Normalizing the contest by shot range lets a single feature encode "how pressured was this shot *for its type*," which raw distance can't express without the model learning the interaction the hard way.
+2. **Distance zones** — bucketed shot distance into restricted area (0–4 ft), mid-range (5–21 ft), and three-point range (22+ ft).
+3. **Shot-clock urgency** — a binary flag for shots taken with under 4 seconds on the clock.
 
 ### Methodology
 
-1. **Train/test split**: 80/20 random split stratified on outcome.
-2. **Models compared** — both raw features and the full engineered set for each:
-   - Logistic Regression
-   - Decision Tree
-   - Random Forest
-   - XGBoost
-3. **Evaluation**: AUC-ROC as the primary metric (binary classification: made vs. missed). Brier score for calibration quality.
-4. **Calibration**: isotonic regression applied to XGBoost outputs to produce reliable probabilities for EV estimation.
-5. **SHAP analysis**: identified which features drove XGBoost predictions most to validate the model's reasoning.
+1. **Train/test split**: 80/20 random split, stratified on outcome. This is a random split, *not* a season holdout — with a single 2014–15 season there's no future season to test on, so these numbers describe in-distribution performance, not temporal generalization.
+2. **The four-model sweep** — Logistic Regression, Decision Tree, Random Forest, and XGBoost, each fit on raw features and again on the full engineered set. Spanning a linear model through gradient-boosted trees is deliberate: if the plateau were about model capacity, XGBoost would clear it and logistic regression wouldn't.
+3. **Two metrics, two jobs**: AUC-ROC measures whether the model *ranks* shots correctly (made vs. missed). The Brier score measures whether the *magnitudes* are right — which is the property the EV multiplication actually depends on. AUC alone would let a badly-calibrated model look fine.
+4. **Calibration**: isotonic regression applied to the XGBoost outputs, so the probabilities feeding the EV curve are trustworthy in value, not just in order.
+5. **SHAP analysis**: to check which features actually drove the predictions and confirm the model's reasoning matched the design intent.
+
+The honest result of the test: feature engineering did **not** move the tree ceiling. XGBoost tuned on the engineered set scored **0.6365** test AUC — flat against, or a hair below, the raw tree baselines (Random Forest 0.6397, XGBoost 0.6411). That's exactly the signature you'd expect if the missing variable is shooter skill: the features we added rearrange known information, they don't add the one thing the model can't see.
 
 ## Results
 
@@ -134,35 +134,43 @@ The dataset includes shot clock, dribbles before shot, closest defender distance
   }]
 }} />
 
-### Model Performance
+### The convergence: the ceiling held
 
-XGBoost with engineered features achieved the best AUC of **0.6365** and a Brier score of **0.2296**, indicating well-calibrated probabilities. All four models converged near AUC 0.63–0.64 regardless of feature engineering, establishing a hard predictability ceiling.
+The headline result is not a single AUC — it's that every model lands in the same place. All four classes, across both raw and engineered features, converged near **AUC 0.63–0.64**: logistic regression up through XGBoost, no feature set breaking the plateau. That convergence is the test coming back positive. A ceiling that a linear model and a tuned gradient-boosted ensemble both hit, and that better features can't lift, is the fingerprint of an *information* limit, not a capacity limit. The missing information is shooter skill — with no player identity in the features, a 35% three-point shooter and a 40% shooter are indistinguishable to the model — and the study was designed to leave exactly that gap open.
 
-The ceiling is informative: with shot-context features but no shooter identity, the model cannot capture individual shooting talent. A 35% three-point shooter and a 40% three-point shooter look nearly identical in the feature space. That gap — shooter skill — is the named missing variable.
+### Calibration: the probabilities are real
 
-### SHAP Feature Importance
+The best XGBoost model posted a Brier score of **0.2296**, indicating well-calibrated probabilities after isotonic recalibration. This is the number that licenses everything downstream: because the probabilities are right in magnitude and not just in rank, multiplying them by point values yields an expected-value estimate you can trust. AUC could have been identical with garbage magnitudes; the Brier score is what rules that out.
 
-**`defender_distance_ratio`** ranked as the top feature by SHAP value, confirming that contest pressure normalized by shot type is the strongest predictor in the dataset. Raw defender distance and shot distance were meaningful but weaker individually; their ratio captures the interaction more efficiently.
+### SHAP: the engineered feature earned its place
 
-### Expected Value by Shot Context
+**`defender_distance_ratio`** ranked as the top feature by SHAP value. That's the design intent confirmed empirically: the ratio encoding captured the contest-by-range interaction that raw defender distance, on its own, missed. Raw distance and raw shot distance both mattered, but weaker individually — folding them into a single normalized ratio is what surfaced the signal.
 
-Translating calibrated make probabilities into expected points (probability × point value) revealed:
+### The expected-value curve is the deliverable
 
-1. **Open shots near the basket (0–4 ft) have the highest EV, around 1.85 expected points.** Restricted-area attempts dominate — low contest pressure and short distance reinforce each other.
+With trustworthy probabilities, the EV curve (make probability × point value) is where the sport insight lives, and its shape is proof the calibrated probabilities carry real signal:
 
-2. **Mid-range shots form a trough.** Expected value for mid-range attempts (roughly 5–21 ft) dips below the corner three for equivalent contest conditions. The mid-range is genuinely inefficient relative to its alternatives.
+1. **Open shots at the rim (0–4 ft) top the curve at ~1.85 expected points.** Low contest and short range compound — nothing else on the floor is close.
 
-3. **Corner threes (22–24 ft) show a bump in EV.** The corner three's geometry advantage — shorter distance to the basket than the wing arc — shows up clearly. Corner threes produce a local EV bump — higher than both mid-range and deeper three-point looks, though well below the restricted area.
+2. **Mid-range is a trough.** EV across roughly 5–21 ft sags below the corner three under comparable contest conditions. The much-maligned mid-range shows up as genuinely inefficient relative to its alternatives — not as opinion, but as a consequence of the calibrated numbers.
+
+3. **The corner three (22–24 ft) bumps back up (~1.15–1.20 open).** The corner is geometrically closer to the rim than the wing arc for the same three points, and that geometry advantage surfaces as a local EV bump — above the mid-range and the deeper looks, though still well short of the restricted area.
 
 ## Key Takeaways
 
-1. **The ceiling is a finding, not a failure.** Four models across two feature sets all converging near AUC 0.63–0.64 tells you something real: shot-context data has a structural limit. Shooter-level skill, absent from this public dataset, is the likely explanation.
+1. **Player-agnostic by design, so the ceiling is interpretable.** Excluding shooter identity was the first decision, not an oversight. It converts a mediocre-looking AUC into a clean measurement: the value of shot context to a league-average shooter.
 
-2. **`defender_distance_ratio` dominates.** Contest pressure, normalized by shot type, is the single strongest predictor. The ratio encoding captures something raw distance alone misses: being tightly contested on a dunk is very different from being tightly contested on a step-back three.
+2. **The four-model sweep tested the ceiling; feature engineering didn't break it.** XGBoost tuned on engineered features (0.6365) sat flat against the raw tree baselines (RF 0.6397, XGB 0.6411), and every model class converged near 0.63–0.64. Engineered features rearranged known information rather than adding the missing variable — which is precisely what the constraint hypothesis predicts.
 
-3. **Calibration is what enables EV estimation.** A model with good AUC but poor calibration produces unreliable probability estimates. The Brier score of 0.2296 and isotonic recalibration step were essential for translating predictions into the expected-value conclusions above.
+3. **Calibration, not AUC, is what enables EV.** Expected value is a multiplication, so it needs correct probability magnitudes. The Brier score of 0.2296 and the isotonic recalibration step are what make the EV curve trustworthy; AUC alone would not have.
 
-4. **Feature engineering improved reliability, not raw ceiling.** The performance gap between models narrowed after feature engineering, but the top AUC barely moved. Engineered features helped the model generalize more consistently across shot types rather than discover new predictive signal.
+4. **`defender_distance_ratio` captures what raw distance misses.** Normalizing contest pressure by shot range — a 2-foot contest on a dunk versus a 2-foot contest on a step-back three — was the top feature by SHAP.
+
+5. **The sport insight is the real output.** The mid-range trough and the corner-three geometry advantage, read straight off calibrated probabilities, are the deliverable — a strategic map of what shot context is worth, absent who's shooting.
+
+### Scope and honesty
+
+This is a two-person course project (CS158) on a single season of public data. The 80/20 split is random, not a temporal holdout, so the numbers describe in-distribution performance on 2014–15 shots — not how the model would hold up on a later season. The value here is the constraint-mapping method and the EV read it produces, not a deployable prediction system.
 
 ---
 
