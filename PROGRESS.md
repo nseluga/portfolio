@@ -8,13 +8,11 @@
 ---
 
 ## Current position
-- **Status:** ✅ **CONTENT OVERHAUL COMPLETE (C1–C5)** — autonomous-run milestones done.
-  Branch `overnight-content-overhaul` ready to merge.
-- **Next:** v3 manual refinement with Nate — grilling each section (baseball-research-advisor
-  for analytics, codebase-design for Patio), calibrating writing voice to Nate's style.
-- **Needs:** Writing samples from Nate to calibrate tone + voice.
-- **Blockers (Needs-Nate):** Resume PDF; Patio live URL; LinkedIn URL (for Human Hookup).
-- **Last updated:** 2026-07-06 (full C1–C5 complete; v3 planning phase)
+- **Status:** ✅ **V3 AUTONOMOUS CONTENT-VOICE LOOP COMPLETE (V0–V7)** — all items done.
+  Branch `content/v3-voice-loop` merged into `main`. Ready for Human Hookup.
+- **Next:** Human Hookup — GitHub push → Cloudflare Pages → `nateseluga.com` (needs Nate).
+- **Blockers (Needs-Nate):** Resume PDF; Patio live URL + screenshots; LinkedIn URL (for hookup).
+- **Last updated:** 2026-07-09 (v3 complete)
 
 ---
 
@@ -39,6 +37,18 @@
 | C4 — AI-native layer | ✅ Done | JSON-LD Person+SoftwareSourceCode; llms.txt; projects.json endpoint; sitemap fixed; robots.txt corrected. |
 | C5 — Verification & wrap-up | ✅ Done | All numbers re-audited; build clean (10 pages); zero-JS on non-chart pages; client:visible hydration confirmed. |
 | Human Hookup (do together) | ⬜ Not started | Merge to `main` · Cloudflare connect · `nateseluga.com`. Needs user accounts. |
+
+### v3 — Autonomous content-voice loop (`dev-team-auto`)
+| Item | Status | Rubric skills | Notes |
+|------|--------|---------------|-------|
+| V0 — OS repo project page | ✅ done full — os-workflow.mdx created (48 skills, 8 projects, 10 memory files verified); homepage bio updated for 3 role tracks; llms.txt synced. ef7ccfc | career-advisor + ai-usage-optimizer | New page `os-workflow.mdx` + homepage bio. |
+| V1 — Project Dashboard mini | ✅ done light — project-dashboard.mdx created (3 paragraphs, accurate stack/features, honest scope); llms.txt updated. a6f3fbb | career-advisor + ai-usage-optimizer | New short page `project-dashboard.mdx`. Keep brief. |
+| V2 — Pitcher Injury-Risk | ✅ done full — honest-ceiling framing; AUC 0.571 as domain finding; 4 model tracks justified; velocity n fix applied. 7df08dd | baseball-research-advisor + career-advisor | `flag:` Opus + framing exploration. |
+| V3 — NBA Shot-Value | ✅ done full — constraint-mapping framing; player-agnostic design decision visible; AUC 0.64 ceiling as information limit; PASS first review pass. 4764f90 | baseball-research-advisor + career-advisor | `flag:` Opus + framing exploration. |
+| V4 — Batting Average Ability | ✅ done full — decomposition framing; ICC 24.7% as headline result; CLR + RF-rejection reasoning visible; 100-PA floor fix applied. 655e52a | baseball-research-advisor + career-advisor | `flag:` Opus + framing exploration. |
+| V5 — Patio | ✅ done full — engineering decisions legible (harmonic mean, norm.ppf edge, dual-confirm rationale, Flask+psycopg2 why); minor fixes applied. d0b31a2 | career-advisor + dt-engineer substance | Engineering-decision legibility. |
+| V6 — Site-wide voice pass | ✅ done light — three-track identity consistent site-wide; About baseball anchor added; LinkedIn wired; bio split into two sentences. 3b92f21 | career-advisor | Home + About + section intros. |
+| V7 — Final QA | ✅ done light — build clean (12 pages), Lighthouse 100/100/100/100 production (home, os-workflow, pitcher), responsive 375px pass (no overflow, all text flows), llms.txt covers all 6 live pages, per-page summaries accurate. | — | Build, responsive, Lighthouse, meta sync. |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 
