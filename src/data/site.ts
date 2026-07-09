@@ -37,13 +37,13 @@ export const SECTIONS = {
     title: 'Software Engineering',
     slug: 'engineering',
     intro:
-      'Full-stack products and AI tooling built from the ground up. Patio is a social betting app for backyard games — React 19, Flask, Supabase, and a scipy house-odds engine at its core. The OS workflow project is a personal Claude Code operating system: 48 custom skills, structured project memory, and a multi-agent dev team.',
+      'Full-stack products and AI tooling built from the ground up. Patio is a social betting app for backyard games — React 19, Flask, Supabase, and a scipy house-odds engine at its core. Alongside it, a personal OS system (Claude Code skills + persistent memory + project tracking) that has compounded into 48 custom skills and is the infrastructure behind how the projects on this page get built.',
   },
   'sports-analytics': {
     title: 'Sports Analytics',
     slug: 'sports-analytics',
     intro:
-      'Statistical models and ML research in baseball and basketball. Projects: multi-model MLB pitcher injury prediction (Injury Risk+), batting average skill isolation (BAA), and NBA shot-value estimation with SHAP interpretability.',
+      'Statistical models and ML research in baseball and basketball. Projects: multi-model MLB pitcher injury prediction — Pitcher Injury Risk+, batting average skill isolation (BAA), and NBA shot-value estimation with SHAP interpretability.',
   },
   startups: {
     title: 'Startups & AI',
