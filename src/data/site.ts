@@ -4,7 +4,7 @@
 
 export const SITE = {
   title: 'Nate Seluga',
-  description: 'CS junior at Harvey Mudd College. Building full-stack apps and sports analytics models.',
+  description: 'CS junior at Harvey Mudd College. Building full-stack apps, statistical and ML models, and AI workflow tooling.',
   url: 'https://nateseluga.com',
   author: 'Nate Seluga',
 };
@@ -37,7 +37,7 @@ export const SECTIONS = {
     title: 'Software Engineering',
     slug: 'engineering',
     intro:
-      'Full-stack products built from the ground up. Patio is a social betting app for backyard games — React 19, Flask, Supabase, and a scipy house-odds engine at its core.',
+      'Full-stack products and AI tooling built from the ground up. Patio is a social betting app for backyard games — React 19, Flask, Supabase, and a scipy house-odds engine at its core. The OS workflow project is a personal Claude Code operating system: 48 custom skills, structured project memory, and a multi-agent dev team.',
   },
   'sports-analytics': {
     title: 'Sports Analytics',
