@@ -11,11 +11,12 @@ const selectedProjects = allProjects
   .slice(0, 3); // Show first 3 projects across all sections as "selected work"
 ---
 
-<BaseLayout title="Nate Seluga | Portfolio" description="CS junior at Harvey Mudd College. Building full-stack apps and sports analytics models.">
+<BaseLayout title="Nate Seluga | Portfolio" description="CS junior at Harvey Mudd College. Building full-stack apps, statistical and ML models, and AI workflow tooling.">
   <div class="py-12">
     <h1 class="text-5xl font-bold mb-6">Nate Seluga</h1>
     <p class="text-xl text-muted mb-12 max-w-2xl">
-      CS junior at Harvey Mudd College ('27). I build full-stack apps and statistical models — from a scipy house-odds engine for backyard-game betting to multi-model MLB pitcher injury prediction and NBA shot-value research.
+      CS junior at Harvey Mudd College ('27). I build full-stack web apps, statistical and ML models, and AI workflow tooling.
+      Recent work: a scipy house-odds engine for social betting (Patio), multi-model MLB pitcher injury prediction (Injury Risk+), batting average skill isolation (BAA), and NBA shot-value research.
     </p>
 
     {selectedProjects.length > 0 && (
@@ -39,7 +40,7 @@ const selectedProjects = allProjects
       <div class="grid gap-6 md:grid-cols-2">
         <a href="/engineering" class="section-entry-card">
           <h3 class="text-lg font-semibold mb-2">Software Engineering</h3>
-          <p class="text-muted text-sm mb-3">Full-stack development, infrastructure, and systems design.</p>
+          <p class="text-muted text-sm mb-3">Patio (React 19 + Flask + Supabase, scipy odds engine) and a personal Claude Code OS with 48 skills and structured project memory.</p>
           <span class="inline-flex items-center gap-1 text-accent text-sm font-medium">
             View all <span>→</span>
           </span>
@@ -47,7 +48,7 @@ const selectedProjects = allProjects
 
         <a href="/sports-analytics" class="section-entry-card">
           <h3 class="text-lg font-semibold mb-2">Sports Analytics</h3>
-          <p class="text-muted text-sm mb-3">Data-driven explorations in baseball and basketball with interactive visualizations.</p>
+          <p class="text-muted text-sm mb-3">Pitcher Injury Risk+ (survival models, walk-forward AUC 0.571), BAA skill isolation (R² 0.457), and NBA shot-value estimation (XGBoost AUC 0.6365).</p>
           <span class="inline-flex items-center gap-1 text-accent text-sm font-medium">
             View all <span>→</span>
           </span>
