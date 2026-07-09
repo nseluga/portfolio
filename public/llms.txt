@@ -37,6 +37,12 @@ Co-author: Michael O'Brien
 
 A 4-model ML comparison (logistic regression, decision tree, random forest, XGBoost) on 122,203 cleaned NBA shots from the 2014–15 season. XGBoost achieves AUC 0.6365 and Brier score 0.2296. The study identifies a hard predictability ceiling at ~0.63–0.64 AUC, with shooter skill as the named missing variable. Defender distance ratio is the top SHAP feature. Calibrated probabilities produce trustworthy expected-value estimates by zone: restricted area ≈ 1.85 EV, mid-range trough ≈ 1.00, corner-3 bump ≈ 1.15.
 
+### Personal OS — Claude Code Workflow System
+URL: https://nateseluga.com/engineering/os-workflow/
+Repo: https://github.com/nseluga/os
+
+A personal operating system built on top of Claude Code: 48 custom skills (reusable workflow definitions invocable by name or description match), a structured project-tracking system covering 8 active projects (each with a README.md containing status, next_step, and repo fields), and a persistent memory layer with 10 fact files auto-injected into sessions. Key skills: career-advisor (portfolio review rubric — accuracy, clarity, credibility, recruiter impact), dev-team-auto (autonomous multi-agent convergence loop for overnight unattended build runs), and baseball-research-advisor (skeptical analytics peer reviewer for sports-analytics writeups). All work on this portfolio site was built with this system as infrastructure. The repo is open.
+
 ---
 
 ## Skills

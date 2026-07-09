@@ -1,0 +1,92 @@
+---
+title: "Personal OS — Claude Code Workflow System"
+section: "engineering"
+date: 2026-07-09
+summary: "A personal operating system built on top of Claude Code: 48 custom skills, a structured project-tracking system covering 8 active projects, and a persistent memory layer with 10 fact files. The system compounds — each skill added makes the next session more capable — and is the infrastructure behind all AI-assisted work on this site."
+repoUrl: "https://github.com/nseluga/os"
+draft: false
+order: 8
+metrics:
+  - label: "Custom Skills"
+    value: "48"
+  - label: "Active Projects"
+    value: "8 tracked"
+  - label: "Memory Files"
+    value: "10 fact files"
+  - label: "GitHub"
+    value: "github.com/nseluga/os"
+---
+
+## The Problem
+
+Claude Code ships with general-purpose tools and no memory of previous sessions. Each conversation starts cold: no context about ongoing projects, no established conventions, no reusable workflows. That works for one-off tasks. It breaks down when you're managing multiple active projects, running recurring workflows, and trying to compound what you've learned about how to use AI effectively.
+
+The concrete version of this problem: I was repeatedly re-explaining the same project context at the start of sessions, re-discovering the same workflows for recurring tasks, and running AI assistance in a way that was useful but not accumulating into anything. Each session was roughly as capable as the last.
+
+The question I wanted to answer: can you build infrastructure on top of Claude Code that makes each session start smarter, and lets you invest in workflows once rather than re-derive them every time?
+
+## Why It Matters
+
+This matters for two reasons that are distinct.
+
+**For my own work:** Every project on this site — the pitcher injury model, Patio, the NBA shot-value study, this portfolio — was built with AI assistance. The quality of that assistance depends directly on how well the AI understands the project context, the conventions I care about, and the task at hand. A system that persists and grows that understanding is infrastructure, not a convenience.
+
+**As a signal to a hirer:** Building tooling to systematically improve how you work is a different skill than using a tool well. The OS repo shows the habit of identifying friction, designing a fix, and implementing it in a reusable form. That's the same habit that drives good engineering and good research: you notice where a process is inefficient, you fix the process, not just the instance.
+
+The repo is public and openable at https://github.com/nseluga/os. The numbers here — 48 skills, 8 projects, 10 memory files — are counts from the live repo, not projections.
+
+## My Approach
+
+### Skills: reusable workflows as invocable commands
+
+The core abstraction is a **skill**: a markdown file that defines a specialized workflow, loaded when Claude Code matches its description or when I invoke it by name. Skills live in `~/os/skills/`, symlinked to `~/.claude/skills/` so they're available in every session.
+
+I have 48 skills currently. Three that concretely illustrate what this enables:
+
+**`career-advisor`** (`~/os/skills/career-advisor/skill.md`) — a senior tech-industry hiring advisor persona, applied to portfolio writeups, project pages, and site copy. Without it, I'm writing portfolio content against my own judgment about what reads well to a recruiter; with it, I get a consistent rubric — accuracy first, then clarity, then credibility, then recruiter impact — applied every time I touch site copy. This writeup was reviewed against it. The patio.mdx writeup was reviewed against it. The homepage bio was updated because of it. It compresses what I know about portfolio-writing quality into a thing I can invoke rather than re-derive.
+
+**`dev-team-auto`** (`~/os/skills/dev-team-auto/skill.md`) — an autonomous multi-agent convergence loop: Engineer builds a task, QA gates it, an Optimization Reviewer reviews, a Bug Fixer applies findings, repeating until the item passes or hits a cap. I run this unattended overnight on the portfolio (the v3 content-voice loop running right now is an example). The skill is what makes that possible — it encodes the loop structure, the handoff protocol between agents, and the stopping conditions. Without the skill, running a multi-agent loop requires orchestrating it manually at the start of each session.
+
+**`baseball-research-advisor`** (`~/os/skills/baseball-research-advisor/skill.md`) — a skeptical analytics peer reviewer modeled on how a baseball-ops analyst would probe a research claim. I use it on the sports analytics writeups: it asks whether model choices are defensible, whether the accuracy framing is honest, whether the sports-domain reasoning holds up. The pitcher injury model writeup was revised specifically because this skill flagged that I was framing a 0.57 AUC as a model failure rather than a domain finding.
+
+The design decision behind skills was to encode the **rubric**, not just the task. A skill that says "review this writeup for quality" is less useful than one that defines what quality means for a specific audience and stakes level — and encodes the questions a reviewer would actually ask.
+
+### Memory: persistent preferences and corrections
+
+The memory system is a set of 10 fact files in `~/os/knowledge/memory/`, indexed by `MEMORY.md`. Each file records something specific: a feedback correction, a behavioral preference, a reference I want auto-loaded for a particular topic.
+
+Examples of what's in there: a note that I want tradeoffs surfaced proactively (not just on request); that portfolio writing should follow a specific style reference; that I'm still building fluency on Claude Code's hook and agent systems and explanations should be at that level. These get injected into sessions automatically via the `autoMemoryDirectory` setting.
+
+The design principle: each fact file records one thing, concisely. A monolithic "preferences" file would grow incoherent; separate files let individual corrections get updated without touching unrelated context.
+
+### Projects structure: context that persists across sessions
+
+Eight active projects are tracked under `~/os/projects/`, each with a `README.md` containing frontmatter fields (`status`, `next_step`, `last_active`, `repo`, `priority`) and a body description. This is what a project dashboard I built separately reads to generate a weekly digest — but its primary value is simpler: when I start a session on a project, the context file is already there. I don't re-explain what the project is, what phase it's in, or what the obvious next step is.
+
+### Hooks: automated behaviors at session boundaries
+
+Claude Code supports hooks that fire on events like session start, tool use, and session stop. I use these to auto-load project context, enforce conventions, and run post-session updates. The hooks are configured in `~/.claude/settings.json`, with the templates in `~/os`.
+
+## Results
+
+The system is in active daily use — it's the infrastructure behind all the AI-assisted work on this site. What I can point to concretely:
+
+The v3 content-voice loop (the autonomous overnight run that produced this writeup) runs because `dev-team-auto` encodes the loop structure. Without that skill, the same task would require a human to orchestrate each handoff. With it, I can kick off a multi-pass convergence loop before sleeping and read the result in the morning.
+
+The sports analytics writeups were revised because `baseball-research-advisor` identified specific claims that a baseball-ops reader would probe. That's a qualitative result, but the cause is traceable: the skill applied a rubric I can't hold entirely in my own head while also writing.
+
+The memory system means the sessions I have now start with significantly more relevant context than the sessions I had six months ago. That's compounding in the direction I wanted.
+
+What I haven't done yet: formal benchmarking of session quality before and after the system, or A/B comparison of output quality with and without skills on matched tasks. Those would make the "this system helps" claim much stronger. Right now, the evidence is behavioral (I use it daily; it changes what I do) not measured.
+
+## Key Takeaways
+
+1. **The right abstraction is the rubric, not the task.** Skills that encode what quality means for a specific context — what a career advisor checks, what a peer reviewer flags, what a QA gate requires — are more useful than skills that describe a task mechanically. The rubric is reusable across instances; the task description is usually one-off.
+
+2. **Memory is only useful if it's specific and updatable.** A general "preferences" file goes stale and becomes noise. The one-fact-one-file design keeps each entry editable without side effects, and specific enough to actually change behavior.
+
+3. **Compounding requires investment discipline.** The skills that pay off most are the ones where I took the time to write down the rubric carefully — which means doing the thinking upfront that I'd otherwise skip. The shortcut of writing a thin skill produces a thin result. The discipline is treating skill files like I'd treat a unit test: worth investing in once so you don't have to re-derive it.
+
+4. **Honest framing of scope is a feature.** This is a personal workflow tool, not a framework for other people, not a product. The repo reflects how I work and what I've found useful — not a universal prescription. That scope is honest and verifiable.
+
+5. **Building for yourself is still building.** The skills, the memory system, and the project structure were all built to solve real friction in how I work, not to demonstrate that I could build them. The distinction shows in the commit history and in the fact that the system is actively in use rather than sitting in a showcase repo.
