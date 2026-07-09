@@ -43,11 +43,11 @@ The core abstraction is a **skill**: a markdown file that defines a specialized 
 
 I have 48 skills currently. Three that concretely illustrate what this enables:
 
-**`career-advisor`** (`~/os/skills/career-advisor/skill.md`) — a senior tech-industry hiring advisor persona, applied to portfolio writeups, project pages, and site copy. Without it, I'm writing portfolio content against my own judgment about what reads well to a recruiter; with it, I get a consistent rubric — accuracy first, then clarity, then credibility, then recruiter impact — applied every time I touch site copy. This writeup was reviewed against it. The patio.mdx writeup was reviewed against it. The homepage bio was updated because of it. It compresses what I know about portfolio-writing quality into a thing I can invoke rather than re-derive.
+**`career-advisor`** (`~/os/skills/career-advisor/SKILL.md`) — a senior tech-industry hiring advisor persona, applied to portfolio writeups, project pages, and site copy. Without it, I'm writing portfolio content against my own judgment about what reads well to a recruiter; with it, I get a consistent rubric — accuracy first, then clarity, then credibility, then recruiter impact — applied every time I touch site copy. This writeup was reviewed against it. The patio.mdx writeup was reviewed against it. The homepage bio was updated because of it. It compresses what I know about portfolio-writing quality into a thing I can invoke rather than re-derive.
 
 **`dev-team-auto`** (`~/os/skills/dev-team-auto/skill.md`) — an autonomous multi-agent convergence loop: Engineer builds a task, QA gates it, an Optimization Reviewer reviews, a Bug Fixer applies findings, repeating until the item passes or hits a cap. I run this unattended overnight on the portfolio (the v3 content-voice loop running right now is an example). The skill is what makes that possible — it encodes the loop structure, the handoff protocol between agents, and the stopping conditions. Without the skill, running a multi-agent loop requires orchestrating it manually at the start of each session.
 
-**`baseball-research-advisor`** (`~/os/skills/baseball-research-advisor/skill.md`) — a skeptical analytics peer reviewer modeled on how a baseball-ops analyst would probe a research claim. I use it on the sports analytics writeups: it asks whether model choices are defensible, whether the accuracy framing is honest, whether the sports-domain reasoning holds up. The pitcher injury model writeup was revised specifically because this skill flagged that I was framing a 0.57 AUC as a model failure rather than a domain finding.
+**`baseball-research-advisor`** (`~/os/skills/baseball-research-advisor/SKILL.md`) — a skeptical analytics peer reviewer modeled on how a baseball-ops analyst would probe a research claim. I use it on the sports analytics writeups: it asks whether model choices are defensible, whether the accuracy framing is honest, whether the sports-domain reasoning holds up. The pitcher injury model writeup was revised specifically because this skill flagged that I was framing a 0.57 AUC as a model failure rather than a domain finding.
 
 The design decision behind skills was to encode the **rubric**, not just the task. A skill that says "review this writeup for quality" is less useful than one that defines what quality means for a specific audience and stakes level — and encodes the questions a reviewer would actually ask.
 
@@ -65,7 +65,7 @@ Eight active projects are tracked under `~/os/projects/`, each with a `README.md
 
 ### Hooks: automated behaviors at session boundaries
 
-Claude Code supports hooks that fire on events like session start, tool use, and session stop. I use these to auto-load project context, enforce conventions, and run post-session updates. The hooks are configured in `~/.claude/settings.json`, with the templates in `~/os`.
+Claude Code supports hooks that fire on events like session start, tool use, and session stop. For example, a Stop hook runs `python3 ~/.claude/save-chat-history.py` at the end of every session, automatically saving a transcript before the context window closes. I use hooks like this to auto-load project context, enforce conventions, and run post-session updates. The hooks are configured in `~/.claude/settings.json`, with the templates in `~/os`.
 
 ## Results
 
