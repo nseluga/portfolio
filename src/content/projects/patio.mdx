@@ -62,7 +62,7 @@ The odds engine spans three generator files and is the most technically rigorous
 
 **1. Recency-weighted player means**
 
-Each player's win rate is computed as an exponentially weighted mean over their last N appearances. Recent form matters more than stale results. This is especially important in small friend-group samples where a player's skill can drift meaningfully over a few weeks.
+Each player's win rate is computed as an exponentially weighted mean over their last N appearances. Recent form matters more than stale results. This is especially important in small friend-group samples where a player's skill can drift meaningfully over a few weeks. For players with fewer than a few games, their rating is pulled toward the group mean — a Bayesian-style prior that prevents outlier lines from small-sample histories.
 
 **2. Harmonic-mean team strength**
 
@@ -74,7 +74,7 @@ The raw win probability is mapped through `scipy.stats.norm.ppf` before the line
 
 **4. Push-proof x.5 lines**
 
-All lines are set at half-integer values (e.g. −3.5, +1.5) to eliminate pushes. A push refunds all bets and earns the house nothing, which undermines the entire point of maintaining a house edge. Half-integer lines make a push structurally impossible.
+All lines are set at half-integer values (e.g. −3.5, +1.5) to eliminate pushes. A push refunds all bets and earns the house nothing, which undermines the entire point of maintaining a house edge. Half-integer lines make a push structurally impossible. Pushes refund both wagers and earn the house nothing, so eliminating them is what makes the ~4% edge stable across bets.
 
 **5. Self-improving stats pipeline**
 
@@ -90,7 +90,7 @@ The flow:
 - Only a double-confirmation advances the bet to `settled`; a dispute flags it for manual review.
 - This prevents either party from unilaterally claiming a win.
 
-State machine: `pending` → `awaiting_confirmation` → `settled` / `disputed`.
+State machine: `pending` → `awaiting_confirmation` → `settled` / `disputed`. (Known edge cases in CPU settlement — including double-payment on re-submission — are documented in the project's PLAN.md bug backlog.)
 
 This is a trust mechanism matched to the social context, not a workaround. The constraint (no neutral referee) is real, and dual-confirmation is the right answer to it.
 
