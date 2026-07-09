@@ -2,7 +2,7 @@
 title: "Patio"
 section: "engineering"
 date: 2025-08-10
-summary: "Solo-built full-stack social betting app for backyard games (Caps, Pong, Beerball). Centerpiece: a scipy house-odds engine (~760 LOC) with recency-weighted player means, ~4% house edge, and a dual-confirmation settlement state machine. React 19 + Flask + Supabase — ~6,150 LOC, 20 API routes."
+summary: "Solo-built full-stack social betting app for backyard games (Caps, Pong, Beerball) with virtual caps currency. The centerpiece is a scipy house-odds engine (~760 LOC) built around harmonic-mean team strength, recency-weighted player means, and normal-percentile line biasing to embed a ~4% house edge. React 19 + Flask + psycopg2 + Supabase Postgres — ~6,150 LOC, 20 API routes, 6 pages. Pre-launch MVP; React Native/Expo pivot in progress."
 thumbnail: "/images/patio.svg"
 repoUrl: "https://github.com/nseluga/patio"
 draft: false
@@ -28,70 +28,84 @@ The challenge: **build a social betting app that computes fair, data-driven line
 
 ## Why It Matters
 
-Patio is a solo-built project that required solving several real engineering problems at once:
+Patio required solving several real engineering problems at once:
 
-- **Domain-specific probabilistic modeling**: computing fair odds for small-sample, skill-asymmetric competitions requires a real statistical approach — not just "50/50 with vibes."
+- **Domain-specific probabilistic modeling**: computing fair odds for small-sample, skill-asymmetric competitions requires a real statistical approach — not just "50/50 with vibes." The odds engine is the hardest piece and the most technically interesting.
 - **Full-stack product shipping**: building a working web app alone (React 19 frontend, Flask API, Supabase Postgres) from schema design through auth, routing, and UI.
 - **Honest self-auditing**: the project's own `PLAN.md` catalogs open bugs, unfinished flows, and a documented pivot to React Native/iOS — the codebase reflects how a real solo MVP evolves, not a polished portfolio facade.
-
-This demonstrates the ability to take a product from concept to functional, opinionated, testable software — and to reason clearly about what it does and doesn't do yet.
 
 ## My Approach
 
 ### Architecture
 
-**Frontend (React 19):**
-- 6 pages covering game selection, bet placement, leaderboard, and account management.
-- JWT-based session management; tokens stored in localStorage, sent in Authorization headers.
-- React Context for auth state; no additional state library (scope doesn't warrant it).
+The stack is React 19 on the frontend, Python Flask on the backend, and Supabase Postgres as the database. Each choice has a specific reason.
 
-**Backend (Python Flask + psycopg2):**
-- 20 REST routes handling users, games, bets, and settlement.
-- Direct psycopg2 connection pool to Supabase Postgres; parameterized queries throughout.
-- JWT issued at login; verified on every protected route via a decorator.
-- No live external data feeds — all odds are computed from internal stats.
+**Backend: Flask + psycopg2 (not Django or SQLAlchemy)**
 
-**Database (Supabase Postgres):**
-- Tables: `users`, `players`, `games`, `game_players`, `bets`, `bet_confirmations`, `player_stats`.
-- `player_stats` is updated as bets settle, feeding the next round of odds computation.
-- Supabase used for managed Postgres and row-level security; psycopg2 used directly (no ORM) for full control over query shape.
+The backend is 20 routes with a clear, stable schema. At that scale, an ORM adds indirection without benefit — it hides the queries that are actually hitting the database, which matters when you're debugging a settlement race condition or auditing why a line came out wrong. Using psycopg2 directly with parameterized queries keeps the query layer visible and fully auditable. Flask is the right fit for a focused API: no MVC overhead, no admin framework, just routes and middleware. Django would bring weight the project doesn't need.
+
+The backend is 17 routes in `app.py` plus 3 auth routes — all request/response, no WebSockets, no real-time features. REST at this scale is the simplest thing that works.
+
+**Database: Supabase Postgres**
+
+Supabase provides managed Postgres with a standard connection string, which means psycopg2 connects to it unmodified — no Supabase SDK, no ORM required. The app owns all the query logic; Supabase handles provisioning, backups, and connection pooling. This is the right division of labor: let the managed service do infrastructure, keep the application in control of what queries run and when.
+
+Schema: `users`, `players`, `games`, `game_players`, `bets`, `bet_confirmations`, `player_stats`. The `player_stats` table is updated as bets settle, which feeds the next round of odds computation — the model's inputs improve as more games are recorded.
+
+**Frontend: React 19**
+
+Six pages covering game selection (PvP and CPU/House modes), active bets, leaderboard, profile, and login/register. JWT-based session management with tokens in localStorage; React Context for auth state. No additional state library — the scope doesn't warrant one.
 
 ### The Odds Engine (~760 LOC, scipy-powered)
 
-The core of the project is a house-odds engine that computes lines from accumulated player history. The algorithm:
+The odds engine spans three generator files and is the most technically rigorous piece of the project. The algorithm:
 
-1. **Recency-weighted player means** — each player's win rate is computed as an exponentially weighted mean over their last N appearances, so recent form matters more than stale results.
+**1. Recency-weighted player means**
 
-2. **Harmonic-mean team strength** — for team-vs-team matchups, each side's aggregate strength is computed via harmonic mean of individual player ratings, which penalizes weak-link effects more aggressively than arithmetic mean.
+Each player's win rate is computed as an exponentially weighted mean over their last N appearances. Recent form matters more than stale results. This is especially important in small friend-group samples where a player's skill can drift meaningfully over a few weeks.
 
-3. **Normal-percentile line biasing** — the raw win probability is mapped through `scipy.stats.norm.ppf` to convert it into a point-spread equivalent, then shifted to embed a ~4% house edge (the book collects this margin over many bets).
+**2. Harmonic-mean team strength**
 
-4. **Push-proof x.5 lines** — all lines are set at half-integer values (e.g. −3.5, +1.5) to eliminate pushes; a push refunds bets and earns the house nothing, so this is a structural necessity.
+For team-vs-team matchups, each side's aggregate strength is the harmonic mean of its players' ratings — not the arithmetic mean. The distinction matters: arithmetic mean rewards depth (a strong player compensates for a weak one), but harmonic mean penalizes weak-link effects more aggressively. In Caps and Pong, one weak player can cost the team a round regardless of how strong their partner is. Harmonic mean better captures how team performance actually distributes in these games.
 
-5. **Self-improving stats pipeline** — when a bet settles, the result feeds back into `player_stats`, so the engine's inputs improve as more games are recorded. The model gets better the more the group plays.
+**3. Normal-percentile line biasing**
+
+The raw win probability is mapped through `scipy.stats.norm.ppf` before the line is set. This converts the probability into a point-spread equivalent in standard-deviation units, then shifts it to embed a ~4% house edge. The result is a house margin that is proportional across the probability distribution — the book earns predictably whether the matchup is 55/45 or 80/20. A flat "add 4 percentage points" approach would skew lines asymmetrically at the tails; the percentile approach doesn't.
+
+**4. Push-proof x.5 lines**
+
+All lines are set at half-integer values (e.g. −3.5, +1.5) to eliminate pushes. A push refunds all bets and earns the house nothing, which undermines the entire point of maintaining a house edge. Half-integer lines make a push structurally impossible.
+
+**5. Self-improving stats pipeline**
+
+When a bet settles, the result feeds back into `player_stats`, so the engine's inputs sharpen as more games are recorded. The model gets better the more the group plays. This is the feedback loop that makes the system worth building: the odds are only as good as the history behind them, and the history grows every time the app is used.
 
 ### Settlement State Machine
 
-Patio uses an honor-system dual-confirmation settlement flow:
+The settlement flow is where the trust problem lives. In a refereeless backyard context, there's no neutral observer. If you trust the winner's stat submission unilaterally, every winner has an incentive to inflate their stats. Admin arbitration requires a third party that doesn't exist in this social context. The solution is dual-confirmation: both parties must agree on the outcome before a bet settles.
+
+The flow:
 - The game winner submits their result.
 - The opposing player must confirm (or dispute) within a time window.
 - Only a double-confirmation advances the bet to `settled`; a dispute flags it for manual review.
 - This prevents either party from unilaterally claiming a win.
 
-The state machine covers: `pending` → `awaiting_confirmation` → `settled` / `disputed`.
+State machine: `pending` → `awaiting_confirmation` → `settled` / `disputed`.
+
+This is a trust mechanism matched to the social context, not a workaround. The constraint (no neutral referee) is real, and dual-confirmation is the right answer to it.
 
 ### Auth
 
-JWT auth via Flask; tokens issued at `/auth/login`, refreshed at `/auth/refresh`. All bet, settlement, and stats routes are protected. No third-party auth provider — the full auth flow is implemented in the backend.
+JWT auth via Flask; tokens issued at `/auth/login`, refreshed at `/auth/refresh`. All bet, settlement, and stats routes are protected via a decorator. No third-party auth provider — the full auth flow is implemented in the backend.
 
 ## Results
 
-Patio is a pre-launch MVP, honestly positioned as such. As of the last audit:
+Patio is a pre-launch MVP, honestly positioned as such.
 
-- **~6,150 LOC** across frontend and backend.
-- **20 API routes** and **6 pages** covering core flows.
+- **~6,150 LOC** across frontend and backend; `app.py` alone is 1,499 lines.
+- **20 API routes** (17 in `app.py` + 3 auth routes) and **6 pages** covering core flows.
 - **~760 LOC odds engine** with full scipy-powered math — the most technically rigorous piece.
-- The project's own `PLAN.md` documents open bugs, incomplete edge-case handling in the settlement flow, and a planned pivot to React Native/iOS to make the app usable at actual backyard gatherings (where nobody has a laptop).
+- **React Native/Expo SDK 54 conversion in progress.** Nobody has a laptop at a backyard party. The web-first form factor was the right scope decision for rapid prototyping — build the model and core flows first, validate the mechanics, then move to mobile. The pivot is product thinking, not retreat.
 
 No live user numbers are reported — the app has not launched publicly. The focus has been on getting the model and the core flows right before pushing to production.
 
@@ -99,10 +113,10 @@ No live user numbers are reported — the app has not launched publicly. The foc
 
 1. **Domain modeling is the hardest part.** The odds engine required thinking carefully about what "fair" means in a skill-asymmetric small-sample game — not just copying a standard Elo formula. Harmonic-mean team strength and recency weighting came from reasoning about the domain, not from a textbook.
 
-2. **Building solo means owning the whole stack honestly.** There's no teammate to blame for a bad schema or a leaky auth flow. Writing a self-audit (PLAN.md) before polishing the surface was the most useful discipline I applied — it forced a clear-eyed view of what works, what's fragile, and what's missing.
+2. **Match the tool to the scale.** Flask + psycopg2 instead of Django + SQLAlchemy; Supabase for managed infrastructure instead of self-hosted Postgres. At 20 routes with a clear schema, full-framework overhead is cost without benefit. The value of a simple stack is that every query is visible and every failure mode is obvious.
 
-3. **Small-sample statistics require humility.** Early versions of the odds engine produced nonsensical lines for players with fewer than five games. The fix — a prior that regresses all players toward the group mean when N is small — came from understanding the math, not from adding more code.
+3. **Design for the trust constraints, not against them.** Dual-confirmation settlement exists because the social context has no neutral referee. The right architecture acknowledges that constraint rather than papering over it with admin controls that don't fit.
 
-4. **Supabase + psycopg2 is a clean combination.** Supabase handles auth bootstrapping and managed Postgres; psycopg2 keeps query control in the application layer. No ORM magic hiding what's actually hitting the database.
+4. **Small-sample statistics require humility.** Early versions of the odds engine produced nonsensical lines for players with fewer than five games. The fix — a prior that regresses all players toward the group mean when N is small — came from understanding the math, not from adding more code.
 
 5. **A pivot is a design decision, not a failure.** The move to React Native/iOS is motivated by a real product insight: nobody pulls out a laptop at a backyard party. Recognizing that the current web-first form factor limits adoption — and planning a concrete path forward — is product thinking, not a retreat.
