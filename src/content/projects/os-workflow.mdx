@@ -1,8 +1,8 @@
 ---
-title: "Personal OS: Claude Code Workflow System"
+title: "Personal OS — Claude Code Workflow System"
 section: "engineering"
 date: 2026-07-09
-summary: "A personal operating system built on top of Claude Code: 48 custom skills, a structured project-tracking system covering 8 active projects, and a persistent memory layer with 10 fact files. Each skill added makes the next session more capable. It's the infrastructure behind all AI-assisted work on this site."
+summary: "A personal operating system built on top of Claude Code: 48 custom skills, a structured project-tracking system covering 8 active projects, and a persistent memory layer with 10 fact files. Each skill added makes the next session more capable, and the system is the infrastructure behind all AI-assisted work on this site."
 repoUrl: "https://github.com/nseluga/os"
 draft: false
 order: 8
@@ -33,7 +33,7 @@ This matters for two reasons that are distinct.
 
 **As a signal to a hirer:** Building tooling to systematically improve how you work is a different skill than using a tool well. The OS repo shows the habit of identifying friction, designing a fix, and implementing it in a reusable form. That's the same habit that drives good engineering and good research: you notice where a process is inefficient, you fix the process, not just the instance.
 
-The repo is public and openable at https://github.com/nseluga/os. The numbers here (48 skills, 8 projects, 10 memory files) are counts from the live repo, not projections.
+The repo is public at https://github.com/nseluga/os. The numbers here (48 skills, 8 projects, 10 memory files) are counts from the live repo, not projections.
 
 ## My Approach
 
@@ -43,11 +43,11 @@ The core abstraction is a **skill**: a markdown file that defines a specialized 
 
 I have 48 skills currently. Three that concretely illustrate what this enables:
 
-**`career-advisor`** (`~/os/skills/career-advisor/SKILL.md`): a senior tech-industry hiring advisor persona, applied to portfolio writeups, project pages, and site copy. Without it, I'm writing portfolio content against my own judgment about what reads well to a recruiter; with it, I get a consistent rubric — accuracy first, then clarity, then credibility, then recruiter impact — applied every time I touch site copy. This writeup was reviewed against it. The patio.mdx writeup was reviewed against it. The homepage bio was updated because of it. It compresses what I know about portfolio-writing quality into a thing I can invoke rather than re-derive.
+**`career-advisor`** (`~/os/skills/career-advisor/SKILL.md`): a senior tech-industry hiring advisor persona, applied to portfolio writeups, project pages, and site copy. Without it, I'm writing portfolio content against my own judgment about what reads well to a recruiter; with it, I get a consistent rubric (accuracy first, then clarity, then credibility, then recruiter impact) applied every time I touch site copy. This writeup was reviewed against it. The patio.mdx writeup was reviewed against it. The homepage bio was updated because of it. It compresses what I know about portfolio-writing quality into something I can invoke rather than re-derive.
 
-**`dev-team-auto`** (`~/os/skills/dev-team-auto/skill.md`): an autonomous multi-agent convergence loop. Engineer builds a task, QA gates it, an Optimization Reviewer reviews, a Bug Fixer applies findings, repeating until the item passes or hits a cap. I run this unattended overnight on the portfolio (the v3 content-voice loop running right now is an example). The skill is what makes that possible — it encodes the loop structure, the handoff protocol between agents, and the stopping conditions. Without the skill, running a multi-agent loop requires orchestrating it manually at the start of each session.
+**`dev-team-auto`** (`~/os/skills/dev-team-auto/skill.md`): an autonomous multi-agent convergence loop. The Engineer builds a task, QA gates it, the Optimization Reviewer reviews, the Bug Fixer applies findings, and the loop repeats until the item passes or hits a cap. I run this unattended overnight on the portfolio (the v3 content-voice loop is an example). The skill makes that possible: it encodes the loop structure, the handoff protocol between agents, and the stopping conditions. Without it, running a multi-agent loop requires orchestrating each handoff manually at the start of every session.
 
-**`baseball-research-advisor`** (`~/os/skills/baseball-research-advisor/SKILL.md`) — a skeptical analytics peer reviewer modeled on how a baseball-ops analyst would probe a research claim. I use it on the sports analytics writeups: it asks whether model choices are defensible, whether the accuracy framing is honest, whether the sports-domain reasoning holds up. The pitcher injury model writeup was revised specifically because this skill flagged that I was framing a 0.57 AUC as a model failure rather than a domain finding.
+**`baseball-research-advisor`** (`~/os/skills/baseball-research-advisor/SKILL.md`): a skeptical analytics peer reviewer modeled on how a baseball-ops analyst would probe a research claim. I use it on the sports analytics writeups: it asks whether model choices are defensible, whether the accuracy framing is honest, whether the sports-domain reasoning holds up. The pitcher injury model writeup was revised specifically because this skill flagged that I was framing a 0.57 AUC as a model failure rather than a domain finding.
 
 The design decision behind skills was to encode the **rubric**, not just the task. A skill that says "review this writeup for quality" is less useful than one that defines what quality means for a specific audience and stakes level, and encodes the questions a reviewer would actually ask.
 
@@ -61,7 +61,7 @@ The design principle: each fact file records one thing, concisely. A monolithic 
 
 ### Projects structure: context that persists across sessions
 
-Eight active projects are tracked under `~/os/projects/`, each with a `README.md` containing frontmatter fields (`status`, `next_step`, `last_active`, `repo`, `priority`) and a body description. A project dashboard I built separately reads these to generate a weekly digest. But the primary value is simpler: when I start a session on a project, the context file is already there. I don't re-explain what the project is, what phase it's in, or what the obvious next step is.
+Eight active projects are tracked under `~/os/projects/`, each with a `README.md` containing frontmatter fields (`status`, `next_step`, `last_active`, `repo`, `priority`) and a body description. A project dashboard I built separately reads these to generate a weekly digest, but the primary value is simpler: when I start a session on a project, the context file is already there. I don't re-explain what the project is, what phase it's in, or what the obvious next step is.
 
 ### Hooks: automated behaviors at session boundaries
 
@@ -77,7 +77,7 @@ The sports analytics writeups were revised because `baseball-research-advisor` i
 
 The memory system means the sessions I have now start with significantly more relevant context than the sessions I had six months ago. That's compounding in the direction I wanted.
 
-What I haven't done yet: formal benchmarking of session quality before and after the system, or A/B comparison of output quality with and without skills on matched tasks. Those would make the "this system helps" claim much stronger. Right now, the evidence is behavioral (I use it daily; it changes what I do) not measured.
+What I haven't done yet: formal benchmarking of session quality before and after the system, or A/B comparison of output quality with and without skills on matched tasks. Those would make the "this system helps" claim much stronger. Right now, the evidence is behavioral rather than measured.
 
 ## Key Takeaways
 
@@ -85,8 +85,8 @@ What I haven't done yet: formal benchmarking of session quality before and after
 
 2. **Memory is only useful if it's specific and updatable.** A general "preferences" file goes stale and becomes noise. The one-fact-one-file design keeps each entry editable without side effects, and specific enough to actually change behavior.
 
-3. **Compounding requires investment discipline.** The skills that pay off most are the ones where I took the time to write down the rubric carefully. That means doing the thinking upfront that I'd otherwise skip. The shortcut of writing a thin skill produces a thin result. The discipline is treating skill files like I'd treat a unit test: worth investing in once so you don't have to re-derive it.
+3. **Compounding requires investment discipline.** The skills that pay off most are the ones where I took the time to write down the rubric carefully, which means doing the thinking upfront that I'd otherwise skip. The shortcut of writing a thin skill produces a thin result. The discipline is treating skill files like I'd treat a unit test: worth investing in once so you don't have to re-derive it.
 
-4. **Honest framing of scope is a feature.** This is a personal workflow tool, not a framework for other people, not a product. The repo reflects how I work and what I've found useful. Not a universal prescription. That scope is honest and verifiable.
+4. **Honest framing of scope is a feature.** This is a personal workflow tool, not a framework for other people, not a product. The repo reflects how I work and what I've found useful, not a universal prescription. That scope is honest and verifiable.
 
-5. **Building for yourself is still building.** The skills, the memory system, and the project structure were all built to solve real friction in how I work, not to demonstrate that I could build them. The distinction shows in the commit history and in the fact that the system is actively in use rather than sitting in a display repo.
+5. **Building for yourself is still building.** The skills, the memory system, and the project structure were all built to solve real friction in how I work, not to demonstrate that I could build them. The distinction shows in the commit history and in the fact that the system is actively in use rather than sitting in a showcase repo.

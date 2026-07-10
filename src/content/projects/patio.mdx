@@ -2,7 +2,7 @@
 title: "Patio"
 section: "engineering"
 date: 2025-08-10
-summary: "Solo-built full-stack social betting app for backyard games (Caps, Pong, Beerball) with virtual caps currency. The centerpiece is a scipy house-odds engine (~760 LOC) built around harmonic-mean team strength, recency-weighted player means, and normal-percentile line biasing to embed a ~4% house edge. React 19 + Flask + psycopg2 + Supabase Postgres — ~6,150 LOC, 20 API routes, 6 pages. Pre-launch MVP; React Native/Expo pivot in progress."
+summary: "Solo-built full-stack social betting app for backyard games (Caps, Pong, Beerball) with virtual caps currency. The centerpiece is a scipy house-odds engine (~760 LOC) built around harmonic-mean team strength, recency-weighted player means, and normal-percentile line biasing to embed a ~4% house edge. Stack: React 19 + Flask + psycopg2 + Supabase Postgres. ~6,150 LOC, 20 API routes, 6 pages. Pre-launch MVP; React Native/Expo pivot in progress."
 thumbnail: "/images/patio.svg"
 repoUrl: "https://github.com/nseluga/patio"
 draft: false
@@ -22,7 +22,7 @@ metrics:
 
 Among a friend group that plays backyard games (Caps, Pong, Beerball), everyone wants to bet on the outcome, but nobody has a fair way to set lines. Without historical performance data and a principled model, whoever runs the book can bias the lines however they like. The result is either chaotic "vibes" odds or nobody bothers.
 
-Bets are denominated in virtual *caps* — a frictionless in-app currency that keeps stakes social without real money.
+Bets are denominated in virtual *caps*, a frictionless in-app currency that keeps stakes social without real money.
 
 The challenge: **build a social betting app that computes fair, data-driven lines automatically from the group's own play history, maintains a house edge to keep the book solvent, and lets friends settle bets through an honest peer-confirmation flow.**
 
@@ -32,7 +32,7 @@ Patio required solving several real engineering problems at once:
 
 - **Domain-specific probabilistic modeling**: computing fair odds for small-sample, skill-asymmetric competitions requires a real statistical approach, not just "50/50 with vibes." The odds engine is the hardest piece and the most technically interesting.
 - **Full-stack product shipping**: building a working web app alone (React 19 frontend, Flask API, Supabase Postgres) from schema design through auth, routing, and UI.
-- **Honest self-auditing**: the project's own `PLAN.md` catalogs open bugs, unfinished flows, and a documented pivot to React Native/iOS — the codebase reflects how a real solo MVP evolves, not a polished portfolio facade.
+- **Honest self-auditing**: the project's own `PLAN.md` catalogs open bugs, unfinished flows, and a documented pivot to React Native/iOS. The codebase reflects how a real solo MVP evolves, not a polished portfolio facade.
 
 ## My Approach
 
@@ -42,15 +42,15 @@ The stack is React 19 on the frontend, Python Flask on the backend, and Supabase
 
 **Backend: Flask + psycopg2 (not Django or SQLAlchemy)**
 
-The backend is 20 routes with a clear, stable schema. At that scale, an ORM adds indirection without benefit. It hides the queries that are actually hitting the database, which matters when you're debugging a settlement race condition or auditing why a line came out wrong. Using psycopg2 directly with parameterized queries keeps the query layer visible and fully auditable. Flask is the right fit for a focused API: no MVC overhead, no admin framework, just routes and middleware. Django would bring weight the project doesn't need.
+The backend is 20 routes with a clear, stable schema. At that scale, an ORM adds indirection without benefit: it hides the queries that are actually hitting the database, which matters when you're debugging a settlement race condition or auditing why a line came out wrong. Using psycopg2 directly with parameterized queries keeps the query layer visible and fully auditable. Flask is the right fit for a focused API: no MVC overhead, no admin framework, just routes and middleware. Django would bring weight the project doesn't need.
 
-The backend is 17 routes in `app.py` plus 3 auth routes: all request/response, no WebSockets, no real-time features. REST at this scale is the simplest thing that works.
+The backend is 17 routes in `app.py` plus 3 auth routes, all request/response with no WebSockets or real-time features. REST at this scale is the simplest thing that works.
 
 **Database: Supabase Postgres**
 
-Supabase provides managed Postgres with a standard connection string, which means psycopg2 connects to it unmodified: no Supabase SDK, no ORM required. The app owns all the query logic; Supabase handles provisioning, backups, and connection pooling. Let the managed service do the infrastructure work; keep the application in control of what queries run and when.
+Supabase provides managed Postgres with a standard connection string, which means psycopg2 connects to it unmodified. No Supabase SDK, no ORM required. The app owns all the query logic; Supabase handles provisioning, backups, and connection pooling. This is the right division of labor: let the managed service do infrastructure, keep the application in control of what queries run and when.
 
-Schema: `users`, `players`, `games`, `game_players`, `bets`, `bet_confirmations`, `player_stats`. The `player_stats` table is updated as bets settle, feeding the next round of odds computation. The model's inputs improve as more games are recorded.
+Schema: `users`, `players`, `games`, `game_players`, `bets`, `bet_confirmations`, `player_stats`. The `player_stats` table is updated as bets settle, which feeds the next round of odds computation. The model's inputs improve as more games are recorded.
 
 **Frontend: React 19**
 
@@ -70,7 +70,7 @@ For team-vs-team matchups, each side's aggregate strength is the harmonic mean o
 
 **3. Normal-percentile line biasing**
 
-The raw win probability is mapped through `scipy.stats.norm.ppf` before the line is set. This converts the probability into a point-spread equivalent in standard-deviation units, then shifts it to embed a ~4% house edge. The result is a house margin proportional across the probability distribution: the book earns predictably whether the matchup is 55/45 or 80/20. A flat "add 4 percentage points" approach would skew lines asymmetrically at the tails; the percentile approach doesn't.
+The raw win probability is mapped through `scipy.stats.norm.ppf` before the line is set. This converts the probability into a point-spread equivalent in standard-deviation units, then shifts it to embed a ~4% house edge. The result is a house margin that is proportional across the probability distribution: the book earns predictably whether the matchup is 55/45 or 80/20. A flat "add 4 percentage points" approach would skew lines asymmetrically at the tails; the percentile approach doesn't.
 
 **4. Push-proof x.5 lines**
 
@@ -90,13 +90,13 @@ The flow:
 - Only a double-confirmation advances the bet to `settled`; a dispute flags it for manual review.
 - This prevents either party from unilaterally claiming a win.
 
-State machine: `pending` → `awaiting_confirmation` → `settled` / `disputed`. (Known edge cases in CPU settlement — including double-payment on re-submission — are documented in the project's PLAN.md bug backlog.)
+State machine: `pending` → `awaiting_confirmation` → `settled` / `disputed`. Known edge cases in CPU settlement (including double-payment on re-submission) are documented in the project's PLAN.md bug backlog.
 
 This is a trust mechanism matched to the social context, not a workaround. The constraint (no neutral referee) is real, and dual-confirmation is the right answer to it.
 
 ### Auth
 
-JWT auth via Flask; tokens issued at `/auth/login`, refreshed at `/auth/refresh`. All bet, settlement, and stats routes are protected via a decorator. No third-party auth provider — the full auth flow is implemented in the backend.
+JWT auth via Flask; tokens issued at `/auth/login`, refreshed at `/auth/refresh`. All bet, settlement, and stats routes are protected via a decorator. No third-party auth provider: the full auth flow is implemented in the backend.
 
 ## Results
 
@@ -107,7 +107,7 @@ Patio is a pre-launch MVP, honestly positioned as such.
 - **~760 LOC odds engine** with full scipy-powered math, the most technically rigorous piece.
 - **React Native/Expo SDK 54 conversion in progress.** Nobody has a laptop at a backyard party. The web-first form factor was the right scope decision for rapid prototyping: build the model and core flows first, validate the mechanics, then move to mobile. The pivot is product thinking, not retreat.
 
-No live user numbers are reported. The app hasn't launched publicly; the focus has been on getting the model and the core flows right before pushing to production.
+No live user numbers are reported. The app hasn't launched publicly. The focus has been on getting the model and the core flows right before pushing to production.
 
 ## Key Takeaways
 
@@ -117,6 +117,6 @@ No live user numbers are reported. The app hasn't launched publicly; the focus h
 
 3. **Design for the trust constraints, not against them.** Dual-confirmation settlement exists because the social context has no neutral referee. The right architecture acknowledges that constraint rather than papering over it with admin controls that don't fit.
 
-4. **Small-sample statistics require humility.** Early versions of the odds engine produced nonsensical lines for players with fewer than five games. The fix was a prior that regresses all players toward the group mean when N is small. It came from understanding the math, not from adding more code.
+4. **Small-sample statistics require humility.** Early versions of the odds engine produced nonsensical lines for players with fewer than five games. The fix, a prior that regresses all players toward the group mean when N is small, came from understanding the math, not from adding more code.
 
-5. **A pivot is a design decision, not a failure.** The move to React Native/iOS is motivated by a real product insight: nobody pulls out a laptop at a backyard party. Recognizing that the current web-first form factor limits adoption, and planning a concrete path forward, is product thinking, not a retreat.
+5. **A pivot is a design decision, not a failure.** The move to React Native/iOS is motivated by a real product insight: nobody pulls out a laptop at a backyard party. Recognizing that the current web-first form factor limits adoption and planning a concrete path forward is product thinking, not a retreat.
