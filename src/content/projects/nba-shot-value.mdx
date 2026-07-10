@@ -59,7 +59,7 @@ The dataset gives shot clock, dribbles before the shot, closest defender distanc
 4. **Calibration**: isotonic regression applied to the XGBoost outputs, so the probabilities feeding the EV curve are trustworthy in value, not just in order.
 5. **SHAP analysis**: to check which features actually drove the predictions and confirm the model's reasoning matched the design intent.
 
-The honest result of the test: feature engineering did **not** move the tree ceiling. XGBoost tuned on the engineered set scored **0.6365** test AUC, flat against (or a hair below) the raw tree baselines (Random Forest 0.6397, XGBoost 0.6411). That's exactly the signature you'd expect if the missing variable is shooter skill: the features we added rearrange known information, they don't add the one thing the model can't see.
+The honest result of the test: feature engineering did **not** move the tree ceiling. XGBoost tuned on the engineered set scored **0.6365** test AUC, at or just below the raw tree baselines (Random Forest 0.6397, XGBoost 0.6411). That's exactly the signature you'd expect if the missing variable is shooter skill: the features we added rearrange known information, they don't add the one thing the model can't see.
 
 ## Results
 
