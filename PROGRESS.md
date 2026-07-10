@@ -8,11 +8,10 @@
 ---
 
 ## Current position
-- **Status:** ✅ **V3 AUTONOMOUS CONTENT-VOICE LOOP COMPLETE (V0–V7)** — all items done.
-  Branch `content/v3-voice-loop` merged into `main`. Ready for Human Hookup.
-- **Next:** Human Hookup — GitHub push → Cloudflare Pages → `nateseluga.com` (needs Nate).
+- **Status:** V4 complete (V0–V8). One autonomous run remaining: v5 (visual polish, Fable + Claude Computer Use).
+- **Next:** Launch run 2 from the Claude app with Fable selected to run V9 (visual polish).
 - **Blockers (Needs-Nate):** Resume PDF; Patio live URL + screenshots; LinkedIn URL (for hookup).
-- **Last updated:** 2026-07-09 (v3 complete)
+- **Last updated:** 2026-07-09 (V8 voice pass complete)
 
 ---
 
@@ -49,6 +48,16 @@
 | V5 — Patio | ✅ done full — engineering decisions legible (harmonic mean, norm.ppf edge, dual-confirm rationale, Flask+psycopg2 why); minor fixes applied. d0b31a2 | career-advisor + dt-engineer substance | Engineering-decision legibility. |
 | V6 — Site-wide voice pass | ✅ done light — three-track identity consistent site-wide; About baseball anchor added; LinkedIn wired; bio split into two sentences. 3b92f21 | career-advisor | Home + About + section intros. |
 | V7 — Final QA | ✅ done light — build clean (12 pages), Lighthouse 100/100/100/100 production (home, os-workflow, pitcher), responsive 375px pass (no overflow, all text flows), llms.txt covers all 6 live pages, per-page summaries accurate. | — | Build, responsive, Lighthouse, meta sync. |
+
+### v4 — Unattended run 1: voice pass (`dev-team-auto`)
+| Item | Status | Notes |
+|------|--------|-------|
+| V8 — Voice pass: strip AI patterns | ✅ done full — all 9 target files rewritten; em dashes eliminated (prose); vocab tells clear; career-advisor PASS (0 Critical, 0 Important); build clean 12 pages. fcad0a4 | All project pages + home + about + site.ts. Phrasing only, no content changes. |
+
+### v5 — Unattended run 2: visual polish (Fable + Claude Computer Use)
+| Item | Status | Notes |
+|------|--------|-------|
+| V9 — Visual polish pass | ⬜ Not started | Launch from Claude app with Fable. Spacing, typography, color, bug fixes. |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 

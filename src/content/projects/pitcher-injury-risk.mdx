@@ -2,7 +2,7 @@
 title: "Pitcher Injury-Risk Model"
 section: "sports-analytics"
 date: 2025-05-15
-summary: "The best honest model I built predicts MLB pitcher injury at walk-forward AUC 0.571 — barely above chance — and that number is the most important finding. Across 3,249 pitchers and 205,911 pitcher-game rows (Statcast 2015–2024, 76 features), I mapped where the domain ceiling sits and which signals stay useful below it: calibrated probabilities, a season-stable Injury Risk+ score, and a validated velocity dose-response."
+summary: "The best honest model I built predicts MLB pitcher injury at walk-forward AUC 0.571, barely above chance, and that number is the most important finding. Across 3,249 pitchers and 205,911 pitcher-game rows (Statcast 2015–2024, 76 features), I mapped where the domain ceiling sits and which signals stay useful below it: calibrated probabilities, a season-stable Injury Risk+ score, and a validated velocity dose-response."
 thumbnail: "/images/pitcher-injury.svg"
 draft: false
 order: 10
@@ -27,8 +27,8 @@ The headline finding of this project is a number that looks like a failure: the 
 Three properties of the data make a strong discrimination score suspicious rather than impressive:
 
 - **The outcome is rare and binary.** The 30-day injury positive rate across pitcher-games is roughly **6.6%**. A model that "just predicts no injury" is right ~93% of the time and useless, so accuracy is meaningless and AUC/PR-AUC are the only honest lenses.
-- **The structure is temporal, not IID.** Injury risk accumulates over a season; feature lookback windows (trailing 7/28/90-day workload) reach backward in time. Any evaluation that shuffles rows leaks the future into the past. Walk-forward CV — train on prior seasons, test forward — is mandatory, not a nicety, and it produces a *lower* number than stratified splits precisely because it stops the leak.
-- **The real causes are invisible.** The mechanisms that actually blow out an elbow — biomechanics, arm-path deterioration, proprioceptive deficits, off-field load — do not appear in Statcast. Statcast measures pitch outcomes, not muscle recruitment. A model that scored, say, AUC 0.85 on this data would be evidence of a leak, not a breakthrough.
+- **The structure is temporal, not IID.** Injury risk accumulates over a season; feature lookback windows (trailing 7/28/90-day workload) reach backward in time. Any evaluation that shuffles rows leaks the future into the past. Walk-forward CV (train on prior seasons, test forward) is mandatory, not a nicety, and it produces a *lower* number than stratified splits precisely because it stops the leak.
+- **The real causes are invisible.** The mechanisms that actually blow out an elbow (biomechanics, arm-path deterioration, proprioceptive deficits, off-field load) don't appear in Statcast. Statcast measures pitch outcomes, not muscle recruitment. A model that scored, say, AUC 0.85 on this data would be evidence of a leak, not a breakthrough.
 
 So the framing throughout is: a high AUC would be a red flag. The interesting question is what you *can* extract when raw ranking is weak.
 
@@ -38,7 +38,7 @@ Once you accept that per-game discrimination has a ceiling, the value moves from
 
 - **Calibrated probabilities for load management.** After isotonic calibration, Expected Calibration Error drops from **0.059 to 0.029**. A probability that matches the observed rate can be thresholded — "hold anyone above X% projected 30-day risk" — even when the model can't cleanly rank two pitchers against each other.
 - **A season-stable risk score for planning.** The Injury Risk+ (IR+) composite correlates **r = 0.583** year-over-year across 9,752 pitcher-seasons. Per-game predictions are noisy; a score that holds from one season to the next is something a front office can plan a roster around months ahead.
-- **A validated dose-response.** Pitchers whose velocity declines more than 2 mph year-over-year show roughly **double** the observed injury rate. That's not a ranking model — it's an actionable, directly interpretable relationship.
+- **A validated dose-response.** Pitchers whose velocity declines more than 2 mph year-over-year show roughly **double** the observed injury rate. That's not a ranking model. It's an actionable, directly interpretable relationship.
 
 This is a canonical hard sports-analytics problem: real data, severe class imbalance, strong temporal dependence, invisible true causes. Building on it honestly meant confronting the limit of the signal instead of chasing a leaderboard number.
 
@@ -57,22 +57,22 @@ Final dataset: **3,249 pitchers**, **205,911 pitcher-game rows**, **76 engineere
 
 I didn't build four models to pad the project. Each one answers a different sub-question that the others can't:
 
-1. **Baseline classifiers — is there *any* signal?** Logistic regression and random forest / gradient boosting on pitcher-game rows. The random forest hit held-out **AUC-ROC 0.579** and **PR-AUC 0.131** (against a ~6.6% base rate), which is the "yes, but barely" answer that sets up everything downstream.
+1. **Baseline classifiers: is there *any* signal?** Logistic regression and random forest / gradient boosting on pitcher-game rows. The random forest hit held-out **AUC-ROC 0.579** and **PR-AUC 0.131** (against a ~6.6% base rate), which is the "yes, but barely" answer that sets up everything downstream.
 
-2. **Survival ensemble — respect the censoring.** Binary classification treats a pitcher who finishes the season healthy as a negative example, which is wrong: he's a *censored* observation, not a confirmed non-injury. I modeled days-until-next-IL-stint with an ensemble of Gradient Boosted Survival Analysis, Cox proportional hazards, and a Random Survival Forest. Ensemble **C-index 0.566** — same modest-but-real signal as the classifiers, but on the correct data structure.
+2. **Survival ensemble: respect the censoring.** Binary classification treats a pitcher who finishes the season healthy as a negative example, which is wrong: he's a *censored* observation, not a confirmed non-injury. I modeled days-until-next-IL-stint with an ensemble of Gradient Boosted Survival Analysis, Cox proportional hazards, and a Random Survival Forest. Ensemble **C-index 0.566** — same modest-but-real signal as the classifiers, but on the correct data structure.
 
-3. **Multi-task severity — 10-day vs. 60-day.** Predicts injury occurrence and, conditional on injury, whether it's a short (10-day) or extended (60-day) stint. "Probably misses two weeks" and "heading toward a season-ender" are different operational decisions, so I separated them.
+3. **Multi-task severity: 10-day vs. 60-day.** Predicts injury occurrence and, conditional on injury, whether it's a short (10-day) or extended (60-day) stint. "Probably misses two weeks" and "heading toward a season-ender" are different operational decisions, so I separated them.
 
 4. **Injury Risk+ (IR+) — convert weak per-game predictions into a stable season number.** An ERA+-style composite scaled to a mean of 100 per season and archetype (starter vs. reliever), computed across **9,752 pitcher-seasons**. This is the track that turns noisy game-level output into the year-over-year-stable operational signal (r = 0.583).
 
 ### Two decisions I had to defend
 
-- **Walk-forward CV over stratified splits.** Stratified time-series splits let the feature-engineering lookback windows see future seasons, inflating the score. I chose temporal walk-forward CV — train only on seasons prior to the test season — even though it produces a *lower* headline number (**mean AUC 0.571, std 0.023**). The honest number is lower, and that's the point.
-- **Interventional SHAP over path-dependent SHAP.** Path-dependent (tree-path) SHAP splits credit by the tree's structure and can hand attribution to correlated features arbitrarily. Under interventional SHAP — conditioning on counterfactual workload — **`pitches_90d` genuinely outranks ACWR**. That flips a common sports-science heuristic: raw 90-day cumulative load carries more signal than the acute-to-chronic *ratio* everyone reaches for first.
+- **Walk-forward CV over stratified splits.** Stratified time-series splits let the feature-engineering lookback windows see future seasons, inflating the score. I chose temporal walk-forward CV (train only on seasons prior to the test season) even though it produces a *lower* headline number (**mean AUC 0.571, std 0.023**). The honest number is lower, and that's the point.
+- **Interventional SHAP over path-dependent SHAP.** Path-dependent (tree-path) SHAP splits credit by the tree's structure and can hand attribution to correlated features arbitrarily. Under interventional SHAP, conditioning on counterfactual workload, **`pitches_90d` genuinely outranks ACWR**. That flips a common sports-science heuristic: raw 90-day cumulative load carries more signal than the acute-to-chronic *ratio* everyone reaches for first.
 
 ## Results
 
-I lead with what's validated, then the ceiling — because the validated findings are what a team can act on, and the ceiling is what keeps the findings honest.
+I lead with what's validated, then the ceiling. The validated findings are what a team can act on; the ceiling is what keeps the findings honest.
 
 <ChartWrapper option={{
   title: {
@@ -183,17 +183,17 @@ I lead with what's validated, then the ceiling — because the validated finding
 
 ### What's validated
 
-- **Velocity-decline dose-response.** In the velocity analysis (~89K no-decline vs. ~13K declining pitcher-games, from NB11), pitchers whose year-over-year velocity fell more than 2 mph show an observed 30-day injury rate of about **12%**, versus roughly **6%** for pitchers without that decline — a near doubling. In IR+ terms the declining cohort scores **119.5** against **96.9** for non-decliners. This is the cleanest, most directly actionable finding: not a ranking, a relationship.
+- **Velocity-decline dose-response.** In the velocity analysis (~89K no-decline vs. ~13K declining pitcher-games, from NB11), pitchers whose year-over-year velocity fell more than 2 mph show an observed 30-day injury rate of about **12%**, versus roughly **6%** for pitchers without that decline, a near doubling. In IR+ terms the declining cohort scores **119.5** against **96.9** for non-decliners. This is the cleanest, most directly actionable finding: not a ranking, a relationship.
 
 - **IR+ is season-stable.** Year-over-year correlation of **r = 0.583** across 9,752 pitcher-seasons. A per-game probability is too noisy to plan around; a score that holds from one season to the next is something a front office can build a roster on.
 
-- **`pitches_90d` outranks ACWR under interventional SHAP.** Absolute 90-day cumulative load carries more signal than the acute-to-chronic ratio the sports-science literature leans on — a concrete, checkable challenge to a common heuristic.
+- **`pitches_90d` outranks ACWR under interventional SHAP.** Absolute 90-day cumulative load carries more signal than the acute-to-chronic ratio the sports-science literature leans on. A concrete, checkable challenge to a common heuristic.
 
 - **Injury history dominates the binary model.** The top random-forest importances are `prior_il_total` (**0.268**), `prior_il_days_lost` (**0.150**), and `days_since_last_injury` (**0.139**) — prior injury, not current workload, is the strongest single binary predictor.
 
-### The ceiling — and how I know it's real
+### The ceiling, and how I know it's real
 
-- **Discrimination tops out near chance.** Walk-forward CV mean **AUC 0.571** (std 0.023); the survival ensemble lands at **C-index 0.566**. Both consistently beat 0.5 across forward folds, so the signal is real — but it is not strong enough to replace expert judgment, and I don't claim it is.
+- **Discrimination tops out near chance.** Walk-forward CV mean **AUC 0.571** (std 0.023); the survival ensemble lands at **C-index 0.566**. Both consistently beat 0.5 across forward folds, so the signal is real. It's not strong enough to replace expert judgment, and I don't claim it is.
 
 - **I tested the ceiling instead of assuming it.** The improvement log is a record of experiments that were tried and *reverted* because they didn't help:
   - **Log-normal AFT** — regressed the ensemble by **−0.0021 C-index**; reverted.
@@ -210,13 +210,13 @@ I lead with what's validated, then the ceiling — because the validated finding
 
 ### Shipping the useful part
 
-The findings live in a **Streamlit dashboard** with four panels: a season IR+ leaderboard, an individual pitcher profile, multi-pitcher comparison, and archetype analysis. It surfaces the outputs that survive the weak-ranking regime — the season score and the dose-response — rather than a per-game prediction the data can't support.
+The findings live in a **Streamlit dashboard** with four panels: a season IR+ leaderboard, an individual pitcher profile, multi-pitcher comparison, and archetype analysis. It surfaces the outputs that survive the weak-ranking regime (the season score and the dose-response) rather than a per-game prediction the data can't support.
 
 ## Key Takeaways
 
 What I'd want a reader to leave holding is the reasoning, not a metric:
 
-1. **The weak AUC is the finding.** 0.571 walk-forward isn't a failure to hide — it's the honest ceiling of injury prediction from public pitch-level data, and stating it up front is what makes the rest of the project trustworthy. A strong AUC here would have meant a leak.
+1. **The weak AUC is the finding.** 0.571 walk-forward isn't a failure to hide. It's the honest ceiling of injury prediction from public pitch-level data, and stating it up front is what makes the rest of the project trustworthy. A strong AUC here would have meant a leak.
 
 2. **When ranking is weak, calibration and stability carry the value.** Isotonic calibration (ECE 0.059 → 0.029) gives thresholdable probabilities; IR+'s r = 0.583 gives a season-level planning number. Both are usable even though per-game discrimination isn't.
 
