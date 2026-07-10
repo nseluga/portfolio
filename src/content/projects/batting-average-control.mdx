@@ -22,17 +22,17 @@ A .320 batting average is a single number hiding two very different stories: how
 
 ## The Problem
 
-Batting average is a variance-decomposition problem wearing a simple disguise. Two hitters bat .300 in the same season — one earned it with elite contact quality, the other got a friendly run of BABIP. The raw number can't tell them apart, and neither can intuition once you're past the extremes.
+Batting average is a variance-decomposition problem wearing a simple disguise. Two hitters bat .300 in the same season: one earned it with elite contact quality, the other got a friendly run of BABIP. The raw number can't tell them apart, and neither can intuition once you're past the extremes.
 
-BAA turns that distinction into a quantity instead of a vibe. It splits each player-season into two components: a **skill component** (the BAA score, driven by the hitter's peripherals) and a **luck component** (actual batting average minus the model's prediction). The deliverable is the decomposition itself — everything downstream is a method choice made to get that split right.
+BAA turns that distinction into a quantity instead of a vibe. It splits each player-season into two components: a **skill component** (the BAA score, driven by the hitter's peripherals) and a **luck component** (actual batting average minus the model's prediction). The deliverable is the decomposition itself; everything downstream is a method choice made to get that split right.
 
-One scope decision up front, because it constrains every other one: this is **skill isolation, not forecasting.** BAA is same-season and descriptive. It estimates what a player's average *should* have been given how he actually hit that year — not what he'll do next year. That narrowness is deliberate, and it's what keeps the model honest about what it measures.
+One scope decision up front, because it constrains every other one: this is **skill isolation, not forecasting.** BAA is same-season and descriptive. It estimates what a player's average *should* have been given how he actually hit that year, not what he'll do next year. That narrowness is deliberate, and it's what keeps the model honest about what it measures.
 
 ## Why It Matters
 
 The decomposition *is* the tool. A .320 hitter sitting on a .400 BABIP is a regression candidate the raw stat flatters; a .265 hitter with elite contact quality and sprint speed is undervalued by a number that can't see past the outcome. BAA makes the luck component quantitative per player-season, so "he's due to fall off" stops being a hunch and becomes a figure you can put in a table.
 
-And the headline is the ICC: **24.7% of the variance in batting average across this dataset is stable, repeatable skill.** That's the answer to "how much of AVG is real?" — roughly a quarter — and it's the kind of number a front office can actually build an evaluation on, because it says how much weight the metric deserves.
+And the headline is the ICC: **24.7% of the variance in batting average across this dataset is stable, repeatable skill.** That's the answer to "how much of AVG is real?" Roughly a quarter. It's the kind of number a front office can actually build an evaluation on, because it says how much weight the metric deserves.
 
 ## My Approach
 
@@ -40,7 +40,7 @@ Each method choice below exists to make the decomposition trustworthy. None of i
 
 ### Data
 
-- **Source:** FanGraphs rate statistics plus Statcast sprint speed — 2015–2024 MLB seasons.
+- **Source:** FanGraphs rate statistics plus Statcast sprint speed, 2015–2024 MLB seasons.
 - **Scale:** 4,374 player-seasons across 1,173 unique players.
 - **Filtering:** Minimum **100 PA** per season; PA-weighted fitting gives more influence to qualified hitters.
 
@@ -48,23 +48,23 @@ Features: strikeout rate, walk rate, contact rate, batted-ball type rates (groun
 
 ### Why mixed effects, not OLS
 
-The stable part of a hitter — hand-eye coordination, bat path, the things that show up in outcomes but not fully in rate stats — is exactly the signal I'm trying to isolate. Plain OLS forces a bad choice: ignore the player grouping and let that stable signal inflate the residuals, or fit individual player terms on thin single-season samples and overfit.
+The stable part of a hitter (hand-eye coordination, bat path, the things that show up in outcomes but not fully in rate stats) is exactly the signal I'm trying to isolate. Plain OLS forces a bad choice: ignore the player grouping and let that stable signal inflate the residuals, or fit individual player terms on thin single-season samples and overfit.
 
-A mixed-effects model (OLS base with player random intercepts, via statsmodels MixedLM) does neither. Partial pooling shrinks small-sample players toward the population and lets the ICC *quantify* the stable between-player signal directly. That's where the **24.7%** comes from — it isn't a byproduct, it's the reason the model has this shape.
+A mixed-effects model (OLS base with player random intercepts, via statsmodels MixedLM) does neither. Partial pooling shrinks small-sample players toward the population and lets the ICC *quantify* the stable between-player signal directly. That's where the **24.7%** comes from: it isn't a byproduct, it's the reason the model has this shape.
 
 ### Why a CLR transform on batted-ball rates
 
-Line-drive, ground-ball, fly-ball, and pop-up rates are compositional — they sum to 1. Feeding those raw percentages into a linear model violates the simplex constraint and distorts the coefficients, because moving one rate mechanically moves the others. A **centered log-ratio (CLR) transform** maps them into unconstrained space where the model reads them honestly. This is a correctness fix, not a nicety.
+Line-drive, ground-ball, fly-ball, and pop-up rates are compositional: they sum to 1. Feeding those raw percentages into a linear model violates the simplex constraint and distorts the coefficients, because moving one rate mechanically moves the others. A **centered log-ratio (CLR) transform** maps them into unconstrained space where the model reads them honestly. This is a correctness fix, not a nicety.
 
 ### Why a random 80/20 split, not temporal CV
 
-Because the scope is same-season descriptive. A temporal split would smuggle in a forecasting goal the model doesn't have — it would be answering a question I'm not asking. A random 80/20 split is the honest evaluation for a same-season measurement.
+Because the scope is same-season descriptive. A temporal split would smuggle in a forecasting goal the model doesn't have. It would be answering a question I'm not asking. A random 80/20 split is the honest evaluation for a same-season measurement.
 
 ### Why linear beats random forest — on evidence
 
-Both were tested. On BABIP prediction, a direct sub-problem, the linear model hit a test R² of **0.372** against **0.293** for random forest — a 21.2% drop — with an RF overfit gap of **0.166**. The tree model memorized BABIP luck in the training data and failed to generalize. When the target is signal rather than noise, the simpler model wins, and here it won on the numbers, not on taste.
+Both were tested. On BABIP prediction, a direct sub-problem, the linear model hit a test R² of **0.372** against **0.293** for random forest, a 21.2% drop, with an RF overfit gap of **0.166**. The tree model memorized BABIP luck in the training data and failed to generalize. When the target is signal rather than noise, the simpler model wins, and here it won on the numbers, not on taste.
 
-The linear model is also legible: **sprint speed is the #2 driver of BABIP** (standardized coefficient **+0.0087\*\*\***). That's analytically meaningful — fast hitters beat out infield hits and reach on errors, a real and repeatable skill that raw BABIP treats as random noise.
+The linear model is also legible: **sprint speed is the #2 driver of BABIP** (standardized coefficient **+0.0087\*\*\***). That's analytically meaningful. Fast hitters beat out infield hits and reach on errors, a real and repeatable skill that raw BABIP treats as random noise.
 
 ### Constructing the components
 
@@ -78,13 +78,13 @@ After fitting, each player-season gets a **`luck_component`**: actual batting av
 |--------|-------|
 | Test R² (AVG from peripherals) | 0.4570 |
 | Test MAE | 0.0215 |
-| Skill share — ICC (AVG model) | 24.7% |
+| Skill share (ICC, AVG model) | 24.7% |
 | ICC (BABIP sub-model) | 18.4% |
 | Prediction interval coverage | 54.5% |
 
 The **ICC of 24.7%** is the result: about a quarter of batting-average variance is stable skill. The BABIP sub-model carries an ICC of 18.4%, consistent with BABIP being the luckier of the two targets.
 
-One honest limitation: **prediction interval coverage is 54.5%**, well below the nominal 95%. The intervals are poorly calibrated — too narrow. The model fits the mean well (MAE ≈ 21 points of average) but its uncertainty estimates aren't trustworthy yet, and I'm not going to pretend they are.
+One honest limitation: **prediction interval coverage is 54.5%**, well below the nominal 95%. The intervals are poorly calibrated, too narrow. The model fits the mean well (MAE ≈ 21 points of average) but its uncertainty estimates aren't trustworthy yet, and I'm not going to pretend they are.
 
 ### Face Validity
 
@@ -100,13 +100,13 @@ The split produces intuitive endpoints. Arraez's peripherals justify a high expe
 
 *† Approximate; MLB BA averaged ~.249 across 2015–2024.*
 
-Alongside the BAA score, the per-player-season `luck_component` is the other half of the deliverable — the quantity that tells you how much of the actual line was the model's expectation and how much was the bounce.
+Alongside the BAA score, the per-player-season `luck_component` is the other half of the deliverable: the quantity that tells you how much of the actual line was the model's expectation and how much was the bounce.
 
 ## Key Takeaways
 
 1. **ICC 24.7% is the result.** Roughly a quarter of batting-average variance is stable, repeatable skill. That's the number the whole project exists to produce.
 
-2. **Scope is skill isolation, not forecast.** The natural next step — does year-N BAA predict year-N+1 batting average, net of that year's peripherals? — would convert this from a descriptive metric into a forecasting tool. That's the explicit future experiment, deliberately outside this version.
+2. **Scope is skill isolation, not forecast.** The natural next step (does year-N BAA predict year-N+1 batting average, net of that year's peripherals?) would convert this from a descriptive metric into a forecasting tool. That's the explicit future experiment, deliberately outside this version.
 
 3. **Mixed effects over OLS.** The stable player signal is the thing worth measuring, so it should be modeled and quantified, not discarded into the residuals.
 
