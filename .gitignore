@@ -31,3 +31,8 @@ Thumbs.db
 
 # Claude Code
 .claude/
+
+# Personal planning/progress/spec — local only, never on GitHub
+/PLAN.md
+/PROGRESS.md
+/SPEC.md
