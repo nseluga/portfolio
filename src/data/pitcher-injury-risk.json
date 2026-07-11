@@ -1,9 +1,10 @@
 {
-  "_source": "Statcast 2015–2024 analysis — inline chart options are defined in src/content/projects/pitcher-injury-risk.mdx",
-  "_note": "Replaces prior fabricated 'Pitcher Injury Risk by Age & Usage' line data. Real numbers below are from the year-over-year velocity decline analysis.",
+  "_source": "NB11 (11_baseball_specific_insights.ipynb), cell e8b828cd — velo_decline_cat groupby output. Groups defined by velo_delta_vs_season bins: >2 mph decline vs at/above season avg. Injury rate from injured_next_30d; IR+ from injury_risk_plus season×archetype-normalized score.",
+  "_note": "IR+ values updated from V9 accuracy pass (2026-07-11). Prior values (96.9/119.5) were unverified. Notebook output: At/above season avg mean_risk_plus=101.97, >2 mph decline mean_risk_plus=129.64. Group sizes: 88,677 (no decline) and 13,271 (declining).",
   "velocityDeclineComparison": {
-    "groups": ["No Decline (< 2 mph over 90 days)", "Significant Decline (≥ 2 mph over 90 days)"],
+    "groups": ["No Decline (at/above season avg)", "Significant Decline (> 2 mph below season avg)"],
     "thirtyDayInjuryRate": [6, 12],
-    "injuryRiskPlus": [96.9, 119.5]
+    "injuryRiskPlus": [102.0, 129.6],
+    "groupSizes": [88677, 13271]
   }
 }
