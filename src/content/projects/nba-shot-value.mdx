@@ -59,7 +59,7 @@ The dataset gives shot clock, dribbles before the shot, closest defender distanc
 4. **Calibration**: isotonic regression applied to the XGBoost outputs, so the probabilities feeding the EV curve are trustworthy in value, not just in order.
 5. **SHAP analysis**: to check which features actually drove the predictions and confirm the model's reasoning matched the design intent.
 
-The honest result of the test: feature engineering did **not** move the tree ceiling. XGBoost tuned on the engineered set scored **0.6365** test AUC, at or just below the raw tree baselines (Random Forest 0.6397, XGBoost 0.6411). That's exactly the signature you'd expect if the missing variable is shooter skill: the features we added rearrange known information, they don't add the one thing the model can't see.
+The honest result of the test: feature engineering did **not** move the tree ceiling. XGBoost tuned on the engineered set scored **0.6365** test AUC, at or just below the raw tree baselines (Random Forest 0.6355, XGBoost 0.6360). That's exactly the signature you'd expect if the missing variable is shooter skill: the features we added rearrange known information, they don't add the one thing the model can't see.
 
 ## Results
 
@@ -83,7 +83,7 @@ The honest result of the test: feature engineering did **not** move the tree cei
     nameLocation: 'middle',
     nameGap: 38,
     nameTextStyle: { color: '#6b7280', fontSize: 11 },
-    data: ['0–4 ft', '5–9 ft', '10–14 ft', '15–19 ft', '20–21 ft', '22–24 ft', '25–27 ft', '28+ ft'],
+    data: ['0–4 ft', '4–8 ft', '8–12 ft', '12–16 ft', '16–20 ft', '20–22 ft', '22–24 ft', '24–28 ft'],
     axisLine: { lineStyle: { color: '#e5e7eb' } },
     axisTick: { show: false },
     axisLabel: { color: '#6b7280', fontSize: 10 }
@@ -105,7 +105,7 @@ The honest result of the test: feature engineering did **not** move the tree cei
   series: [{
     name: 'Expected Value',
     type: 'line',
-    data: [1.85, 1.45, 1.20, 1.05, 1.00, 1.15, 1.05, 0.90],
+    data: [1.85, 1.63, 1.09, 1.03, 0.93, 0.86, 1.20, 1.13],
     lineStyle: { color: '#1f2937', width: 2.5 },
     itemStyle: { color: '#1f2937' },
     symbolSize: 6,
@@ -122,8 +122,8 @@ The honest result of the test: feature engineering did **not** move the tree cei
           { xAxis: '0–4 ft' }
         ],
         [
-          { name: 'Mid-Range', xAxis: '5–9 ft', itemStyle: { color: 'rgba(156,163,175,0.07)' } },
-          { xAxis: '20–21 ft' }
+          { name: 'Mid-Range', xAxis: '4–8 ft', itemStyle: { color: 'rgba(156,163,175,0.07)' } },
+          { xAxis: '20–22 ft' }
         ],
         [
           { name: 'Corner 3', xAxis: '22–24 ft', itemStyle: { color: 'rgba(31,41,55,0.05)' } },
@@ -152,7 +152,7 @@ With trustworthy probabilities, the EV curve (make probability × point value) i
 
 1. **Open shots at the rim (0–4 ft) top the curve at ~1.85 expected points.** Low contest and short range compound. Nothing else on the floor is close.
 
-2. **Mid-range is a trough.** EV across roughly 5–21 ft sags below the corner three under comparable contest conditions. The much-maligned mid-range shows up as genuinely inefficient relative to its alternatives, not as opinion, but as a consequence of the calibrated numbers.
+2. **Mid-range is a trough.** EV from roughly 8–22 ft sags below the corner three under comparable contest conditions. The much-maligned mid-range shows up as genuinely inefficient relative to its alternatives, not as opinion, but as a consequence of the calibrated numbers.
 
 3. **The corner three (22–24 ft) bumps back up (~1.15–1.20 open).** The corner is geometrically closer to the rim than the wing arc for the same three points, and that geometry advantage surfaces as a local EV bump: above the mid-range and the deeper looks, though still well short of the restricted area.
 
@@ -160,7 +160,7 @@ With trustworthy probabilities, the EV curve (make probability × point value) i
 
 1. **Player-agnostic by design, so the ceiling is interpretable.** Excluding shooter identity was the first decision, not an oversight. It converts a mediocre-looking AUC into a clean measurement: the value of shot context to a league-average shooter.
 
-2. **The four-model sweep tested the ceiling; feature engineering didn't break it.** XGBoost tuned on engineered features (0.6365) sat flat against the raw tree baselines (RF 0.6397, XGB 0.6411), and every model class converged near 0.63–0.64. Engineered features rearranged known information rather than adding the missing variable, which is precisely what the constraint hypothesis predicts.
+2. **The four-model sweep tested the ceiling; feature engineering didn't break it.** XGBoost tuned on engineered features (0.6365) sat flat against the raw tree baselines (RF 0.6355, XGB 0.6360), and every model class converged near 0.63–0.64. Engineered features rearranged known information rather than adding the missing variable, which is precisely what the constraint hypothesis predicts.
 
 3. **Calibration, not AUC, is what enables EV.** Expected value is a multiplication, so it needs correct probability magnitudes. The Brier score of 0.2296 and the isotonic recalibration step are what make the EV curve trustworthy; AUC alone would not have.
 

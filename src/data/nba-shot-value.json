@@ -1,0 +1,9 @@
+{
+  "_source": "NB08 shot_data_visualizations.ipynb — pressure_ev groupby(['shot_distance_bin','def_pressure_bin']).agg(expected_value=('expected_shot_value','mean')), Open (6+ ft) filter, min_attempts=75; XGBoost model from NB07 (make_probability * pts_type)",
+  "expectedValueCurve": {
+    "distanceBins": ["0–4 ft", "4–8 ft", "8–12 ft", "12–16 ft", "16–20 ft", "20–22 ft", "22–24 ft", "24–28 ft"],
+    "openShotEV": [1.846, 1.627, 1.089, 1.033, 0.927, 0.863, 1.204, 1.132],
+    "openShotAttempts": [1034, 487, 300, 892, 3526, 1819, 4930, 7600],
+    "description": "Expected points per shot by distance bin, open shots (defender distance > 6 ft), 2014–15 NBA season. Computed as mean(make_probability × pts_type) using the NB07 XGBoost model (AUC 0.6365, Brier 0.2296)."
+  }
+}
