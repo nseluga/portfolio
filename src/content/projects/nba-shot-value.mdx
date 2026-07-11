@@ -48,7 +48,7 @@ The core of the study is a test of one hypothesis: *if* the ceiling is an inform
 The dataset gives shot clock, dribbles before the shot, closest defender distance, touch time, and shot distance, but **no x/y court coordinates**, and, by our own choice, no shooter identity. Feature engineering worked within those constraints:
 
 1. **`defender_distance_ratio`:** defender distance divided by shot distance. Raw defender distance is misleading on its own: a defender two feet away means one thing on a dunk and something completely different on a step-back three. Normalizing the contest by shot range lets a single feature encode "how pressured was this shot *for its type*," which raw distance can't express without the model learning the interaction the hard way.
-2. **Distance zones:** bucketed shot distance into restricted area (0–4 ft), mid-range (5–21 ft), and three-point range (22+ ft).
+2. **Distance zones:** bucketed shot distance into restricted area (0–4 ft), mid-range (8–22 ft), and three-point range (22+ ft).
 3. **Shot-clock urgency:** a binary flag for shots taken with under 4 seconds on the clock.
 
 ### Methodology
