@@ -1,0 +1,19 @@
+{
+  "_source": "batting_average_model.ipynb — cells 124 (AVG model performance), 95 (BABIP ICC), 128 (AVG ICC), 97 (feature importance), 154 (player examples); babip_model_comparison.csv (model comparison); babip_final_model_info.txt (coverage)",
+  "modelPerformance": {
+    "testR2": 0.4570,
+    "testMAE": 0.0215,
+    "icc_avg": 0.2472,
+    "icc_babip": 0.1844,
+    "predictionIntervalCoverage": 0.545
+  },
+  "playerExamples": [
+    {"player": "Luis Arraez", "season": 2023, "baa": 133.2, "ba": 0.354},
+    {"player": "Joey Gallo", "season": 2023, "baa": 61.2, "ba": 0.177}
+  ],
+  "babipModelComparison": {
+    "linearR2": 0.372,
+    "rfR2": 0.293,
+    "rfOverfitGap": 0.166
+  }
+}
