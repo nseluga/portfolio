@@ -63,7 +63,7 @@ I didn't build four models to pad the project. Each one answers a different sub-
 
 3. **Multi-task severity: 10-day vs. 60-day.** Predicts injury occurrence and, conditional on injury, whether it's a short (10-day) or extended (60-day) stint. "Probably misses two weeks" and "heading toward a season-ender" are different operational decisions, so I separated them.
 
-4. **Injury Risk+ (IR+): convert weak per-game predictions into a stable season number.** An ERA+-style composite scaled to a mean of 100 per season and archetype (starter vs. reliever), computed across **9,752 pitcher-seasons**. This is the track that turns noisy game-level output into the year-over-year-stable operational signal (r = 0.583).
+4. **Injury Risk+ (IR+): convert weak per-game predictions into a stable season number.** An ERA+-style composite scaled to a mean of 100 per season and archetype (starter vs. reliever), computed across **9,752 pitcher-seasons**. This is the track that turns noisy game-level output into the year-over-year-stable operational signal (r = 0.645).
 
 ### Two decisions I had to defend
 
@@ -196,11 +196,11 @@ I lead with what's validated, then the ceiling, because the validated findings a
 - **Discrimination tops out near chance.** Walk-forward CV mean **AUC 0.574** (std 0.023); the survival ensemble lands at **C-index 0.556**. Both consistently beat 0.5 across forward folds, so the signal is real, but it's not strong enough to replace expert judgment, and I don't claim it is.
 
 - **I tested the ceiling instead of assuming it.** The improvement log is a record of experiments that were tried and *reverted* because they didn't help:
-  - **Log-normal AFT:** regressed the ensemble by **−0.0021 C-index**; reverted.
+  - **Weibull AFT:** attempted as a parametric survival model; reverted after it failed to improve the ensemble.
   - **ExtraSurvivalTrees:** scored **C = 0.5381** on its own and dragged the ensemble down; dropped.
   - **IPCW least-squares loss:** incompatible with **95% censoring** in the survival data; abandoned.
 
-  These reversions are the evidence that 0.571 is a discovered ceiling, not a lack of effort.
+  These reversions are the evidence that 0.574 is a discovered ceiling, not a lack of effort.
 
 ### What the model can't see
 
@@ -222,7 +222,7 @@ What I'd want a reader to leave holding is the reasoning, not a metric:
 
 3. **The method choices were forced by the data.** Walk-forward CV because lookback windows leak the future; survival modeling because 95%-censored healthy seasons aren't negatives; a composite because per-game output is too noisy to act on. Each decision has a specific reason and a rejected alternative.
 
-4. **The ceiling was tested, not assumed.** Log-normal AFT, ExtraSurvivalTrees, and an IPCW loss were all tried and reverted with recorded numbers. That's how I know 0.574 is where the signal actually stops.
+4. **The ceiling was tested, not assumed.** A Weibull AFT, ExtraSurvivalTrees, and an IPCW loss were all tried and reverted. That's how I know 0.574 is where the signal actually stops.
 
 5. **What a baseball-ops team can use today:** the calibrated risk threshold for load management, the IR+ season signal for roster planning, and the >2 mph velocity dose-response as a validated red flag.
 
