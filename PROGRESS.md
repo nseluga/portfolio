@@ -8,10 +8,10 @@
 ---
 
 ## Current position
-- **Status:** V4 complete (V0–V8). One autonomous run remaining: v5 (visual polish, Fable + Claude Computer Use).
-- **Next:** Launch run 2 from the Claude app with Fable selected to run V9 (visual polish).
-- **Blockers (Needs-Nate):** Resume PDF; Patio live URL + screenshots; LinkedIn URL (for hookup).
-- **Last updated:** 2026-07-09 (V8 voice pass complete)
+- **Status:** V0–V9 complete. One item remains before deployment.
+- **Next:** V10 — visual polish (Fable + CCU, launch from Claude app). Reference: brittanychiang.com/#projects.
+- **Blockers (Needs-Nate):** Resume PDF; Patio live URL + screenshots; LinkedIn URL; review of V9 framing sections (motivation/interpretation not touched by accuracy pass).
+- **Last updated:** 2026-07-11 (V9 done — all three analytics pages accuracy-verified)
 
 ---
 
@@ -49,15 +49,20 @@
 | V6 — Site-wide voice pass | ✅ done light — three-track identity consistent site-wide; About baseball anchor added; LinkedIn wired; bio split into two sentences. 3b92f21 | career-advisor | Home + About + section intros. |
 | V7 — Final QA | ✅ done light — build clean (12 pages), Lighthouse 100/100/100/100 production (home, os-workflow, pitcher), responsive 375px pass (no overflow, all text flows), llms.txt covers all 6 live pages, per-page summaries accurate. | — | Build, responsive, Lighthouse, meta sync. |
 
-### v4 — Unattended run 1: voice pass (`dev-team-auto`)
+### v4 — Voice pass (complete)
 | Item | Status | Notes |
 |------|--------|-------|
 | V8 — Voice pass: strip AI patterns | ✅ done full — all 9 target files rewritten; em dashes eliminated (prose); vocab tells clear; career-advisor PASS (0 Critical, 0 Important); build clean 12 pages. fcad0a4 | All project pages + home + about + site.ts. Phrasing only, no content changes. |
 
-### v5 — Unattended run 2: visual polish (Fable + Claude Computer Use)
+### v5 — Analytics accuracy + visualization pass
 | Item | Status | Notes |
 |------|--------|-------|
-| V9 — Visual polish pass | ⬜ Not started | Launch from Claude app with Fable. Spacing, typography, color, bug fixes. |
+| V9 — Analytics accuracy: metrics, model descriptions, chart data | ✅ done full — Pitcher (11 metrics corrected, Weibull AFT name fix), NBA (RF/XGB AUC corrected, EV chart rebuilt from NB08, mid-range bounds fixed), BAA (Gallo BA fixed, JSON data files created); baseball-research-advisor PASS on all three. e309d47 | Pitcher / NBA / BAA. Non-subjective scope only. baseball-researcher loop. |
+
+### v6 — Visual polish (Fable + Claude Computer Use)
+| Item | Status | Notes |
+|------|--------|-------|
+| V10 — Visual polish pass | ⬜ Not started | Launch from Claude app with Fable. Reference: brittanychiang.com/#projects. |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Done · ⛔ Blocked
 

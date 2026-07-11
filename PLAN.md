@@ -1,111 +1,108 @@
-# Portfolio Website — Manual Refinement Plan & Working TODO (v3)
+# Portfolio Website — Plan (v4)
 
-> Working document for the agent building this site with Nate. Update it every pass: check off
-> completed items, add follow-ups as they surface, keep it an accurate picture of remaining
-> work. Source of truth for _what/why/feel_ is `portfolio-brief.md`; this file is _how_.
+> Source of truth for remaining work. V0–V8 complete. Two items left before deployment.
 
 ---
 
 ## Status
 
-- **Built & content-complete:** Astro SSG + Tailwind + MDX + real ECharts visuals + AI-native layer
-  (JSON-LD, llms.txt, projects.json). 12 pages, clean build. V0–V7 done: all project pages
-  rewritten with real data, in-voice, rubric-passing.
-- **Next (run 1):** V8 (strip AI patterns, voice pass) via `dev-team-auto`.
-- **Then (run 2):** V9 visual polish via Fable + Claude Computer Use (launch from Claude app with Fable selected).
+- **Complete:** Astro SSG + Tailwind + MDX + ECharts + AI-native layer. 12 pages, clean build. All project pages written in-voice with real data (V0–V8 done).
+- **Next (run 1):** V9 — analytics accuracy + visualization pass, via `dev-team-auto` with baseball-researcher loop.
+- **Then (run 2):** V10 — visual polish via Fable + Claude Computer Use (launch from Claude app with Fable selected).
 - **Then:** Human Hookup (GitHub → Cloudflare Pages → `nateseluga.com`).
-- **Startups & AI section:** Hidden until shipped work exists (2026-07-02, unchanged).
+- **Startups & AI section:** Hidden until shipped work exists.
 
 ---
 
-## Finalized decisions (unchanged from v1)
+## Finalized decisions
 
-| Area               | Decision                                                                                                         |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| **Framework**      | Astro, static output; interactivity via React islands only.                                                      |
-| **Content model**  | MDX via Content Collections; `section` frontmatter enum; global data in `src/data/`.                             |
-| **Styling**        | Tailwind, locked tokens, hand-built components, self-hosted fonts.                                               |
-| **Visualizations** | ECharts in `client:visible` islands; data pre-computed offline → JSON committed to repo; browser never computes. |
-| **Live apps**      | Outbound links only ("View live ↗").                                                                             |
-| **Deployment**     | Cloudflare Pages on push to `main`; `nateseluga.com`.                                                            |
+| Area | Decision |
+| --- | --- |
+| **Framework** | Astro, static output; interactivity via React islands only. |
+| **Content model** | MDX via Content Collections; `section` frontmatter enum; global data in `src/data/`. |
+| **Styling** | Tailwind, locked tokens, hand-built components, self-hosted fonts. |
+| **Visualizations** | ECharts in `client:visible` islands; data pre-computed offline → JSON committed to `src/data/`; browser never computes. All chart data must be exported from actual notebook outputs. |
+| **Live apps** | Outbound links only ("View live ↗"). |
+| **Deployment** | Cloudflare Pages on push to `main`; `nateseluga.com`. |
 
-### Design guardrails (from the brief — enforce on every visual choice)
+### Design guardrails
 
 - Minimal, elegant, typography-led, high whitespace. Content _is_ the design.
 - Muted-gray labels, near-black body, one accent used sparingly, near-white background.
 - **Avoid:** hero splashes, gradients, decorative shapes, resume-card templates, skill bars, testimonial carousels, walls of text.
-- Content rule: evidence over claims; show the artifact, don't describe it; depth over quantity — **and now: every claim traceable to the repo.**
-
-### Project page structure (unchanged)
-
-1. The Problem 2. Why It Matters 3. My Approach 4. Results (with visuals) 5. Key Takeaways
+- **Accuracy rule:** no number, method, or artifact appears on the site unless it is traceable to a notebook or repo output. When content changes, update `llms.txt` and per-page meta in the same pass.
 
 ---
 
-## Milestones & Tasks
+## Remaining work
 
-### v4 — Unattended run 1: voice pass (`dev-team-auto`)
+### V9 — Analytics accuracy + visualization pass · `status: done` · `track: full`
 
-One item. Run `dev-team-auto` normally — it will stop at the marker below when done.
+**Scope is narrow and hard-bounded.** The agent only touches the two categories below. Everything else is Naté's decision and must not be changed.
 
----
+**What the agent owns (non-subjective):**
+- Exact metric values and model results: AUC, C-index, R², MAE, ICC, feature importances, n counts, p-values, calibration scores — verify each against actual notebook cell outputs and correct any discrepancy.
+- Modeling approach descriptions: verify that what the prose says was done matches what the code actually does (e.g. "walk-forward CV" → confirm the notebook uses temporal splits, not shuffled).
+- Chart data: export real outputs from notebooks into `src/data/` JSON files, replace any fabricated or unverified inline chart data with values from actual notebook cells. Source field (`_source`) must name the notebook and cell/section.
 
-#### V8 — Site-wide voice pass: strip AI patterns, mirror Nate's voice · `status: done` · `track: full`
+**What Nate owns — do not touch:**
+- Project motivation and "why it matters" framing
+- Opening summary and problem statement
+- Interpretation of what results mean for the sport/domain
+- Visualization type choice (which chart, what it shows)
+- Any sentence that is primarily about framing or emphasis rather than stating a number
 
-All project writeups and site copy were written by AI. The content and facts are solid — this pass strips the AI-generated phrasing and rewrites to match Nate's natural voice without changing any content, numbers, structure, or meaning.
+**Files in scope (analytics only):**
+- `src/content/projects/pitcher-injury-risk.mdx` + `src/data/pitcher-injury-risk.json`
+- `src/content/projects/nba-shot-value.mdx` (needs `src/data/nba-shot-value.json` created)
+- `src/content/projects/batting-average-control.mdx` (needs `src/data/batting-average-control.json` created)
 
-- **files:** All non-draft project pages in `src/content/projects/` + homepage bio/section descriptions in `src/pages/index.astro` + `src/pages/about.astro` + `src/data/site.ts` section intros
-- **voice reference:** Load everything in `~/os/knowledge/library/style_reference/`. Use each file for a distinct purpose:
-  - **Essays and longer writing** (e.g. `Seluga Final Paper.pdf`) — reference for rhythm, word choices, sentence variety, and how ideas connect. These show the structural and stylistic patterns that carry across Nate's writing regardless of topic.
-  - **Personal project explanations** (any files Nate has labeled as rough/personal examples) — reference specifically for voice calibration: the informal register, how he explains technical decisions in his own words, what he emphasizes and skips. These make it sound like *him*, not just well-written.
-- **task:** Pass over every file listed above and eliminate AI writing patterns. Rewrite phrasing only. Content, facts, numbers, and structure stay identical.
+**Notebooks to read (local):**
+- Pitcher: `/Users/nateseluga/Pitcher-Injury-Risk/notebooks/` — read all relevant notebooks; NB11 (`11_baseball_specific_insights.ipynb`) is the source for visualization numbers on the site.
+- NBA: `/Users/nateseluga/Downloads/Shot-Value-Machine-Learning/notebooks` — the current shot value visualizations
+are incorrect compared to the notebook.
+- BAA: find the batting-average-ability notebooks (check `~/batting-average-ability/` or similar); the Arraez 133.2 and Gallo 61.2 values need to be verified.
 
-  Patterns to eliminate:
-  - Em dashes (—) — replace with a comma, period, or restructured sentence
-  - Parenthetical asides that break reading flow — fold into the sentence or cut
-  - Hedging openers: "Of course," "Certainly," "It's worth noting," "To be clear," "Generally speaking"
-  - Filler transitions: "Moreover," "Furthermore," "Additionally," "Consequently," "That said"
-  - Vocabulary tells: "delve," "underscore," "showcase," "leverage" (as verb), "paramount," "meticulous," "pivotal," "realm," "tapestry," "beacon," "multifaceted," "commence," "foster," "align with," "facilitate," "harness"
-  - Conclusion signals used as openers: "In summary," "In conclusion," "To summarize," "Ultimately"
-  - Over-structured scaffolding: "First... Moreover... In addition... Finally..."
-  - Lists that always resolve to exactly three items for rhetorical balance
-  - Uniform sentence length — vary the rhythm, use short sentences where they land harder
-  - Missing contractions where a person would naturally use them ("it is" → "it's", "do not" → "don't", etc.)
+**Software projects — out of scope for deep accuracy work.** Patio, OS workflow, and project dashboard do not have the same depth requirement. Verify only that each has: a clear one-paragraph explanation of what it is, the stack/systems used, and a working link to the repo or live app. No deep methodological accuracy pass.
 
-  Voice to target: direct, specific, active. States what was built and why without framing language. No theatrical transitions. Honest about scope without qualifying every claim. Varies sentence length naturally.
+**Loop mechanic:** For each analytics project in sequence:
+1. Read the notebooks fully. Extract all metric values and model descriptions.
+2. Read the corresponding MDX page.
+3. Use `baseball-research-advisor` to compare: flag every place where the prose states a number, a method, or a model behavior that does not match what the notebook actually shows.
+4. Fix discrepancies in the prose and update/create the corresponding JSON data file with real notebook output.
+5. Rebuild and confirm build clean.
 
-- **done when:** Build clean. Every file above reviewed and rewritten. No em dashes remain. Parenthetical asides cut or folded in. None of the vocabulary tells remain. The pages read as written by a person. `career-advisor` confirms no marketing language crept in during the rewrite.
+- **done when:** Build clean. Every metric and model description in the three analytics pages is traceable to a specific notebook cell. Fabricated chart data replaced with real exports. `src/data/` JSON files updated with `_source` fields naming the notebook and section. `baseball-research-advisor` review passes for each page with no remaining factual discrepancies.
 
 ---
 
 > **⚠️ AUTONOMOUS RUN — STOP HERE**
 
-_V8 is for run 1 (`dev-team-auto`, standard models). V9 below is run 2 — it uses Fable as orchestrator + Claude Computer Use and must be launched separately from the Claude app with Fable selected. Everything after V9 requires user accounts and cannot run unattended._
+_V9 is run 1. V10 below requires Fable + Claude Computer Use and must be launched from the Claude app with Fable selected._
 
 ---
 
-### v5 — Unattended run 2: visual polish (Fable + Claude Computer Use)
+### V10 — Visual polish pass · `status: not started` · `track: full`
 
 > **How to run:** Open the Claude app, select Fable as the model, then run `/dev-team-auto`.
 > Fable acts as the orchestrator and visual decision maker — it views the actual rendered site
 > via Claude Computer Use and uses that visual judgment to direct fixes. Sub-agents
 > (`dt-engineer`, `dt-qa`, `dt-fix`) use their standard models for implementation.
 
----
+The site is functionally clean but looks stock Tailwind. This pass elevates the visual quality to match a strong reference point.
 
-#### V9 — Visual polish pass · `status: not started` · `track: full`
+**Reference:** `https://brittanychiang.com/#projects` — study the typography, spacing, card layout, and color use. The goal is that level of visual polish: opinionated but restrained, high whitespace, every element placed deliberately. Not a copy — apply the same quality bar to the existing minimal/muted aesthetic.
 
-The site is functionally clean but looks stock. This pass improves spacing, typography, color, and removes small visual bugs. No content changes.
+- **task:** Open the local dev server (`npm run dev`) in Chrome via Claude Computer Use. Do a visual audit of the homepage, engineering section, a sports-analytics project page, and the about page. Compare against the reference site's quality bar. Then fix in order:
 
-- **task:** Open the local dev server (`npm run dev`) in a browser using Claude Computer Use. Do a visual audit of the homepage, engineering section, a sports-analytics project page, and the about page. Then fix in order:
+  1. **Typography** — The current font stack is generic Tailwind system fonts. Choose and wire a characterful typeface for headings (geometric sans-serif like Inter/Geist at heavy weight, or a light-weight serif like DM Serif Display) while keeping body text clean. The reference site's heading treatment is a good model — weight and size contrast that makes hierarchy instantly readable.
+  2. **Spacing and layout** — Identify any sections where content feels cramped or floated without intention. The reference site has very deliberate section breathing room and card padding. Fix so every spacing decision looks chosen, not default.
+  3. **Project cards and section landing pages** — The cards are the primary recruiter touchpoint. Compare card treatment against the reference: does each card communicate clearly at a glance? Does hover state feel polished? Are labels and metadata visually subordinate to the project name?
+  4. **Visual bugs** — Fix overlapping text, clipped labels, misaligned elements, or layout breaks at 375px mobile and 1280px desktop.
 
-  1. **Spacing** — Identify any sections where content feels vertically off (text floating too high or low relative to its container, uneven card padding, sections that don't breathe). Fix so spacing looks intentional throughout, not default.
-  2. **Visual style** — Move away from the default Tailwind aesthetic. Consider a more characterful font for headings (geometric sans-serif, or a light-weight serif) while keeping body text clean and readable. Add small personality to hover states or the accent color. Stay within the design guardrails from `PLAN.md`: no gradients, no decorative shapes, muted-gray labels, near-black body, near-white background.
-  3. **Visual bugs** — Fix overlapping text, clipped labels, misaligned elements, or layout breaks at 375px mobile and 1280px desktop.
+  Use Fable's visual judgment throughout: view the rendered page, identify issues against the reference bar, direct `dt-engineer` to implement, verify visually before marking resolved. Do not mark a fix done without visual confirmation.
 
-  Use Fable's visual judgment throughout: view the actual rendered page, identify issues, direct `dt-engineer` to implement the fix, then verify visually in the browser before marking it resolved. Do not mark fixed without visual confirmation.
-
-- **done when:** Build clean. No overlapping or clipped elements at 375px and 1280px. Spacing looks deliberate throughout. Typography has personality beyond the default Tailwind font stack. The visual bugs identified in the opening audit are resolved. Fable's visual review after fixes confirms the site looks polished, not generic.
+- **done when:** Build clean. No overlapping or clipped elements at 375px and 1280px. Typography has clear hierarchy and personality beyond default Tailwind. Spacing looks deliberate throughout. Project cards read clearly at a glance. Fable's final visual review confirms the site reads as polished, not generic, at the reference quality bar.
 
 ---
 
@@ -117,35 +114,27 @@ _Everything below requires user accounts/money/auth and cannot run unattended._
 
 ## Human Hookup (do together — ~15 min)
 
-These are account/money/auth steps, not code. Order matters. (Unchanged from v1.)
-
-- [ ] **GitHub:** repo exists (`nseluga/portfolio`) — merge working branch → `main`.
+- [ ] **GitHub:** merge working branch → `main`.
 - [ ] **Cloudflare Pages:** connect repo, build `npm run build`, output `dist`, verify `*.pages.dev` deploy.
 - [ ] **Domain:** register `nateseluga.com` (Cloudflare Registrar), attach, DNS + SSL, redirect.
 - [ ] **Verify live:** Lighthouse against live URL; charts hydrate; zero JS on non-chart pages.
 - [ ] Optional: Cloudflare Web Analytics.
 
-### Needs-Nate follow-ups (surfaced by the audit)
+## Needs-Nate
 
-- [ ] Patio: confirm whether `patio.nateseluga.com` is live (link or cut); capture real UI screenshots.
-- [ ] LinkedIn URL — add to C3.3 contact block when available.
-- [ ] Resume PDF — add to `public/resume.pdf` and uncomment link in C3.3 when updated.
-
----
-
-## Open follow-ups / decisions deferred
-
-- [ ] Which project gets a full **dashboard** island vs single chart (Injury Risk+ is the candidate — it has a real Streamlit app to link and real leaderboard data to embed).
-- [ ] Contact method: mailto (current) vs form — unchanged, mailto is fine for now.
-- [ ] OG images: default is clean; per-project OG images from real charts are a nice-to-have after C2.
+- [ ] Patio: confirm whether a live deploy exists (link or cut the placeholder); capture real UI screenshots.
+- [ ] LinkedIn URL — add to contact block when available.
+- [ ] Resume PDF — add to `public/resume.pdf` and uncomment link when updated.
+- [ ] BAA page: decide whether to add an IR+-style leaderboard chart (real data is in the BAA notebooks once located) or keep the current two-row table.
+- [ ] Review V9 output: the accuracy pass will not touch motivation, problem framing, or "why it matters" sections — those sections should be reviewed by Nate after V9 completes.
 
 ---
 
 ## Conventions (for the agent)
 
 - Reusable components in `src/components/`; layouts in `src/layouts/`; project MDX in `src/content/projects/`; chart JSON in `src/data/`; static visuals in `public/`.
-- Never compute analytics in the browser — commit pre-aggregated JSON **exported from the actual project repos** (note the generating notebook/script in a JSON `_source` field or adjacent comment).
+- Never compute analytics in the browser — commit pre-aggregated JSON **exported from the actual project notebooks** (note the generating notebook and section in a JSON `_source` field).
 - Every new project addable via content only; component gaps get fixed, not hacked around.
 - Keep zero-JS on any page without an intentional island.
-- **Style rule: all explanations and project writeups follow Nate's voice as demonstrated in `~/os/knowledge/library/style_reference/Project_Writeup.pdf` — specific, evidence-driven, honest about scope/uncertainty, no marketing language. When polishing copy, compare against this reference.**
-- **Accuracy rule: no number, method, or artifact appears on the site unless it is traceable to a repo output. When content changes, update `llms.txt` and per-page meta in the same pass.**
+- **Style rule:** all analytics writeups follow the voice in `~/os/knowledge/library/style_reference/` — specific, evidence-driven, honest about scope. When touching copy, compare against this reference.
+- **Accuracy rule:** no number, method, or artifact appears on the site unless traceable to a notebook output. When content changes, update `llms.txt` and per-page meta in the same pass.
