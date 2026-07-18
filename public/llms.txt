@@ -1,4 +1,4 @@
-# Nate Seluga — Portfolio
+# Nate Seluga: Portfolio
 
 ## About
 
@@ -37,7 +37,7 @@ Co-author: Michael O'Brien
 
 A 4-model ML comparison (logistic regression, decision tree, random forest, XGBoost) on 122,203 cleaned NBA shots from the 2014–15 season. XGBoost achieves AUC 0.6365 and Brier score 0.2296. The study identifies a hard predictability ceiling at ~0.63–0.64 AUC, with shooter skill as the named missing variable. Defender distance ratio is the top SHAP feature. Calibrated probabilities produce trustworthy expected-value estimates by zone: restricted area ≈ 1.85 EV, mid-range trough ≈ 0.86–1.09, corner-3 bump ≈ 1.20.
 
-### Personal OS — Claude Code Workflow System
+### Personal OS: Claude Code Workflow System
 URL: https://nateseluga.com/engineering/os-workflow/
 Repo: https://github.com/nseluga/os
 

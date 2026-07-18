@@ -27,7 +27,7 @@ The challenge: **How do I capture, organize, and resurface these insights such t
 
 Most people use folders. Folders create false structure (a paper fits in multiple categories; a note belongs nowhere obvious). Search fails when you forget the exact keyword. The result: a graveyard of notes you'll never find again.
 
-**The vision:** A knowledge system where connections are first-class. Notes reference other notes, concepts link across domains, and automation surfaces serendipitous combinations—a system that thinks alongside me rather than against me.
+**The vision:** A knowledge system where connections are first-class. Notes reference other notes, concepts link across domains, and automation surfaces serendipitous combinations, a system that thinks alongside me rather than against me.
 
 ## Why It Matters
 
@@ -51,7 +51,7 @@ This project demonstrates:
 - Scheduled scripts that run nightly:
   - **Ingestion**: Fetch articles from saved links (Pocket), parse them, extract summaries and key terms.
   - **Tagging**: Auto-tag notes by semantic similarity (embedding-based clustering).
-  - **Backlink discovery**: Find implicit connections between notes (two notes both mention "Bayesian inference"—auto-link them).
+  - **Backlink discovery**: Find implicit connections between notes (two notes both mention "Bayesian inference"; auto-link them).
   - **Insight surfacing**: Identify clusters of notes that have grown (signals emerging themes).
 
 **Search & discovery (Elasticsearch):**
@@ -65,7 +65,7 @@ This project demonstrates:
 
 2. **Why daily notes?** Journaling is a proven cognitive tool. Dating entries creates a timeline; prompts ensure reflection. Over time, patterns in my own thinking become visible.
 
-3. **Why automate connection discovery?** Backlinks require manual work; the graph is only as good as the links I create. Automation finds implicit connections I'd miss ("Oh, I've written about recursion and dynamic programming in separate notes—they're related!").
+3. **Why automate connection discovery?** Backlinks require manual work; the graph is only as good as the links I create. Automation finds implicit connections I'd miss ("Oh, I've written about recursion and dynamic programming in separate notes; they're related!").
 
 4. **Why Elasticsearch, not SQLite?** Elasticsearch scales to thousands of notes without performance degradation. SQLite would work fine at current scale, but Elasticsearch' fuzzy matching and relevance ranking are superior for discovery.
 
@@ -85,7 +85,7 @@ This project demonstrates:
 **After (2024):** 
 - 2,000+ notes organized by backlinks, not folders.
 - Search finds related ideas in 2–3 seconds.
-- Weekly review surfaces connections (e.g., discovered that my notes on "low-latency systems" and "event-driven architecture" cluster—the overlap informs my current backend design).
+- Weekly review surfaces connections (e.g., discovered that my notes on "low-latency systems" and "event-driven architecture" cluster; the overlap informs my current backend design).
 
 ### Automation Impact
 
@@ -102,9 +102,9 @@ This project demonstrates:
 
 Monthly theme analysis revealed unexpected clusters:
 
-- **Cluster 1 (Apr 2024)**: Notes on "Kafka", "event streaming", "fault tolerance"—all relevant to a backend project I started weeks later.
-- **Cluster 2 (May 2024)**: "Bayesian inference", "causal inference", "A/B testing"—signaled that I was (unconsciously) working toward a data experiment.
-- **Cluster 3 (Jun 2024)**: "Product strategy", "market sizing", "first-principles thinking"—appeared before I explicitly decided to explore startup ideas.
+- **Cluster 1 (Apr 2024)**: Notes on "Kafka", "event streaming", "fault tolerance", all relevant to a backend project I started weeks later.
+- **Cluster 2 (May 2024)**: "Bayesian inference", "causal inference", "A/B testing", signaled that I was (unconsciously) working toward a data experiment.
+- **Cluster 3 (Jun 2024)**: "Product strategy", "market sizing", "first-principles thinking", appeared before I explicitly decided to explore startup ideas.
 
 These clusters are useful retrospectively and prospectively: they validate that I'm thinking about coherent topics, and they prompt me to revisit assumptions when I see unexpected groupings.
 
