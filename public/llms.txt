@@ -16,7 +16,7 @@ Portfolio: https://nateseluga.com
 URL: https://nateseluga.com/sports-analytics/pitcher-injury-risk/
 Repo: https://github.com/nseluga/Pitcher-Injury-Risk
 
-A multi-model MLB pitcher health research platform built over Statcast 2015–2024 data (3,249 pitchers, 205,911 pitcher-game rows, 76 engineered features). Models include baseline classifiers, survival analysis (ensemble C-index 0.566), and an ERA+-style Injury Risk+ composite (mean 100 per season, year-over-year stability r = 0.583). Walk-forward cross-validation AUC is 0.571; the honest framing of this ceiling — discrimination is genuinely hard in injury prediction — is a feature, not a weakness. Key finding: pitchers with chronic velocity decline ≥2 mph show double the 30-day injury rate (6% → 12%, Injury Risk+ 96.9 → 119.5). Isotonic calibration improves ECE from 0.059 to 0.029.
+A multi-model MLB pitcher health research platform built over Statcast 2015–2024 data (3,249 pitchers, 205,911 pitcher-game rows, 82 engineered features). Models include baseline classifiers, survival analysis (ensemble C-index 0.556), and an ERA+-style Injury Risk+ composite (mean 100 per season, year-over-year stability r = 0.645). Walk-forward cross-validation AUC is 0.574; the honest framing of this ceiling, that discrimination is genuinely hard in injury prediction, is a feature, not a weakness. Key finding: pitchers with chronic velocity decline ≥2 mph show double the 30-day injury rate (6% → 12%, Injury Risk+ 102.0 → 129.6). Isotonic calibration is applied to the raw probabilities (raw ECE 0.046 on the 2024 holdout).
 
 ### Patio
 URL: https://nateseluga.com/engineering/patio/
@@ -28,20 +28,20 @@ A solo-built full-stack social betting app where friends wager virtual "caps" on
 URL: https://nateseluga.com/sports-analytics/batting-average-control/
 Repo: https://github.com/nseluga/Batting-Average-Ability
 
-A same-season skill-isolation metric that separates repeatable batting ability from luck. Uses a mixed-effects model with player random intercepts (ICC: 24.7% of batting average variance is between-player), CLR-transformed batted-ball composition, and PA-weighted fitting over 4,374 player-seasons (1,173 players). Test R² is 0.457, MAE 0.022. Random forest and ensemble methods were tried and rejected on evidence (BABIP Test R² 0.293 vs. linear 0.372). BAA is indexed 100 ± 10 per season. Face validity: Arraez 2023 = BAA 133.2 (.354 BA), Gallo 2023 = BAA 61.2 (.159 BA).
+A same-season skill-isolation metric that separates repeatable batting ability from luck. Uses a mixed-effects model with player random intercepts (ICC: 24.7% of batting average variance is between-player), CLR-transformed batted-ball composition, and PA-weighted fitting over 4,374 player-seasons (1,173 players). Test R² is 0.457, MAE 0.022. Random forest and ensemble methods were tried and rejected on evidence (BABIP Test R² 0.293 vs. linear 0.372). BAA is indexed 100 ± 10 per season. Face validity: Arraez 2023 = BAA 133.2 (.354 BA), Gallo 2023 = BAA 61.2 (.177 BA).
 
 ### NBA Shot-Value Model
 URL: https://nateseluga.com/sports-analytics/nba-shot-value/
 Repo: https://github.com/nseluga/Shot-Value-Machine-Learning
 Co-author: Michael O'Brien
 
-A 4-model ML comparison (logistic regression, decision tree, random forest, XGBoost) on 122,203 cleaned NBA shots from the 2014–15 season. XGBoost achieves AUC 0.6365 and Brier score 0.2296. The study identifies a hard predictability ceiling at ~0.63–0.64 AUC, with shooter skill as the named missing variable. Defender distance ratio is the top SHAP feature. Calibrated probabilities produce trustworthy expected-value estimates by zone: restricted area ≈ 1.85 EV, mid-range trough ≈ 1.00, corner-3 bump ≈ 1.15.
+A 4-model ML comparison (logistic regression, decision tree, random forest, XGBoost) on 122,203 cleaned NBA shots from the 2014–15 season. XGBoost achieves AUC 0.6365 and Brier score 0.2296. The study identifies a hard predictability ceiling at ~0.63–0.64 AUC, with shooter skill as the named missing variable. Defender distance ratio is the top SHAP feature. Calibrated probabilities produce trustworthy expected-value estimates by zone: restricted area ≈ 1.85 EV, mid-range trough ≈ 0.86–1.09, corner-3 bump ≈ 1.20.
 
 ### Personal OS — Claude Code Workflow System
 URL: https://nateseluga.com/engineering/os-workflow/
 Repo: https://github.com/nseluga/os
 
-A personal operating system built on top of Claude Code: 48 custom skills (reusable workflow definitions invocable by name or description match), a structured project-tracking system covering 8 active projects (each with a README.md containing status, next_step, and repo fields), and a persistent memory layer with 10 fact files auto-injected into sessions. Key skills: career-advisor (portfolio review rubric — accuracy, clarity, credibility, recruiter impact), dev-team-auto (autonomous multi-agent convergence loop for overnight unattended build runs), and baseball-research-advisor (skeptical analytics peer reviewer for sports-analytics writeups). All work on this portfolio site was built with this system as infrastructure. The repo is open.
+A personal operating system built on top of Claude Code: 48 custom skills (reusable workflow definitions invocable by name or description match), a structured project-tracking system covering 8 active projects (each with a README.md containing status, next_step, and repo fields), and a persistent memory layer with 10 fact files auto-injected into sessions. Key skills: career-advisor (portfolio review rubric covering accuracy, clarity, credibility, recruiter impact), dev-team-auto (autonomous multi-agent convergence loop for overnight unattended build runs), and baseball-research-advisor (skeptical analytics peer reviewer for sports-analytics writeups). All work on this portfolio site was built with this system as infrastructure. The repo is open.
 
 ### Project Dashboard
 URL: https://nateseluga.com/engineering/project-dashboard/

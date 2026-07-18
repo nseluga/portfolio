@@ -23,7 +23,7 @@ import ChartWrapper from '../../components/ChartWrapper.astro';
 
 ## The Problem
 
-We started by taking something out. Before choosing a model or a metric, we decided to exclude shooter identity from the feature space entirely: no player IDs, no per-player shooting histories. That one design decision reframed the whole project. The question stopped being "will *this player* make *this shot*?" and became "what is *this kind of shot* worth to a league-average shooter?"
+This project is defined by what it leaves out. Before choosing a model or a metric, we excluded shooter identity from the feature space entirely: no player IDs, no per-player shooting histories. That one design decision reframed the whole project. The question stopped being "will *this player* make *this shot*?" and became "what is *this kind of shot* worth to a league-average shooter?"
 
 That reframing matters because it changes what a middling accuracy number *means*. If you're trying to predict LeBron's next make and you top out at AUC 0.64, that reads like a modeling failure. But if you've deliberately withheld who's shooting, 0.64 is not a failure. It's a measurement. It's the ceiling of what shot *context* predicts once you've removed shooter skill from the picture. The research question here is "what does shot context alone predict?", not "how accurately can we predict makes?", and the player-agnostic design is what makes the ceiling interpretable as a finding about information, rather than a shortfall in the pipeline.
 

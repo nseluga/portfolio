@@ -191,7 +191,7 @@ I lead with what's validated, then the ceiling, because the validated findings a
 
 - **Injury history dominates the binary model.** The top random-forest importances are `prior_il_total` (**0.258**), `days_since_last_injury` (**0.147**), and `prior_il_days_lost` (**0.136**). Prior injury, not current workload, is the strongest single binary predictor.
 
-### The ceiling — and how I know it's real
+### The ceiling, and how I know it's real
 
 - **Discrimination tops out near chance.** Walk-forward CV mean **AUC 0.574** (std 0.023); the survival ensemble lands at **C-index 0.556**. Both consistently beat 0.5 across forward folds, so the signal is real, but it's not strong enough to replace expert judgment, and I don't claim it is.
 
