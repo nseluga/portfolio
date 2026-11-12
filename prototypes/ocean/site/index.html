@@ -203,11 +203,11 @@
 
     <article class="brief" id="p-hitter" tabindex="-1">
       <button class="close" aria-label="Close">&times;</button>
-      <p class="kicker">Research &middot; Jun 2026 to now</p>
+      <p class="kicker">Research &middot; Jun to Sep 2026</p>
       <h2>Hitter Embedding</h2>
       <p class="lede">A neural network that learns a 64-number profile of each MLB hitter from the pitches they see and uses it to project wOBA.</p>
       <ul class="facts">
-        <li>The network has a head for each step of a plate appearance (swing, contact, exit velocity, launch angle and spray), and a Markov chain over the count turns those into projected wOBA.</li>
+        <li>The network has a head for each step of a plate appearance (swing, contact, foul or in play, exit velocity, launch angle and spray), and a Markov chain over the count turns those into projected wOBA.</li>
         <li>Trained on about 6.5 million pitches from 1,672 hitters between 2015 and 2024, with the 2025 season sealed for a pre-registered test.</li>
         <li>It did not pass that test. RMSE was 0.0452 against 0.0453 for gradient boosting, although rank correlation was 0.47 against 0.42.</li>
         <li>On 2024 it recovers 60% of the rank-order platoon signal, and swing and contact signals stabilize several times faster than wOBA.</li>
@@ -302,11 +302,11 @@
 
     <article class="brief" id="p-willagrams" tabindex="-1">
       <button class="close" aria-label="Close">&times;</button>
-      <p class="kicker">Software &middot; Aug 2026 to now</p>
+      <p class="kicker">Software &middot; Aug to Sep 2026</p>
       <h2>Willagrams</h2>
       <p class="lede">A word-tile game for iPhone and iPad that you can play solo against a bot or against friends in real time.</p>
       <ul class="facts">
-        <li>A SwiftUI app with a 144-tile set and a Supabase backend for Postgres, Sign in with Apple and realtime sync.</li>
+        <li>A SwiftUI app with a 144-tile set and a Supabase backend for Postgres, anonymous sign-in and realtime sync.</li>
         <li>Behavior tests check the Postgres row-level security rules.</li>
         <li>It has 700+ automated tests and is in App Review, so it isn't released yet.</li>
       </ul>
