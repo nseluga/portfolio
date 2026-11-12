@@ -162,9 +162,9 @@
       <h2>NBA Shot Value</h2>
       <p class="lede">A model of how good an NBA shot is before you know who took it.</p>
       <ul class="facts">
-        <li>I trained logistic regression, a decision tree, a random forest and XGBoost on 128,069 shots from the 2014-15 season, using only shot context such as distance, defender distance, dribbles, touch time and shot clock.</li>
-        <li>I used SHAP to see what drives shot value, and defender distance ranks ahead of shot distance and touch time.</li>
-        <li>All four models stop at an AUC of 0.63 to 0.64, and what is left is shooter skill, which I left out on purpose. An open shot at the rim is worth about 1.85 points, while a contested one from 20 to 22 feet is worth about 0.62.</li>
+        <li>I trained logistic regression, a decision tree, a random forest and XGBoost on 128,069 shots from the 2014-15 season, using only shot context such as distance, defender distance and shot clock.</li>
+        <li>I used SHAP to see what drives shot value. Defender distance ranks ahead of shot distance, and all four models stop at an AUC of 0.63 to 0.64 because shooter skill is left out on purpose.</li>
+        <li>Shot value follows a U-shape by distance and defensive pressure, with a bump at the corner three and a trough through the mid-range. An open shot at the rim is worth about 1.85 points and a contested one from 20 to 22 feet about 0.62.</li>
       </ul>
       <p class="stack"><span>pandas</span><span>scikit-learn</span><span>XGBoost</span><span>SHAP</span></p>
       <p class="links"><a href="https://github.com/nseluga/Shot-Value-Machine-Learning" target="_blank" rel="noopener">Code</a><span class="note">Paper to be added.</span></p>
@@ -176,9 +176,9 @@
       <h2>Batting Average Ability</h2>
       <p class="lede">How much of a batting average is the hitter, and how much is luck?</p>
       <ul class="facts">
-        <li>I fit a two-pass mixed-effects model with a random intercept for each player, BABIP first and then batting average, on 4,374 player-seasons from 1,173 hitters between 2015 and 2024, using FanGraphs data.</li>
-        <li>I used the model to measure how much of batting average is stable player skill, and looked at which inputs drive BABIP. Sprint speed is the strongest after batted-ball mix.</li>
-        <li>About a quarter of the variation in batting average (24.7%) is stable player skill. On the test set the model explains 45.7% of the variance with a mean error of .0215.</li>
+        <li>I fit a two-pass mixed-effects model with a random intercept for each player, BABIP first and then batting average, on 4,374 player-seasons of FanGraphs data from 2015 to 2024.</li>
+        <li>About a quarter of batting average (24.7%) is stable player skill. On the test set the model explains 45.7% of the variance with a mean error of .0215, and sprint speed is the strongest BABIP driver after batted-ball mix.</li>
+        <li>The skill index passes a sanity check. Luis Arraez in 2023 scores highest and Joey Gallo in 2023 lowest, and faster hitters beating out grounders fits what you would expect.</li>
       </ul>
       <p class="stack"><span>statsmodels</span><span>pybaseball</span><span>pandas</span><span>scikit-learn</span></p>
       <p class="links"><a href="https://github.com/nseluga/Batting-Average-Ability" target="_blank" rel="noopener">Code</a></p>
@@ -190,9 +190,9 @@
       <h2>Pitcher Injury Risk</h2>
       <p class="lede">Models of how likely an MLB pitcher is to get hurt, how badly and how soon.</p>
       <ul class="facts">
-        <li>I trained classifiers and survival models on 205,911 pitcher-game rows for 3,249 pitchers from 2015 to 2024, using Statcast and injured-list records, and combined them into one score, Injury Risk+, indexed to 100.</li>
-        <li>I tested it on 2023 and 2024 after training on 2015 to 2022, with walk-forward validation and isotonic calibration, and looked at what moves the 30-day injury rate.</li>
-        <li>AUC came out around 0.57, which looks close to what public data can tell you. The clearest signal is a velocity drop of more than 2 mph, which doubles the 30-day injury rate from 6% to 12%.</li>
+        <li>I trained classifiers and survival models on 205,911 pitcher-game rows from 2015 to 2024, using Statcast and injured-list records, and combined them into one score, Injury Risk+, indexed to 100.</li>
+        <li>I tested it on 2023 and 2024 with walk-forward validation. AUC came out around 0.57, which looks close to what public data can tell you, and a velocity drop of more than 2 mph doubles the 30-day injury rate from 6% to 12%.</li>
+        <li>Prior injured-list history and 90-day pitch load dominate the signal, and the standard acute-to-chronic workload ratio is weaker than the literature suggests.</li>
       </ul>
       <p class="stack"><span>scikit-learn</span><span>XGBoost</span><span>lifelines</span><span>SHAP</span><span>Streamlit</span></p>
       <p class="links"><a href="https://github.com/nseluga/Pitcher-Injury-Risk" target="_blank" rel="noopener">Code</a></p>
@@ -204,9 +204,9 @@
       <h2>Hitter Embedding</h2>
       <p class="lede">A neural network that learns a 64-number profile of each MLB hitter from the pitches they see and uses it to project wOBA.</p>
       <ul class="facts">
-        <li>I trained a neural network with a head for each step of a plate appearance (swing, contact, foul or in play, exit velocity, launch angle and spray) on about 6.5 million pitches from 1,672 hitters between 2015 and 2024, with the 2025 season sealed for a pre-registered test.</li>
-        <li>I ran a Markov chain over the count to turn those heads into projected wOBA, then measured it against gradient boosting on the sealed season.</li>
-        <li>It did not pass the test. RMSE was 0.0452 against 0.0453 for gradient boosting, although rank correlation was 0.47 against 0.42 and swing and contact signals stabilize several times faster than wOBA.</li>
+        <li>I trained a neural network with a head for each step of a plate appearance on about 6.5 million pitches from 1,672 hitters between 2015 and 2024, with the 2025 season sealed for a pre-registered test.</li>
+        <li>I ran a Markov chain over the count to project wOBA. It did not pass the test. RMSE was 0.0452 against 0.0453 for gradient boosting, although rank correlation was 0.47 against 0.42.</li>
+        <li>When I plotted the learned profiles, hitters with similar power, contact and plate discipline landed near each other, even though the model was never given those attributes.</li>
       </ul>
       <p class="stack"><span>PyTorch</span><span>XGBoost</span><span>pandas</span><span>Statcast</span></p>
       <p class="links"><a href="https://github.com/nseluga/Hitter-Embedding" target="_blank" rel="noopener">Code</a><a href="https://nseluga.github.io/Hitter-Embedding/" target="_blank" rel="noopener">Matchup explorer</a><span class="note">Paper to be added.</span></p>
