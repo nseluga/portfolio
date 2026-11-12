@@ -162,10 +162,9 @@
       <h2>NBA Shot Value</h2>
       <p class="lede">A model of how good an NBA shot is before you know who took it.</p>
       <ul class="facts">
-        <li>Uses 128,069 shots from the 2014-15 season, described only by context such as shot distance, defender distance, dribbles, touch time and shot clock.</li>
-        <li>Logistic regression, a decision tree, a random forest and XGBoost all stop at an AUC of 0.63 to 0.64. What is left is shooter skill, which we left out on purpose.</li>
-        <li>SHAP ranks defender distance ahead of shot distance and touch time.</li>
-        <li>An open shot at the rim is worth about 1.85 points, while a contested one from 20 to 22 feet is worth about 0.62.</li>
+        <li>I trained logistic regression, a decision tree, a random forest and XGBoost on 128,069 shots from the 2014-15 season, using only shot context such as distance, defender distance, dribbles, touch time and shot clock.</li>
+        <li>I used SHAP to see what drives shot value, and defender distance ranks ahead of shot distance and touch time.</li>
+        <li>All four models stop at an AUC of 0.63 to 0.64, and what is left is shooter skill, which I left out on purpose. An open shot at the rim is worth about 1.85 points, while a contested one from 20 to 22 feet is worth about 0.62.</li>
       </ul>
       <p class="stack"><span>pandas</span><span>scikit-learn</span><span>XGBoost</span><span>SHAP</span></p>
       <p class="links"><a href="https://github.com/nseluga/Shot-Value-Machine-Learning" target="_blank" rel="noopener">Code</a><span class="note">Paper to be added.</span></p>
@@ -177,10 +176,9 @@
       <h2>Batting Average Ability</h2>
       <p class="lede">How much of a batting average is the hitter, and how much is luck?</p>
       <ul class="facts">
-        <li>A two-pass mixed-effects model with a random intercept for each player, fitting BABIP first and then batting average.</li>
-        <li>Fit on 4,374 player-seasons from 1,173 hitters between 2015 and 2024, using FanGraphs data.</li>
-        <li>24.7% of the variation in batting average is stable player skill. On the test set the model explains 45.7% of the variance with a mean error of .0215.</li>
-        <li>Sprint speed is the strongest driver of BABIP after batted-ball mix.</li>
+        <li>I fit a two-pass mixed-effects model with a random intercept for each player, BABIP first and then batting average, on 4,374 player-seasons from 1,173 hitters between 2015 and 2024, using FanGraphs data.</li>
+        <li>I used the model to measure how much of batting average is stable player skill, and looked at which inputs drive BABIP. Sprint speed is the strongest after batted-ball mix.</li>
+        <li>About a quarter of the variation in batting average (24.7%) is stable player skill. On the test set the model explains 45.7% of the variance with a mean error of .0215.</li>
       </ul>
       <p class="stack"><span>statsmodels</span><span>pybaseball</span><span>pandas</span><span>scikit-learn</span></p>
       <p class="links"><a href="https://github.com/nseluga/Batting-Average-Ability" target="_blank" rel="noopener">Code</a></p>
@@ -192,10 +190,9 @@
       <h2>Pitcher Injury Risk</h2>
       <p class="lede">Models of how likely an MLB pitcher is to get hurt, how badly and how soon.</p>
       <ul class="facts">
-        <li>Built on 205,911 pitcher-game rows for 3,249 pitchers from 2015 to 2024, using Statcast and injured-list records.</li>
-        <li>Classifiers and survival models combine into one score, Injury Risk+, indexed to 100.</li>
-        <li>Trained on 2015 to 2022 and tested on 2023 and 2024, with walk-forward validation and isotonic calibration.</li>
-        <li>AUC is about 0.57, which seems to be close to what public data can tell you. The clearest signal is a velocity drop of more than 2 mph, which doubles the 30-day injury rate from 6% to 12%.</li>
+        <li>I trained classifiers and survival models on 205,911 pitcher-game rows for 3,249 pitchers from 2015 to 2024, using Statcast and injured-list records, and combined them into one score, Injury Risk+, indexed to 100.</li>
+        <li>I tested it on 2023 and 2024 after training on 2015 to 2022, with walk-forward validation and isotonic calibration, and looked at what moves the 30-day injury rate.</li>
+        <li>AUC came out around 0.57, which looks close to what public data can tell you. The clearest signal is a velocity drop of more than 2 mph, which doubles the 30-day injury rate from 6% to 12%.</li>
       </ul>
       <p class="stack"><span>scikit-learn</span><span>XGBoost</span><span>lifelines</span><span>SHAP</span><span>Streamlit</span></p>
       <p class="links"><a href="https://github.com/nseluga/Pitcher-Injury-Risk" target="_blank" rel="noopener">Code</a></p>
@@ -207,10 +204,9 @@
       <h2>Hitter Embedding</h2>
       <p class="lede">A neural network that learns a 64-number profile of each MLB hitter from the pitches they see and uses it to project wOBA.</p>
       <ul class="facts">
-        <li>The network has a head for each step of a plate appearance (swing, contact, foul or in play, exit velocity, launch angle and spray), and a Markov chain over the count turns those into projected wOBA.</li>
-        <li>Trained on about 6.5 million pitches from 1,672 hitters between 2015 and 2024, with the 2025 season sealed for a pre-registered test.</li>
-        <li>It did not pass that test. RMSE was 0.0452 against 0.0453 for gradient boosting, although rank correlation was 0.47 against 0.42.</li>
-        <li>On 2024 it recovers 60% of the rank-order platoon signal, and swing and contact signals stabilize several times faster than wOBA.</li>
+        <li>I trained a neural network with a head for each step of a plate appearance (swing, contact, foul or in play, exit velocity, launch angle and spray) on about 6.5 million pitches from 1,672 hitters between 2015 and 2024, with the 2025 season sealed for a pre-registered test.</li>
+        <li>I ran a Markov chain over the count to turn those heads into projected wOBA, then measured it against gradient boosting on the sealed season.</li>
+        <li>It did not pass the test. RMSE was 0.0452 against 0.0453 for gradient boosting, although rank correlation was 0.47 against 0.42 and swing and contact signals stabilize several times faster than wOBA.</li>
       </ul>
       <p class="stack"><span>PyTorch</span><span>XGBoost</span><span>pandas</span><span>Statcast</span></p>
       <p class="links"><a href="https://github.com/nseluga/Hitter-Embedding" target="_blank" rel="noopener">Code</a><a href="https://nseluga.github.io/Hitter-Embedding/" target="_blank" rel="noopener">Matchup explorer</a><span class="note">Paper to be added.</span></p>
@@ -222,10 +218,8 @@
       <h2>Stacker Bot</h2>
       <p class="lede">Reinforcement learning for Stacker, a Big Two-style card game for 3 to 8 players and 1 or 2 decks.</p>
       <ul class="facts">
-        <li>The plan is a Deep Monte-Carlo specialist for 4 players and one deck, and a transformer generalist across all six configurations.</li>
-        <li>The evaluation rules were set before any training, including sealed deals, fixed test seeds, paired bootstrap confidence intervals and pre-registration.</li>
-        <li>The heuristic baseline beats greedy play by 0.656 points per hand over 150 sealed deals.</li>
-        <li>There are no trained-agent results yet. The simulator and evaluation code have 522 tests.</li>
+        <li>I'm building a Deep Monte-Carlo model for the specialist, which plays 4 players and one deck.</li>
+        <li>Next I'll explore transformer designs for a generalist that covers all six configurations.</li>
       </ul>
       <p class="stack"><span>PyTorch</span><span>NumPy</span><span>pytest</span></p>
       <p class="links"><a href="https://github.com/nseluga/stacker-bot" target="_blank" rel="noopener">Code</a></p>
@@ -251,8 +245,7 @@
       <ul class="facts">
         <li>I built the shared multi-tenant platform on Next.js and Supabase with row-level security, a Cloud Run worker and an MCP server.</li>
         <li>Every new client app starts from the same shared packages and client template.</li>
-        <li>We've shipped a revenue tracker for a restaurant and a booking system.</li>
-        <li>We signed 5 clients in the first month, and I run the CI/CD, uptime checks and nightly backups.</li>
+        <li>We've signed 5 clients in total and shipped a revenue tracker for a restaurant and a booking system, with me owning software development and AI integration.</li>
       </ul>
       <p class="stack"><span>Next.js</span><span>Supabase</span><span>Cloud Run</span><span>MCP</span></p>
       <p class="links"><a href="https://bcn-services.com" target="_blank" rel="noopener">bcn-services.com</a></p>
@@ -265,8 +258,8 @@
       <p class="lede">My Harvey Mudd Clinic project, a year-long build with a student team for the Union of Concerned Scientists.</p>
       <ul class="facts">
         <li>We're building an open data platform that shows where California groundwater compliance, air quality and land-use burdens overlap.</li>
-        <li>I own the backend and the data-pipeline architecture.</li>
-        <li>We've cataloged 36 datasets and picked 6 for the fall MVP. The farmland (FMMP) and OpenET pulls are built, with format-conversion tests.</li>
+        <li>I own the backend architecture, including the data pipelines.</li>
+        <li>I also focus on ethical development and user-centered design.</li>
       </ul>
       <p class="stack"><span>Python</span><span>geopandas</span><span>shapely</span><span>pandas</span><span>React</span><span>Vite</span></p>
     </article>
@@ -280,7 +273,6 @@
         <li>Built with React and Flask on Supabase Postgres, then ported to React Native with Expo.</li>
         <li>It has 10+ bet types, and 30+ players logged 500+ game outcomes.</li>
         <li>The house sets its lines from player stats, blending the season average with the last five games and setting thresholds from normal quantiles.</li>
-        <li>Both players have to confirm a result before a bet settles.</li>
       </ul>
       <p class="stack"><span>React Native</span><span>Expo</span><span>Flask</span><span>Postgres</span></p>
       <p class="links"><a href="https://github.com/nseluga/patio" target="_blank" rel="noopener">Code</a></p>
@@ -306,9 +298,9 @@
       <h2>Willagrams</h2>
       <p class="lede">A word-tile game for iPhone and iPad that you can play solo against a bot or against friends in real time.</p>
       <ul class="facts">
-        <li>A SwiftUI app with a 144-tile set and a Supabase backend for Postgres, anonymous sign-in and realtime sync.</li>
-        <li>Behavior tests check the Postgres row-level security rules.</li>
-        <li>It has 700+ automated tests and is in App Review, so it isn't released yet.</li>
+        <li>You race to arrange your tiles into one connected grid of valid words, drawing more from a shared pool, and call Willagrams! to win.</li>
+        <li>I built it in SwiftUI with a 144-tile set and a Supabase backend for Postgres, anonymous sign-in and realtime sync.</li>
+        <li>The app is released for iPhone and iPad.</li>
       </ul>
       <p class="stack"><span>SwiftUI</span><span>Supabase</span><span>Postgres</span></p>
       <p class="links"><a href="https://github.com/nseluga/Willagrams" target="_blank" rel="noopener">Code</a></p>
