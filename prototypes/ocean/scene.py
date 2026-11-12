@@ -90,6 +90,7 @@ a.add_argument('--shot', default='idle', choices=['idle', 'wave', 'surf', 'about
 #   about: the same ride, the camera goes out to him and comes back; loop: one PERIOD of riding seen from alongside, repeats for ever (about frame 144 = loop frame 0)
 a.add_argument('--start', type=int, default=0)   # first frame; with --step, lets one process per GPU share a clip
 a.add_argument('--zoom', type=float, default=1.0)  # lens multiplier, for checking poses up close
+a.add_argument('--aim-z', type=float, default=0.0)  # with --zoom: aim this far above the board (1.6 = his head when standing)
 a.add_argument('--cam-z', type=float, default=WAVE_CAM_POS[2])  # beach camera height m; raise for close-ups so waves don't hide him
 a.add_argument('--wave-h', type=float, default=WAVE_H)          # crest height m
 a.add_argument('--t', type=float, default=0.0)    # seconds into the shot (stills), or clip start
@@ -129,10 +130,13 @@ if WAVE:                                # beach shots: adult proportions (1.8 m)
               (-.47, .24, 1.22), (-.56, .38, 1.03), (-.50, .55, .90), (-.14, .06, 1.25), (.02, .08, 1.03), (.22, .16, .92),
               (-.50, .20, .50), (-.62, -.03, .10), (-.58, .16, .06), (-.10, .18, .52), (-.06, -.03, .10), (.08, .11, .06), (-.25, .22, 1.45), (4, 1.2, .7)])
     # the figure (MakeHuman via the MPFB extension): 0..1 sliders, then the asset files under assets/
-    HUMAN = dict(gender=1.0, age=0.5, muscle=0.7, weight=0.4, height=0.5, proportions=0.6, race=dict(asian=0.0, caucasian=1.0, african=0.0))
-    HUMAN_SKIN, HUMAN_HAIR, HUMAN_TALL = 'skins/young_caucasian_male/young_caucasian_male.mhmat', 'hair/short03/short03.mhclo', 1.80
+    HUMAN = dict(gender=1.0, age=0.45, muscle=0.7, weight=0.4, height=0.5, proportions=0.6, race=dict(asian=0.0, caucasian=1.0, african=0.0))
+    HUMAN_SKIN, HUMAN_HAIR, HUMAN_TALL = 'skins/young_caucasian_male/young_caucasian_male.mhmat', 'hair/short02/short02.mhclo', 1.80
+    HUMAN_HAIR_PUFF, HUMAN_HAIR_DROP, HUMAN_HAIR_WAVE = (1.08, 1.10, 1.18), 0.6, 0.03   # the hair cap scaled out from the head's centre, its lower half lengthened, then lumped into waves (m)
     SHORTS = (0.72, 0.09, 0.06)
-    HUMAN_TAN, HUMAN_HAIR_TINT = (0.95, 0.80, 0.70), (0.30, 0.21, 0.16)      # multiplied into the skin and hair colour
+    HUMAN_FACE = {'head/head-oval': 0.8, 'head/head-age-decr': 0.5, 'head/head-scale-horiz-decr': 0.3, 'chin/chin-width-decr': 0.4, 'chin/chin-bones-incr': 0.3,   # MPFB detail targets: a younger, slimmer face
+                  'mouth/mouth-upperlip-volume-incr': 0.3, 'mouth/mouth-lowerlip-volume-incr': 0.3}
+    HUMAN_TAN, HUMAN_HAIR_TINT = (0.95, 0.80, 0.70), (0.36, 0.25, 0.18)      # multiplied into the skin and hair colour
 SUN = Vector((math.sin(SUN_AZ) * math.cos(SUN_EL), math.cos(SUN_AZ) * math.cos(SUN_EL), math.sin(SUN_EL)))
 
 
@@ -508,6 +512,8 @@ def build_human(rig, coll):
     from bl_ext.blender_org.mpfb.services.targetservice import TargetService
     assets = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets')
     h = HumanService.create_human(macro_detail_dict={**TargetService.get_default_macro_info_dict(), **HUMAN})
+    import bl_ext.blender_org.mpfb as mpfb
+    for k, w in HUMAN_FACE.items(): TargetService.load_target(h, os.path.join(os.path.dirname(mpfb.__file__), 'data', 'targets', k + '.target.gz'), weight=w)
     arm = HumanService.add_builtin_rig(h, 'game_engine')
     HumanService.set_character_skin(os.path.join(assets, HUMAN_SKIN), h)
     for kind, f in (('Eyes', 'eyes/low-poly/low-poly.mhclo'), ('Eyebrows', 'eyebrows/eyebrow001/eyebrow001.mhclo'),
@@ -527,7 +533,12 @@ def build_human(rig, coll):
     h.vertex_groups['body'].remove([v.index for v in h.data.vertices if lo + 0.06 < co[v.index].z < hi - 0.02 and abs(co[v.index].x) < 0.3])   # no skin under them to poke through
     pg = sh.vertex_groups.new(name='puff')
     for v in sh.data.vertices: pg.add([v.index], min(1.0, 0.25 + (hi + 0.04 - v.co.z) / 0.06), 'REPLACE')
-    for ob, col in [(h, HUMAN_TAN)] + [(c, HUMAN_HAIR_TINT) for c in h.children if 'short' in c.name.lower() or 'hair' in c.name.lower()]:
+    hair = next(c for c in arm.children if os.path.basename(HUMAN_HAIR)[:-6] in c.name); c = (B['head'].head_local + B['head'].tail_local) / 2
+    for v in hair.data.vertices:
+        d = v.co - c; v.co = c + Vector((d.x * HUMAN_HAIR_PUFF[0], d.y * HUMAN_HAIR_PUFF[1], d.z * (HUMAN_HAIR_PUFF[2] if d.z > 0 else 1 + HUMAN_HAIR_DROP)))
+    tx = bpy.data.textures.new('wave', 'CLOUDS'); tx.noise_scale = 0.05
+    d = hair.modifiers.new('wave', 'DISPLACE'); d.texture, d.strength, d.mid_level, d.texture_coords = tx, HUMAN_HAIR_WAVE, 0.5, 'LOCAL'; hair.modifiers.move(len(hair.modifiers) - 1, 0)
+    for ob, col in (h, HUMAN_TAN), (hair, HUMAN_HAIR_TINT):
         for m in ob.data.materials: tint(m.node_tree, col)
     sh.data.materials.clear(); sh.data.materials.append(surface('shorts', SHORTS, 0.8))
     for m in [m for m in sh.modifiers if m.type != 'ARMATURE']: sh.modifiers.remove(m)
@@ -659,7 +670,7 @@ def camera_at(t):
 def follow(rig, t):                                        # beach: a tripod pan, part of the way with the surfer; alongside: half-follows his carving
     co = bpy.context.scene.camera; pos, k = camera_at(t)
     co.location, co.data.lens = pos, (WAVE_LENS + (CLOSE_LENS - WAVE_LENS) * k) * A.zoom
-    d = Vector(WAVE_CAM_AIM).lerp(rig.location, CAM_FOLLOW if A.zoom == 1 else 1.0) - pos
+    d = Vector(WAVE_CAM_AIM).lerp(rig.location + Vector((0, 0, A.aim_z)), CAM_FOLLOW if A.zoom == 1 else 1.0) - pos
     if A.zoom == 1: d.z = math.hypot(d.x, d.y) * math.tan(CAM_PITCH)
     if k:
         _, tv, D = clock(t); mid = Vector((np.interp(tv, TS, MID[:, 0]) + D, np.interp(tv, TS, MID[:, 1]) + D, 0))
