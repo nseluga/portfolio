@@ -36,3 +36,7 @@ Thumbs.db
 /PLAN.md
 /PROGRESS.md
 /SPEC.md
+
+# Ocean film renders (frames, re-renderable from scene.py)
+prototypes/ocean/out/
+prototypes/ocean/assets/

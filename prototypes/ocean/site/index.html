@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nate Seluga</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Projects by Nate Seluga in machine learning research, software and work with small businesses.">
+<script>
+  // Ocean mode needs room and motion; everything else gets the plain page below (also what search engines read).
+  var OCEAN = matchMedia('(min-width: 900px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)');
+  var PLAIN = new URLSearchParams(location.search).has('plain');
+  document.documentElement.classList.toggle('ocean', OCEAN.matches && !PLAIN);
+</script>
+<style>
+  :root { --ink: #f4f1ea; --dim: #b9c6c9; --deep: #06161e; --glass: rgba(6, 22, 30, .62); --line: rgba(244, 241, 234, .16); --sun: #ffb37a; --sea: #8fe6d6;
+          --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif; --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+          --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+  * { box-sizing: border-box; }
+  html { background: var(--deep); color: var(--ink); font: 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+  body { margin: 0; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--sun); outline-offset: 3px; border-radius: 4px; }
+  h1, h2, h3, p, ol, ul { margin: 0; padding: 0; } ol, ul { list-style: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+  /* ---------- shared pieces ---------- */
+  .stage { position: relative; height: min(62vw, 70vh); overflow: hidden; background: #0b2a36 url(media/poster.jpg) center / cover; }
+  .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }   /* clips stack; the one playing is on top */
+  .scrim { position: absolute; inset: 0; z-index: 3; pointer-events: none;
+           background: linear-gradient(180deg, rgba(6, 22, 30, .42), transparent 11%), linear-gradient(0deg, rgba(6, 22, 30, .75), transparent 45%); }   /* the top band stops short of the sun */
+  #spray { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
+  .top { position: absolute; top: 0; left: 0; right: 0; display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; padding: 28px clamp(20px, 4vw, 48px); z-index: 3; }
+  .name { font: 600 28px/1.1 var(--serif); letter-spacing: -.01em; text-decoration: none; }
+  .top nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .top nav a { padding: 8px 14px; border-radius: 999px; font-size: 14px; text-decoration: none; border: 1px solid transparent; transition: background .2s, border-color .2s; }
+  .top nav a:hover, .top nav a[aria-current] { background: rgba(244, 241, 234, .12); border-color: var(--line); }
+  .kicker, .group h2 { font: 12px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sun); }
+  .brief h2 { font: 600 34px/1.08 var(--serif); letter-spacing: -.015em; margin: 10px 0 12px; }
+  .lede { font-size: 17px; line-height: 1.5; }
+  .lede + .lede { margin-top: 12px; }
+  .facts { margin: 18px 0; display: grid; gap: 10px; }
+  .facts li { position: relative; padding-left: 18px; color: #dfe6e4; font-size: 15px; }
+  .facts li::before { content: ''; position: absolute; left: 0; top: .62em; width: 8px; height: 2px; background: var(--sea); border-radius: 2px; }
+  .stack { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack span { font: 12px/1 var(--mono); padding: 6px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--dim); }
+  .links { margin-top: 18px; display: flex; gap: 18px; flex-wrap: wrap; align-items: baseline; font-size: 15px; }
+  .links a { text-decoration: none; border-bottom: 1px solid var(--sun); padding-bottom: 2px; }
+  .links a:hover { color: var(--sun); }
+  .links .note { font: 12px/1.3 var(--mono); color: var(--dim); }
+  .brief:focus { outline: none; }
+  .brief:target { border-color: var(--sun); }
+  .close, .skipbar, .tabs { display: none; }
+
+  /* ---------- plain page: phones, reduced motion, ?plain, no JS ---------- */
+  html:not(.ocean) .stage { height: min(56vw, 44vh); }
+  html:not(.ocean) .top { position: static; flex-direction: column; gap: 10px; max-width: 760px; margin: 0 auto; padding: 26px 20px 0; }
+  html:not(.ocean) .top nav { justify-content: flex-start; margin-left: -14px; }
+  @media (max-width: 500px) { .brief h2 { font-size: 28px; } }
+  .toolbar { max-width: 760px; margin: 0 auto; padding: 40px 20px 8px; display: grid; gap: 28px; }
+  .group ol { margin-top: 12px; border-top: 1px solid var(--line); }
+  .group a { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline; padding: 11px 4px; border-bottom: 1px solid var(--line); text-decoration: none; }
+  .group .t { font: 600 18px/1.25 var(--serif); }
+  .group .k { font: 12px var(--mono); color: var(--dim); text-align: right; }
+  .briefs { max-width: 760px; margin: 0 auto; padding: 16px 20px 80px; display: grid; gap: 20px; }
+  .brief { position: relative; padding: 26px 24px; border: 1px solid var(--line); border-radius: 16px; background: rgba(244, 241, 234, .035); scroll-margin-top: 16px; }
+
+  /* ---------- ocean mode ---------- */
+  .ocean body { height: 100vh; overflow: hidden; }
+  .ocean .stage { position: fixed; inset: 0; height: auto; }
+  .ocean #spray { display: block; position: fixed; z-index: 5; }   /* above the brief, so the spray lands on it */
+  .ocean .top { position: fixed; text-shadow: 0 1px 12px rgba(6, 22, 30, .55); }
+  .ocean .toolbar { position: fixed; left: clamp(20px, 4vw, 48px); bottom: 40px; width: min(380px, 34vw); margin: 0; padding: 0; z-index: 3; display: flex; flex-direction: column; gap: 0; transition: opacity .4s; }
+  .ocean .tabs { display: flex; gap: 6px; order: 2; margin-top: 14px; }
+  .tabs button { padding: 9px 16px; border-radius: 999px; font-size: 14px; background: var(--glass); border: 1px solid var(--line); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: background .2s, border-color .2s; }
+  .tabs button:hover { border-color: rgba(244, 241, 234, .4); }
+  .tabs button[aria-expanded=true] { background: rgba(143, 230, 214, .2); border-color: var(--sea); }
+  .ocean .group { display: none; }
+  .ocean .group.on { display: block; animation: glass .3s ease both; }
+  .ocean .group h2 { display: none; }
+  .ocean .group ol { margin: 0; border-top-color: rgba(244, 241, 234, .28); }
+  .ocean .group a { padding: 8px 6px; border-bottom-color: rgba(244, 241, 234, .14); transition: background .2s, padding .2s; text-shadow: 0 1px 10px rgba(6, 22, 30, .7); }
+  .ocean .group a:hover, .ocean .group a:focus-visible, .ocean .group a[aria-current] { background: linear-gradient(90deg, rgba(143, 230, 214, .22), transparent); padding-left: 14px; }
+  .ocean .group .t { font-size: 17px; }
+  .ocean .group .k { color: var(--ink); opacity: .75; }
+  @media (max-height: 700px) { .ocean .group a { padding: 5px 6px; } .ocean .group .t { font-size: 15px; } }
+  .ocean .briefs { position: fixed; right: clamp(20px, 4vw, 48px); top: 96px; bottom: 40px; width: min(480px, 40vw); margin: 0; padding: 0; display: flex; align-items: center; z-index: 4; pointer-events: none; }
+  .ocean .brief { display: none; width: 100%; max-height: 100%; overflow: auto; padding: 30px 30px 28px; background: var(--glass); border-color: rgba(244, 241, 234, .2);
+                  -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2); box-shadow: 0 30px 80px rgba(0, 0, 0, .35); pointer-events: auto;
+                  scrollbar-width: thin; scrollbar-color: rgba(244, 241, 234, .3) transparent; }
+  .ocean .brief.on { display: block; animation: glass .5s ease both; }
+  @keyframes glass { from { opacity: 0; } }
+  .ocean .brief > * { transition: opacity .6s ease; }
+  .ocean .brief.pre > * { opacity: 0; transition: none; }
+  .ocean .brief .kicker { padding-right: 40px; }
+  @media (max-height: 760px) { .ocean .briefs { top: 76px; bottom: 30px; } .ocean .brief { padding: 22px 26px 20px; } .ocean .brief h2 { font-size: 28px; margin: 6px 0 8px; }
+    .ocean .lede { font-size: 16px; } .ocean .facts { margin: 12px 0; gap: 7px; } .ocean .facts li { font-size: 14px; } .ocean .links { margin-top: 12px; } }
+  .ocean .close { display: grid; place-items: center; position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); font-size: 18px; line-height: 1; color: var(--dim); }
+  .ocean .close:hover { color: var(--ink); background: rgba(244, 241, 234, .1); }
+  .ocean .skipbar { position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%); z-index: 4; display: flex; gap: 14px; align-items: center; padding: 9px 10px 9px 18px; border-radius: 999px;
+                    background: var(--glass); border: 1px solid var(--line); font-size: 14px; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+  .ocean .skipbar.on { opacity: 1; visibility: visible; }
+  .skipbar button { padding: 5px 12px; border-radius: 999px; background: rgba(244, 241, 234, .12); }
+  .skipbar button:hover { background: rgba(244, 241, 234, .22); }
+  .ocean.busy .toolbar { opacity: .55; }
+  .ocean.busy .toolbar:hover, .ocean.busy .toolbar:has(:focus-visible) { opacity: 1; }
+</style>
+</head>
+<body id="top">
+
+<canvas id="spray" aria-hidden="true"></canvas>
+<div class="stage" aria-hidden="true"><div class="scrim"></div></div>
+
+<header class="top">
+  <a class="name" href="#top">Nate Seluga</a>
+  <nav aria-label="Site">
+    <a href="#about" data-open="about">About</a>
+    <a href="https://github.com/nseluga" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.linkedin.com/in/nate-seluga" target="_blank" rel="noopener">LinkedIn</a>
+  </nav>
+</header>
+
+<main>
+  <nav class="toolbar" aria-label="Projects">
+    <div class="tabs">
+      <button type="button" data-tab="g-research" aria-controls="g-research" aria-expanded="false">Research</button>
+      <button type="button" data-tab="g-experience" aria-controls="g-experience" aria-expanded="false">Experience</button>
+      <button type="button" data-tab="g-software" aria-controls="g-software" aria-expanded="false">Software</button>
+    </div>
+    <section class="group" id="g-research">
+      <h2>Research</h2>
+      <ol>
+        <li><a href="#p-nba" data-open="p-nba"><span class="t">NBA Shot Value</span><span class="k">Basketball</span></a></li>
+        <li><a href="#p-batting" data-open="p-batting"><span class="t">Batting Average Ability</span><span class="k">Baseball</span></a></li>
+        <li><a href="#p-injury" data-open="p-injury"><span class="t">Pitcher Injury Risk</span><span class="k">Baseball</span></a></li>
+        <li><a href="#p-hitter" data-open="p-hitter"><span class="t">Hitter Embedding</span><span class="k">Baseball</span></a></li>
+        <li><a href="#p-stacker" data-open="p-stacker"><span class="t">Stacker Bot</span><span class="k">Card game</span></a></li>
+      </ol>
+    </section>
+    <section class="group" id="g-experience">
+      <h2>Experience</h2>
+      <ol>
+        <li><a href="#p-cocc" data-open="p-cocc"><span class="t">COCC</span><span class="k">Internship</span></a></li>
+        <li><a href="#p-bcns" data-open="p-bcns"><span class="t">BCNS</span><span class="k">Co-founder</span></a></li>
+        <li><a href="#p-ucs" data-open="p-ucs"><span class="t">UCS</span><span class="k">Clinic</span></a></li>
+      </ol>
+    </section>
+    <section class="group" id="g-software">
+      <h2>Software</h2>
+      <ol>
+        <li><a href="#p-patio" data-open="p-patio"><span class="t">Patio</span><span class="k">Mobile app</span></a></li>
+        <li><a href="#p-os" data-open="p-os"><span class="t">Personal AI OS</span><span class="k">Tooling</span></a></li>
+        <li><a href="#p-willagrams" data-open="p-willagrams"><span class="t">Willagrams</span><span class="k">iOS game</span></a></li>
+      </ol>
+    </section>
+  </nav>
+
+  <div class="briefs">
+    <article class="brief" id="p-nba" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Research &middot; Apr to May 2025</p>
+      <h2>NBA Shot Value</h2>
+      <p class="lede">A model of how good an NBA shot is before you know who took it.</p>
+      <ul class="facts">
+        <li>Uses 128,069 shots from the 2014-15 season, described only by context such as shot distance, defender distance, dribbles, touch time and shot clock.</li>
+        <li>Logistic regression, a decision tree, a random forest and XGBoost all stop at an AUC of 0.63 to 0.64. What is left is shooter skill, which we left out on purpose.</li>
+        <li>SHAP ranks defender distance ahead of shot distance and touch time.</li>
+        <li>An open shot at the rim is worth about 1.85 points, while a contested one from 20 to 22 feet is worth about 0.62.</li>
+      </ul>
+      <p class="stack"><span>pandas</span><span>scikit-learn</span><span>XGBoost</span><span>SHAP</span></p>
+      <p class="links"><a href="https://github.com/nseluga/Shot-Value-Machine-Learning" target="_blank" rel="noopener">Code</a><span class="note">Paper to be added.</span></p>
+    </article>
+
+    <article class="brief" id="p-batting" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Research &middot; Nov to Dec 2025</p>
+      <h2>Batting Average Ability</h2>
+      <p class="lede">How much of a batting average is the hitter, and how much is luck?</p>
+      <ul class="facts">
+        <li>A two-pass mixed-effects model with a random intercept for each player, fitting BABIP first and then batting average.</li>
+        <li>Fit on 4,374 player-seasons from 1,173 hitters between 2015 and 2024, using FanGraphs data.</li>
+        <li>24.7% of the variation in batting average is stable player skill. On the test set the model explains 45.7% of the variance with a mean error of .0215.</li>
+        <li>Sprint speed is the strongest driver of BABIP after batted-ball mix.</li>
+      </ul>
+      <p class="stack"><span>statsmodels</span><span>pybaseball</span><span>pandas</span><span>scikit-learn</span></p>
+      <p class="links"><a href="https://github.com/nseluga/Batting-Average-Ability" target="_blank" rel="noopener">Code</a></p>
+    </article>
+
+    <article class="brief" id="p-injury" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Research &middot; May to Jun 2026</p>
+      <h2>Pitcher Injury Risk</h2>
+      <p class="lede">Models of how likely an MLB pitcher is to get hurt, how badly and how soon.</p>
+      <ul class="facts">
+        <li>Built on 205,911 pitcher-game rows for 3,249 pitchers from 2015 to 2024, using Statcast and injured-list records.</li>
+        <li>Classifiers and survival models combine into one score, Injury Risk+, indexed to 100.</li>
+        <li>Trained on 2015 to 2022 and tested on 2023 and 2024, with walk-forward validation and isotonic calibration.</li>
+        <li>AUC is about 0.57, which seems to be close to what public data can tell you. The clearest signal is a velocity drop of more than 2 mph, which doubles the 30-day injury rate from 6% to 12%.</li>
+      </ul>
+      <p class="stack"><span>scikit-learn</span><span>XGBoost</span><span>lifelines</span><span>SHAP</span><span>Streamlit</span></p>
+      <p class="links"><a href="https://github.com/nseluga/Pitcher-Injury-Risk" target="_blank" rel="noopener">Code</a></p>
+    </article>
+
+    <article class="brief" id="p-hitter" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Research &middot; Jun 2026 to now</p>
+      <h2>Hitter Embedding</h2>
+      <p class="lede">A neural network that learns a 64-number profile of each MLB hitter from the pitches they see and uses it to project wOBA.</p>
+      <ul class="facts">
+        <li>The network has a head for each step of a plate appearance (swing, contact, exit velocity, launch angle and spray), and a Markov chain over the count turns those into projected wOBA.</li>
+        <li>Trained on about 6.5 million pitches from 1,672 hitters between 2015 and 2024, with the 2025 season sealed for a pre-registered test.</li>
+        <li>It did not pass that test. RMSE was 0.0452 against 0.0453 for gradient boosting, although rank correlation was 0.47 against 0.42.</li>
+        <li>On 2024 it recovers 60% of the rank-order platoon signal, and swing and contact signals stabilize several times faster than wOBA.</li>
+      </ul>
+      <p class="stack"><span>PyTorch</span><span>XGBoost</span><span>pandas</span><span>Statcast</span></p>
+      <p class="links"><a href="https://github.com/nseluga/Hitter-Embedding" target="_blank" rel="noopener">Code</a><a href="https://nseluga.github.io/Hitter-Embedding/" target="_blank" rel="noopener">Matchup explorer</a><span class="note">Paper to be added.</span></p>
+    </article>
+
+    <article class="brief" id="p-stacker" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Research &middot; Oct 2026 to now</p>
+      <h2>Stacker Bot</h2>
+      <p class="lede">Reinforcement learning for Stacker, a Big Two-style card game for 3 to 8 players and 1 or 2 decks.</p>
+      <ul class="facts">
+        <li>The plan is a Deep Monte-Carlo specialist for 4 players and one deck, and a transformer generalist across all six configurations.</li>
+        <li>The evaluation rules were set before any training, including sealed deals, fixed test seeds, paired bootstrap confidence intervals and pre-registration.</li>
+        <li>The heuristic baseline beats greedy play by 0.656 points per hand over 150 sealed deals.</li>
+        <li>There are no trained-agent results yet. The simulator and evaluation code have 522 tests.</li>
+      </ul>
+      <p class="stack"><span>PyTorch</span><span>NumPy</span><span>pytest</span></p>
+      <p class="links"><a href="https://github.com/nseluga/stacker-bot" target="_blank" rel="noopener">Code</a></p>
+    </article>
+
+    <article class="brief" id="p-cocc" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Experience &middot; Jun to Aug 2026</p>
+      <h2>COCC</h2>
+      <p class="lede">A summer as a software engineering intern at COCC (Connecticut Online Computer Center).</p>
+      <ul class="facts">
+        <li>Built and deployed a company-wide prompt-coaching agent that reads employees' AI prompts and suggests better ones, which cut token use by 30%.</li>
+        <li>Refactored the flex-script generation pipeline in an internal banking tool and fixed recurring edge cases in the script builder.</li>
+        <li>Wrote the architecture, API and workflow documentation for the online banking application.</li>
+      </ul>
+    </article>
+
+    <article class="brief" id="p-bcns" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Experience &middot; Jul 2026 to now</p>
+      <h2>BCNS</h2>
+      <p class="lede">A software studio I co-founded that builds custom apps for small businesses.</p>
+      <ul class="facts">
+        <li>I built the shared multi-tenant platform on Next.js and Supabase with row-level security, a Cloud Run worker and an MCP server.</li>
+        <li>Every new client app starts from the same shared packages and client template.</li>
+        <li>We've shipped a revenue tracker for a restaurant, an order-lookup tool that reads an email inbox and a booking system.</li>
+        <li>We signed 5 clients in the first month, and I run the CI/CD, uptime checks and nightly backups.</li>
+      </ul>
+      <p class="stack"><span>Next.js</span><span>Supabase</span><span>Cloud Run</span><span>MCP</span></p>
+      <p class="links"><a href="https://bcn-services.com" target="_blank" rel="noopener">bcn-services.com</a></p>
+    </article>
+
+    <article class="brief" id="p-ucs" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Experience &middot; Aug 2026 to now</p>
+      <h2>UCS</h2>
+      <p class="lede">My Harvey Mudd Clinic project, a year-long build with a student team for the Union of Concerned Scientists.</p>
+      <ul class="facts">
+        <li>We're building an open data platform that shows where California groundwater compliance, air quality and land-use burdens overlap.</li>
+        <li>I own the backend and the data-pipeline architecture.</li>
+        <li>We've cataloged 36 datasets and picked 6 for the fall MVP. The farmland (FMMP) and OpenET pulls are built, with format-conversion tests.</li>
+      </ul>
+      <p class="stack"><span>Python</span><span>geopandas</span><span>shapely</span><span>pandas</span><span>React</span><span>Vite</span></p>
+    </article>
+
+    <article class="brief" id="p-patio" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Software &middot; Mar to Aug 2025</p>
+      <h2>Patio</h2>
+      <p class="lede">A social betting app for backyard games, where you bet against friends or against the house.</p>
+      <ul class="facts">
+        <li>Built with React and Flask on Supabase Postgres, then ported to React Native with Expo.</li>
+        <li>It has 10+ bet types, and 30+ players logged 500+ game outcomes.</li>
+        <li>The house sets its lines from player stats, blending the season average with the last five games and setting thresholds from normal quantiles.</li>
+        <li>Both players have to confirm a result before a bet settles.</li>
+      </ul>
+      <p class="stack"><span>React Native</span><span>Expo</span><span>Flask</span><span>Postgres</span></p>
+      <p class="links"><a href="https://github.com/nseluga/patio" target="_blank" rel="noopener">Code</a></p>
+    </article>
+
+    <article class="brief" id="p-os" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Software &middot; Jun 2026 to now</p>
+      <h2>Personal AI OS</h2>
+      <p class="lede">The Claude Code setup I run my work through, with an eval harness that checks whether each layer of it earns its place.</p>
+      <ul class="facts">
+        <li>The setup is skills, subagent definitions, memory files with a retrieval hook and an index for each project.</li>
+        <li>The harness strips the setup back layer by layer. On the latest scorecard the bare model passes 66% of runs and the full setup 88%, at about 2.5 times the cost per run.</li>
+        <li>A blind judge is only trusted at a kappa of 0.6 or better over at least 30 rated pairs.</li>
+      </ul>
+      <p class="stack"><span>Claude Code</span><span>Python</span></p>
+      <p class="links"><a href="https://github.com/nseluga/os-evals" target="_blank" rel="noopener">Eval harness code</a></p>
+    </article>
+
+    <article class="brief" id="p-willagrams" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">Software &middot; Aug 2026 to now</p>
+      <h2>Willagrams</h2>
+      <p class="lede">A word-tile game for iPhone and iPad that you can play solo against a bot or against friends in real time.</p>
+      <ul class="facts">
+        <li>A SwiftUI app with a 144-tile set and a Supabase backend for Postgres, Sign in with Apple and realtime sync.</li>
+        <li>Behavior tests check the Postgres row-level security rules.</li>
+        <li>It has 700+ automated tests and is in App Review, so it isn't released yet.</li>
+      </ul>
+      <p class="stack"><span>SwiftUI</span><span>Supabase</span><span>Postgres</span></p>
+      <p class="links"><a href="https://github.com/nseluga/Willagrams" target="_blank" rel="noopener">Code</a></p>
+    </article>
+
+    <article class="brief about" id="about" tabindex="-1">
+      <button class="close" aria-label="Close">&times;</button>
+      <p class="kicker">About</p>
+      <h2>Hi, I'm Nate.</h2>
+      <p class="lede">I study computer science at Harvey Mudd College and graduate in 2027. I'm most interested in agentic AI and machine learning research, and I like owning my own projects and working hands on with the businesses that use them.</p>
+      <p class="lede">So far that has meant co-founding BCNS, a studio that builds software for small businesses, interning as a software engineer at COCC and doing research on baseball data.</p>
+      <p class="lede">When I'm not working I surf, play baseball and get out to national parks whenever I can.</p>
+      <p class="links"><a href="https://github.com/nseluga" target="_blank" rel="noopener">GitHub</a><a href="https://www.linkedin.com/in/nate-seluga" target="_blank" rel="noopener">LinkedIn</a></p>
+    </article>
+  </div>
+</main>
+
+<div class="skipbar" role="status"><span id="catching"></span><button type="button" id="skip">Skip the ride</button></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const root = document.documentElement, stage = $('.stage'), canvas = $('#spray'), ctx = canvas.getContext('2d'), skipbar = $('.skipbar');
+  const ocean = () => root.classList.contains('ocean');
+
+  // ---------- the film: five clips that only ever join on a frame they share, so there is never a cut ----------
+  //   idle (he waits, one 6 s wave period) -> idle | ride | in      ride (catch, carve, kick out, paddle back) -> same three
+  //   in (camera pushes in as he catches one) -> loop | out         loop (camera rides along) -> loop | out      out (kick out, paddle back, camera eases back) -> idle | ride | in
+  const CLIPS = { idle: 'idle', ride: 'ride', in: 'about-in', loop: 'about-loop', out: 'about-out' };
+  const T_REVEAL = 5.4;                                        // seconds into ride / in: the top turn, where the spray leaves the board
+  const TRACK = {"ride":[0.697,0.6101,0.697,0.6106,0.6965,0.6106,0.6936,0.61,0.6865,0.609,0.6758,0.6074,0.6661,0.6052,0.663,0.6019,0.6683,0.5972,0.6783,0.5915,0.6876,0.5853,0.6929,0.5792,0.6948,0.5723,0.6952,0.5654,0.6956,0.5575,0.6961,0.5494,0.6967,0.5427,0.6972,0.5379,0.6977,0.5351,0.6982,0.5329,0.6988,0.5313,0.6995,0.5316,0.7003,0.5345,0.701,0.5395,0.7016,0.5454,0.7024,0.5511,0.7032,0.5563,0.7048,0.5635,0.7073,0.5762,0.7103,0.5902,0.7127,0.6037,0.714,0.6149,0.7133,0.6229,0.7094,0.6274,0.7018,0.6282,0.6907,0.6263,0.6766,0.6222,0.6604,0.6157,0.6429,0.608,0.6248,0.5997,0.6068,0.5917,0.5892,0.5848,0.5723,0.5801,0.556,0.5773,0.5404,0.5752,0.5254,0.5731,0.5118,0.5729,0.5,0.5756,0.4902,0.5845,0.4826,0.5997,0.4769,0.6182,0.4725,0.6405,0.469,0.6695,0.4655,0.7005,0.4611,0.7265,0.4549,0.7443,0.4455,0.7548,0.432,0.7616,0.414,0.7647,0.3923,0.7626,0.3676,0.7534,0.3412,0.7405,0.3139,0.7221,0.2867,0.704,0.26,0.6867,0.2342,0.674,0.2096,0.6671,0.1857,0.6637,0.1627,0.663,0.1421,0.6644,0.1247,0.665,0.1102,0.6665,0.0982,0.6677,0.0891,0.6728,0.0831,0.6827,0.0738,0.6902,0.026,0.689,-0.0078,0.7006,-0.0047,0.7166,0.0007,0.7326,0.0062,0.7495,0.0119,0.7658,0.0174,0.7819,0.0231,0.7952,0.0288,0.8047,0.0347,0.8101,0.0407,0.8129,0.0468,0.8142,0.053,0.8149,0.0592,0.816,0.0656,0.8177,0.072,0.8194,0.0784,0.8205,0.0849,0.8212,0.0915,0.8213,0.0981,0.8207,0.1047,0.8197,0.1114,0.8185,0.1182,0.8167,0.1249,0.8142,0.1318,0.8114,0.1386,0.8085,0.1455,0.8054,0.1524,0.8018,0.1593,0.7972,0.1662,0.7906,0.1732,0.7812,0.1804,0.7662,0.1876,0.7409,0.1945,0.7037,0.2009,0.6656,0.2077,0.639,0.215,0.6367,0.2222,0.649,0.2293,0.6668,0.2363,0.6867,0.2432,0.707,0.25,0.7264,0.2568,0.7435,0.2635,0.7553,0.2703,0.7612,0.2771,0.7622,0.284,0.7601,0.2907,0.7576,0.2975,0.7558,0.3042,0.7545,0.3109,0.7536,0.3176,0.7531,0.3242,0.7539,0.3307,0.7554,0.3372,0.7563,0.3436,0.7563,0.35,0.7558,0.3563,0.755,0.3625,0.7537,0.3687,0.7512,0.3748,0.7477,0.3809,0.7428,0.3869,0.7362,0.3929,0.7272,0.3988,0.7145,0.4049,0.6951,0.4108,0.6645,0.4164,0.6264,0.4218,0.5927,0.4275,0.575,0.4331,0.5769,0.4387,0.5882,0.4441,0.6035,0.4495,0.6207,0.4549,0.6385,0.4601,0.6557,0.4653,0.6703,0.4704,0.6812,0.4753,0.6877,0.4802,0.6897,0.4851,0.6896,0.4899,0.6887,0.4946,0.6878,0.4993,0.6866,0.504,0.6854,0.5085,0.6843,0.513,0.6831,0.5175,0.6812,0.5219,0.6789,0.5262,0.6768,0.5304,0.6747,0.5345,0.6723,0.5386,0.6696,0.5426,0.6686,0.5465,0.6679,0.5504,0.6671,0.5542,0.6654,0.5579,0.6611,0.5616,0.652,0.5653,0.6344,0.569,0.6074,0.5724,0.5775,0.5757,0.5565,0.579,0.5533,0.5822,0.5609,0.5855,0.5723,0.5887,0.5854,0.5918,0.5991,0.5949,0.6121,0.598,0.6232,0.601,0.6317,0.6039,0.6366,0.6067,0.6389,0.6095,0.6387,0.6123,0.6374,0.615,0.6364,0.6176,0.6359,0.6201,0.6352,0.6226,0.6343,0.6251,0.6332,0.6275,0.6323,0.6298,0.6315,0.6321,0.6305,0.6343,0.6291,0.6365,0.6276,0.6386,0.6259,0.6407,0.6241,0.6427,0.622,0.6447,0.6196,0.6467,0.617,0.6486,0.6139,0.6505,0.6099,0.6524,0.604,0.6541,0.5946,0.6558,0.5794,0.6575,0.5584,0.6593,0.5353,0.6609,0.5175,0.6625,0.5112,0.6639,0.5162,0.6653,0.5262,0.6667,0.5375,0.6681,0.5497,0.6694,0.5622,0.6706,0.5739,0.6719,0.5841,0.6734,0.5919,0.6752,0.597,0.6776,0.5997,0.6793,0.6009,0.6815,0.6011,0.684,0.6006,0.6867,0.5999,0.6894,0.5993,0.6919,0.5988,0.694,0.5986,0.6956,0.5988,0.6965,0.5994,0.6969,0.6005,0.697,0.602,0.697,0.6038,0.697,0.6057,0.697,0.6076,0.697,0.6091,0.697,0.6101],"in":[0.697,0.6101,0.697,0.6106,0.6965,0.6106,0.6936,0.61,0.6865,0.609,0.6758,0.6074,0.6661,0.6052,0.663,0.6019,0.6683,0.5972,0.678,0.5914,0.6865,0.5851,0.6903,0.5786,0.6902,0.5712,0.6882,0.5636,0.6856,0.5547,0.6826,0.5453,0.6792,0.537,0.6753,0.5304,0.6708,0.5256,0.6659,0.5211,0.6607,0.5171,0.6553,0.5147,0.6496,0.5152,0.6437,0.5179,0.6377,0.5216,0.6321,0.525,0.627,0.5278,0.6234,0.5331,0.6219,0.5458,0.6221,0.5609,0.6227,0.5764,0.623,0.5897,0.6215,0.5993,0.616,0.6042,0.605,0.6036,0.5878,0.5987,0.5646,0.5898,0.5363,0.5759,0.5045,0.5586,0.4708,0.5392,0.4369,0.5188,0.4045,0.4992,0.3749,0.4833,0.3489,0.4703,0.327,0.4579,0.31,0.4444,0.3001,0.4339,0.2991,0.4293,0.3078,0.4391],"loop":[0.3078,0.4391,0.3252,0.4625,0.3493,0.4943,0.3785,0.5335,0.4107,0.5884,0.4436,0.648,0.4747,0.6936,0.5018,0.7202,0.5216,0.7314,0.5311,0.7355,0.5288,0.7327,0.5156,0.7176,0.4939,0.6907,0.4669,0.6545,0.4375,0.6115,0.4082,0.5682,0.381,0.5283,0.3572,0.4988,0.3373,0.4806,0.3212,0.4699,0.3086,0.4627,0.2996,0.4566,0.2955,0.4558,0.2977,0.4668,0.3071,0.487,0.324,0.5117,0.3475,0.5342,0.3764,0.5575,0.4085,0.5861,0.4419,0.6165,0.4737,0.6455,0.5014,0.6663,0.5215,0.6783,0.5311,0.6801,0.5289,0.6712,0.5156,0.6566,0.4937,0.635,0.4663,0.609,0.4367,0.5795,0.4074,0.5502,0.3804,0.5233,0.3567,0.4994,0.337,0.4808,0.321,0.4675,0.3083,0.4545,0.2993,0.4427,0.2953,0.4328,0.2979,0.4298,0.3078,0.4391],"out":[0.3078,0.4391,0.3254,0.4631,0.3496,0.4941,0.3792,0.5334,0.4115,0.5884,0.4445,0.6475,0.4752,0.6948,0.5016,0.7229,0.5202,0.7348,0.5278,0.7394,0.5232,0.7368,0.5077,0.7237,0.484,0.696,0.4556,0.6619,0.4251,0.6173,0.3953,0.5756,0.3674,0.5374,0.342,0.51,0.319,0.4949,0.2975,0.487,0.278,0.4837,0.262,0.4843,0.2503,0.4843,0.2417,0.4866,0.2353,0.4892,0.2315,0.4991,0.2309,0.5176,0.2277,0.5303,0.1554,0.5295,0.102,0.5524,0.11,0.5808,0.1199,0.608,0.1278,0.6358,0.134,0.6619,0.1388,0.6869,0.1425,0.7072,0.1453,0.7217,0.1476,0.7302,0.1496,0.7349,0.1512,0.7379,0.1527,0.7402,0.1543,0.743,0.1559,0.7468,0.1576,0.7506,0.1594,0.7538,0.1614,0.7565,0.1635,0.7585,0.1657,0.7599,0.1681,0.7609,0.1706,0.7618,0.1733,0.7619,0.1761,0.7615,0.1792,0.7608,0.1824,0.7601,0.1857,0.7592,0.1892,0.7579,0.1929,0.7555,0.1967,0.751,0.2007,0.7436,0.2051,0.7303,0.2097,0.7062,0.2141,0.6697,0.2182,0.6328,0.2228,0.6082,0.2281,0.609,0.2335,0.6249,0.2389,0.6461,0.2444,0.6693,0.2499,0.6925,0.2555,0.7144,0.2612,0.7337,0.267,0.7475,0.273,0.7551,0.2791,0.7575,0.2853,0.7566,0.2917,0.7551,0.298,0.7542,0.3045,0.7536,0.311,0.7532,0.3176,0.753,0.3242,0.7539,0.3307,0.7554,0.3372,0.7563,0.3436,0.7563,0.35,0.7558,0.3563,0.755,0.3625,0.7537,0.3687,0.7512,0.3748,0.7477,0.3809,0.7428,0.3869,0.7362,0.3929,0.7272,0.3988,0.7145,0.4049,0.6951,0.4108,0.6645,0.4164,0.6264,0.4218,0.5927,0.4275,0.575,0.4331,0.5769,0.4387,0.5882,0.4441,0.6035,0.4495,0.6207,0.4549,0.6385,0.4601,0.6557,0.4653,0.6703,0.4704,0.6812,0.4753,0.6877,0.4802,0.6897,0.4851,0.6896,0.4899,0.6887,0.4946,0.6878,0.4993,0.6866,0.504,0.6854,0.5085,0.6843,0.513,0.6831,0.5175,0.6812,0.5219,0.6789,0.5262,0.6768,0.5304,0.6747,0.5345,0.6723,0.5386,0.6696,0.5426,0.6686,0.5465,0.6679,0.5504,0.6671,0.5542,0.6654,0.5579,0.6611,0.5616,0.652,0.5653,0.6344,0.569,0.6074,0.5724,0.5775,0.5757,0.5565,0.579,0.5533,0.5822,0.5609,0.5855,0.5723,0.5887,0.5854,0.5918,0.5991,0.5949,0.6121,0.598,0.6232,0.601,0.6317,0.6039,0.6366,0.6067,0.6389,0.6095,0.6387,0.6123,0.6374,0.615,0.6364,0.6176,0.6359,0.6201,0.6352,0.6226,0.6343,0.6251,0.6332,0.6275,0.6323,0.6298,0.6315,0.6321,0.6305,0.6343,0.6291,0.6365,0.6276,0.6386,0.6259,0.6407,0.6241,0.6427,0.622,0.6447,0.6196,0.6467,0.617,0.6486,0.6139,0.6505,0.6099,0.6524,0.604,0.6541,0.5946,0.6558,0.5794,0.6575,0.5584,0.6593,0.5353,0.6609,0.5175,0.6625,0.5112,0.6639,0.5162,0.6653,0.5262,0.6667,0.5375,0.6681,0.5497,0.6694,0.5622,0.6706,0.5739,0.6719,0.5841,0.6734,0.5919,0.6752,0.597,0.6776,0.5997,0.6793,0.6009,0.6815,0.6011,0.684,0.6006,0.6867,0.5999,0.6894,0.5993,0.6919,0.5988,0.694,0.5986,0.6956,0.5988,0.6965,0.5994,0.6969,0.6005,0.697,0.602,0.697,0.6038,0.697,0.6057,0.697,0.6076,0.697,0.6091,0.697,0.6101]}, RATE = 8;  /*TRACK*/
+  const src = {}, ready = {}, film = window.__film = { log: [], seeks: 0 };
+  let now = null, clip = '', going = null, goingClip = '', loading = false;
+  let cur = null, shown = false, gen = 0, from = null;
+
+  const play = v => { const p = v.play(); if (p) p.catch(() => {}); };
+  function make(name) {                                        // a fresh element for every play: nothing is ever seeked or looped
+    const v = document.createElement('video');
+    v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = src[name];
+    v.addEventListener('seeking', () => film.seeks++);
+    stage.prepend(v); return v;
+  }
+  const prep = name => src[name] && (ready[name] ||= make(name));
+  const home = () => clip !== 'in' && clip !== 'loop';        // the clip ends with him sitting at the waiting spot
+  function wanted() {                                          // what should follow the clip now playing
+    if (!home()) return cur === 'about' ? 'loop' : 'out';
+    if (cur === 'about' && src.out) return 'in';
+    return cur && cur !== 'about' && !shown ? 'ride' : 'idle';
+  }
+  async function load() {
+    if (loading) return; loading = true;
+    for (const k in CLIPS) {
+      try { const r = await fetch(`media/${CLIPS[k]}.mp4`); if (!r.ok) return; src[k] = URL.createObjectURL(await r.blob()); } catch { return; }
+      if (k === 'idle') { now = make(clip = 'idle'); now.style.zIndex = 2; play(now); film.log.push({ clip, t: Math.round(performance.now()) }); }
+    }
+  }
+
+  function surferAt(name, t) {                                 // board tail: clip time -> video fraction -> viewport px, through object-fit: cover
+    const tr = TRACK[name], i = Math.min(Math.max(t * RATE, 0), tr.length / 2 - 1.001), k = Math.floor(i), f = i - k;
+    const u = tr[2 * k] + (tr[2 * k + 2] - tr[2 * k]) * f, v = tr[2 * k + 1] + (tr[2 * k + 3] - tr[2 * k + 1]) * f;
+    const W = innerWidth, H = innerHeight, s = Math.max(W / 16, H / 9);
+    return [W / 2 + (u - .5) * 16 * s, H / 2 + (v - .5) * 9 * s];
+  }
+
+  function targets(el) {                                       // where each droplet lands: title glyph pixels, then a scatter along every other word
+    const out = [], walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), r = document.createRange(), off = document.createElement('canvas'), o = off.getContext('2d', { willReadFrequently: true });
+    for (let n; (n = walk.nextNode());) {
+      const title = n.parentElement.tagName === 'H2', cs = getComputedStyle(n.parentElement);
+      for (const m of n.data.matchAll(/\S+/g)) {
+        r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
+        for (const b of r.getClientRects()) {
+          if (!b.width || b.bottom < 0 || b.top > innerHeight) continue;
+          if (!title) { for (let i = 0; i < b.width / 5; i++) out.push([b.left + Math.random() * b.width, b.top + b.height * (.36 + .34 * Math.random())]); continue; }
+          off.width = Math.ceil(b.width); off.height = Math.ceil(b.height);
+          o.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; o.textBaseline = 'middle'; o.fillStyle = '#fff'; o.fillText(m[0], 0, off.height / 2);
+          const px = o.getImageData(0, 0, off.width, off.height).data;
+          for (let y = 0; y < off.height; y += 2) for (let x = 0; x < off.width; x += 2) if (px[4 * (y * off.width + x) + 3] > 128) out.push([b.left + x, b.top + y]);
+        }
+      }
+    }
+    return out;
+  }
+
+  // One fixed set of droplets, made once: each is thrown off the board as he turns (over the first 350 ms), flies as spray, and settles on a letter.
+  function spray(el, done) {
+    const dpr = Math.min(devicePixelRatio || 1, 2), W = innerWidth, H = innerHeight, g = gen, t0 = performance.now(), c0 = now.currentTime, name = clip, k = H / 800;
+    canvas.width = W * dpr; canvas.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const P = targets(el).map(([x, y]) => {
+      const d = Math.random() * 350, [ox, oy] = surferAt(name, c0 + d / 1000);
+      return { x, y, d, ox, oy, vx: (60 + Math.random() * 300) * k, vy: -(140 + Math.random() * 330) * k, T: 750 + Math.random() * 350, s: .8 + Math.random() * 1.5 };
+    });
+    film.spray = { n: P.length, drawn: 0, at: 0 };
+    let told = false;
+    (function frame(t) {
+      if (g !== gen) return ctx.clearRect(0, 0, W, H);
+      t -= t0;
+      const fade = Math.min(Math.max(1 - (t - 1500) / 600, 0), 1);
+      ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fff'; film.spray.drawn = 0; film.spray.at = Math.round(t);
+      for (const p of P) {
+        const a = (t - p.d) / 1000, f = Math.min(Math.max(a * 1000 / p.T, 0), 1), e = f * f * (3 - 2 * f);
+        if (a <= 0) continue;                                  // still on the board: it shows once it is thrown
+        const x = p.ox + p.vx * a, y = p.oy + p.vy * a + 450 * k * a * a;
+        ctx.globalAlpha = (.6 + .35 * f) * fade;
+        ctx.fillRect(x + (p.x - x) * e, y + (p.y - y) * e, p.s, p.s); film.spray.drawn++;
+      }
+      if (t > 1250 && !told) { told = true; done(); }
+      if (fade > 0) requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
+    })(t0);
+  }
+
+  function showBrief(how) {                                    // how: 'spray' | 'fade'
+    const el = document.getElementById(cur); shown = true; gen++;
+    skipbar.classList.remove('on'); el.classList.add('on'); el.scrollTop = 0;
+    const settle = () => { el.classList.remove('pre'); el.focus({ preventScroll: true }); };
+    if (how === 'spray') { el.classList.add('pre'); spray(el, settle); } else settle();
+  }
+
+  function hideBrief() {
+    gen++; shown = false; skipbar.classList.remove('on');
+    $$('.brief.on').forEach(b => b.classList.remove('on', 'pre'));
+    $$('[aria-current]').forEach(a => a.removeAttribute('aria-current'));
+  }
+
+  function tab(id) {                                           // open one topic's list, or none
+    $$('[data-tab]').forEach(b => b.setAttribute('aria-expanded', b.dataset.tab === id));
+    $$('.group').forEach(s => s.classList.toggle('on', s.id === id));
+  }
+
+  // He is sitting (or about to turn): the card waits for the wave. Anywhere else it comes off the board where he is now.
+  const playing = () => now && !now.paused && !now.ended;
+  const natural = () => playing() && (clip === 'idle' ? src[cur === 'about' ? 'out' : 'ride'] : (clip === 'ride' || clip === 'in') && now.currentTime < T_REVEAL);
+
+  function open(id, instant) {
+    hideBrief(); cur = id; root.classList.add('busy');
+    $$(`[data-open="${id}"]`).forEach(a => { a.setAttribute('aria-current', 'true'); const s = a.closest('.group'); if (s) tab(s.id); });
+    history.replaceState(null, '', '#' + id);
+    if (instant) return showBrief('fade');
+    if (!natural()) return showBrief(playing() && TRACK[clip] ? 'spray' : 'fade');
+    $('#catching').textContent = id === 'about' ? 'Catching a wave' : 'Catching ' + $(`#${id} h2`).textContent; skipbar.classList.add('on');
+  }
+
+  function close() {                                           // the card goes; the film just carries on
+    if (!cur) return;
+    hideBrief(); cur = null; root.classList.remove('busy');
+    history.replaceState(null, '', location.pathname + location.search);
+    if (from && from.isConnected) from.focus({ preventScroll: true });
+  }
+
+  (function tick() {
+    requestAnimationFrame(tick);
+    if (!now) return;
+    const rest = home() ? 'idle' : 'loop', want = wanted();
+    prep(rest); prep(want);
+    if (!going && (now.ended || now.duration - now.currentTime < .07)) {   // about a frame from the shared frame: start the next clip underneath
+      goingClip = ready[want] && ready[want].readyState > 2 ? want : rest; going = ready[goingClip];
+      if (going && going.readyState > 2) { delete ready[goingClip]; going.style.zIndex = 1; play(going); } else going = null;
+    }
+    if (going && going.currentTime > 0) {                      // it is running on that same frame: take the old clip away
+      film.log.push({ clip: goingClip, after: clip, left: +(now.duration - now.currentTime).toFixed(3), t: Math.round(performance.now()) });
+      const old = now; now = going; clip = goingClip; going = null; now.style.zIndex = 2;
+      old.pause(); old.remove(); old.removeAttribute('src'); old.load();
+    }
+    if (cur && !shown && (clip === 'ride' || clip === 'in') && now.currentTime >= T_REVEAL) showBrief(TRACK[clip] ? 'spray' : 'fade');
+  })();
+
+  document.addEventListener('click', e => {
+    if (!ocean()) return;
+    const t = e.target.closest('[data-tab]');
+    if (t) return tab(t.getAttribute('aria-expanded') === 'true' ? null : t.dataset.tab);
+    const a = e.target.closest('[data-open]');
+    if (a) { e.preventDefault(); from = a; return a.dataset.open === cur ? close() : open(a.dataset.open); }
+    if (e.target.closest('.close')) return close();
+    if (e.target.closest('#skip') && cur && !shown) return showBrief('fade');
+    if (e.target.closest('.name')) { e.preventDefault(); return close(); }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ocean()) close(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && ocean()) [now, going].forEach(v => v && !v.ended && play(v)); });
+
+  OCEAN.addEventListener('change', () => {                     // crossing into or out of ocean mode: reset to a clean state
+    close(); root.classList.toggle('ocean', OCEAN.matches && !PLAIN);
+    if (!ocean()) [now, going].forEach(v => v && v.pause()); else if (now) [now, going].forEach(v => v && play(v)); else load();
+  });
+  if (ocean()) load();                                         // the clips only load where they can play
+  if (ocean() && document.getElementById(location.hash.slice(1))?.classList.contains('brief')) open(location.hash.slice(1), true);
+})();
+</script>
+</body>
+</html>
